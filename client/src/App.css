@@ -47,6 +47,16 @@ input:-webkit-autofill:active {
   height: 100%;
 }
 
+.custom-navbar {
+  background: #3176b1;
+  border: none;
+  height: 77px;
+  width: 100vw;
+  position: sticky;
+  top: 0;
+  z-index: 2;
+}
+
 .infovariant {
   display: inline-block;
   width: 14.67px;

@@ -7,10 +7,10 @@ import ResultList from "./components/ResultList";
 import Search from "./components/Search";
 import SignInForm from "./components/SignIn/SignInForm";
 import { useAuth } from "oidc-react";
-import Navbar from "react-bootstrap/Navbar";
 import Footer from "./components/Footer.js";
 import LoggedIn from "./components/SignIn/LoggedIn.js";
 import NetworkMembers from "./components/NetworkMembers.js";
+import CustomNavbar from "./components/Navbar.js";
 
 function App() {
   // new
@@ -120,7 +120,7 @@ function App() {
   return (
     <div class="bigparent">
       <div class="parentwrapper">
-        <Navbar
+        {/* <Navbar
           style={{
             background: "#3176B1",
             height: "77px",
@@ -147,7 +147,8 @@ function App() {
             <h1 className="beacon">EGA Allele Frequency Browser</h1>
             <LoggedIn onClickHandler={onClickHandler} />
           </Container>
-        </Navbar>
+        </Navbar> */}
+        <CustomNavbar onClickHandler={onClickHandler} />
         <Container>
           <Row>
             <Col lg={3}></Col>

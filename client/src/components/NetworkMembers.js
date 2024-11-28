@@ -33,7 +33,7 @@ function NetworkMembers() {
   return (
     <div>
       <p className="lead mt-5 mb-4 bnmembers-title">
-        <b>Beacon Network Members</b>
+        <b>Institutions involved</b>
       </p>
       <div className="bnmembers-container">
         {/* <div className="row bnmembers-row"> */}
