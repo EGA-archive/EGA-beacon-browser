@@ -1,8 +1,6 @@
 import React from "react";
 import { Box } from "@mui/system";
 import { Row } from "react-bootstrap";
-import Tooltip from "@mui/material/Tooltip";
-import { styled } from "@mui/material/styles";
 import TooltipHeader from "./TooltipHeader.js";
 
 function ResultList({
@@ -144,7 +142,7 @@ function ResultList({
     "Number of copies of a specific allele in a population.",
     "Total number of analysed individuals.",
     "Number of individuals homozygous for the allele.",
-    "Number of individuals homozygous for the allele.",
+    "Number of individuals heterozygous for the allele.",
     "Incidence of the allele in a population.",
   ];
 

@@ -25,6 +25,8 @@ const SignupSchema = Yup.object().shape({
 //Dropdown Menu
 const refGenome = [{ label: "GRCh37" }, { label: "GRCh38" }];
 
+// values.variant saves the variant written in the inputfield.
+// search comes from App.js - it is the big api call
 function Search({ search, setVariant }) {
   const onSubmit = async (values, actions) => {
     setVariant(values.variant);
@@ -127,6 +129,7 @@ function Search({ search, setVariant }) {
                       name="variant"
                       className="input-field variant-field shadow-none"
                       style={{
+                        backgroundColor: "green",
                         marginBottom: "20px",
                         borderColor:
                           touched.variant && errors.variant ? "red" : "",
