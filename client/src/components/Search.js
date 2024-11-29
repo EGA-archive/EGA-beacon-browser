@@ -88,11 +88,7 @@ function Search({ search, setVariant }) {
               {/* <Form.Group controlId="country"> */}
               <Form.Group>
                 <Row style={{ marginTop: "85px" }}>
-                  <Col
-                    lg={8}
-                    className="variant"
-                    style={{ marginBottom: "-10px" }}
-                  >
+                  <Col lg={8} className="variant">
                     <Form.Label>
                       <b style={{ marginRight: "10px" }}>Variant query</b>
                       <CustomTooltip
@@ -124,20 +120,35 @@ function Search({ search, setVariant }) {
                         </b>
                       </CustomTooltip>
                     </Form.Label>
-                    <Form.Control
-                      type="search"
-                      name="variant"
-                      className="input-field variant-field shadow-none"
-                      style={{
-                        backgroundColor: "green",
-                        marginBottom: "20px",
-                        borderColor:
-                          touched.variant && errors.variant ? "red" : "",
-                      }}
-                      placeholder="Insert your variant"
-                      onPaste={handlePaste}
+
+                    <Autocomplete
+                      freeSolo
+                      options={[]}
                       value={values.variant}
-                      onChange={handleChange}
+                      onInputChange={(event, newValue) => {
+                        setFieldValue("variant", newValue);
+                      }}
+                      renderInput={(params) => (
+                        <TextField
+                          {...params}
+                          placeholder="Insert your variant"
+                          size="small"
+                          onPaste={handlePaste}
+                          error={Boolean(touched.variant && errors.variant)}
+                          helperText={
+                            touched.variant && errors.variant
+                              ? errors.variant
+                              : ""
+                          }
+                          sx={{
+                            marginBottom: "20px",
+                            "& .MuiOutlinedInput-root": {
+                              borderColor:
+                                touched.variant && errors.variant ? "red" : "",
+                            },
+                          }}
+                        />
+                      )}
                     />
                   </Col>
 
@@ -187,9 +198,9 @@ function Search({ search, setVariant }) {
               </Form.Group>
               <Form.Group as={Row}></Form.Group>
               {/* Example */}
-              {touched.variant && errors.variant && (
+              {/* {touched.variant && errors.variant && (
                 <div className="errors">{errors.variant}</div>
-              )}
+              )} */}
               <div style={{ marginTop: "10px" }}>
                 <span>Example: </span>
                 <a

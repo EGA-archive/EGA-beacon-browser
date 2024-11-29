@@ -29,11 +29,8 @@ const customTheme = createTheme({
           "& .MuiAutocomplete-option": {
             borderRadius: "5px",
             "&[aria-selected='true']": {
-              backgroundColor: "#F4F9FE !important", // Keeps the selected option's background
+              backgroundColor: "#F4F9FE !important",
             },
-            // "&:hover": {
-            //   backgroundColor: "inherit !important", // Keeps default MUI hover behavior
-            // },
           },
         },
       },
@@ -41,9 +38,9 @@ const customTheme = createTheme({
     MuiFormHelperText: {
       styleOverrides: {
         root: {
-          marginLeft: "0px", // Remove left margin
-          marginRight: "0px", // Remove right margin
-          color: "#FF0000", // Set the color to red for error text
+          marginLeft: "0px",
+          marginRight: "0px",
+          color: "#FF0000",
         },
       },
     },
