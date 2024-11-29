@@ -153,7 +153,7 @@ body {
 }
 
 .egalogo {
-  height: 32.2px;
+  height: 45.2px;
   cursor: pointer;
 }
 
@@ -216,14 +216,6 @@ body {
   color: #3176b1 !important;
 }
 
-.logos-founders {
-  height: 64.9px;
-  display: flex;
-  gap: 17px;
-  justify-content: flex-end;
-  align-items: center;
-}
-
 .input-field {
   border: 1px solid #0234524d;
   border-radius: 10px;
@@ -263,22 +255,17 @@ body {
 }
 
 .bnmembers-container {
-  width: 1100px;
-  /* height: Hug (157.94px); */
   height: auto;
   display: flex;
   flex-direction: row !important;
   align-items: center;
-  justify-content: flex-start;
-  gap: 10px;
+  justify-content: center;
 }
 
 .bnmembers-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 20px;
-  width: 100%;
-  max-width: 1100px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .cell {
@@ -389,6 +376,9 @@ body {
   word-wrap: break-word;
   white-space: normal;
   height: 62.78px;
+}
+.underlined {
+  text-decoration: underline;
 }
 
 .mail-icon {

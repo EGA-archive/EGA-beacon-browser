@@ -1,10 +1,10 @@
-// client/src/components/ResultList.js
-
 import React from "react";
 import { Box } from "@mui/system";
 import { Row } from "react-bootstrap";
+import Tooltip from "@mui/material/Tooltip";
+import { styled } from "@mui/material/styles";
+import TooltipHeader from "./TooltipHeader.js";
 
-// changed
 function ResultList({
   results,
   metaresults,
@@ -140,6 +140,14 @@ function ResultList({
     isresponse = "False";
   }
 
+  const tooltipTexts = [
+    "Number of copies of a specific allele in a population.",
+    "Total number of analysed individuals.",
+    "Number of individuals homozygous for the allele.",
+    "Number of individuals homozygous for the allele.",
+    "Incidence of the allele in a population.",
+  ];
+
   return (
     <Row>
       {results && exists === "True" && (
@@ -168,21 +176,46 @@ function ResultList({
                 <th className="centered-header" style={{ width: "11%" }}>
                   Population
                 </th>
-                <th className="centered-header" style={{ width: "11%" }}>
-                  Allele Count
-                </th>
-                <th className="centered-header" style={{ width: "11%" }}>
-                  Allele Number
-                </th>
-                <th className="centered-header" style={{ width: "16%" }}>
-                  Homozygous/ Hemizygous Count
-                </th>
-                <th className="centered-header" style={{ width: "16%" }}>
-                  Heterozygous Count
-                </th>
-                <th className="centered-header" style={{ width: "11%" }}>
-                  Allele Frequency
-                </th>
+                <TooltipHeader title={tooltipTexts[0]}>
+                  <th
+                    className="centered-header underlined"
+                    style={{ width: "11%" }}
+                  >
+                    Allele Count
+                  </th>
+                </TooltipHeader>
+                <TooltipHeader title={tooltipTexts[1]}>
+                  <th
+                    className="centered-header underlined"
+                    style={{ width: "11%" }}
+                  >
+                    Allele Number
+                  </th>
+                </TooltipHeader>
+                <TooltipHeader title={tooltipTexts[2]}>
+                  <th
+                    className="centered-header underlined"
+                    style={{ width: "16%" }}
+                  >
+                    Homozygous/ Hemizygous Count
+                  </th>
+                </TooltipHeader>
+                <TooltipHeader title={tooltipTexts[3]}>
+                  <th
+                    className="centered-header underlined"
+                    style={{ width: "16%" }}
+                  >
+                    Heterozygous Count
+                  </th>
+                </TooltipHeader>
+                <TooltipHeader title={tooltipTexts[4]}>
+                  <th
+                    className="centered-header underlined"
+                    style={{ width: "11%" }}
+                  >
+                    Allele Frequency
+                  </th>
+                </TooltipHeader>
               </tr>
               {addedBeacons}
             </table>

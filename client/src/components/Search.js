@@ -85,7 +85,6 @@ function Search({ search, setVariant }) {
             <Form noValidate onSubmit={handleSubmit}>
               {/* <Form.Group controlId="country"> */}
               <Form.Group>
-                {/* Need to comment with Sara */}
                 <Row style={{ marginTop: "85px" }}>
                   <Col
                     lg={8}
