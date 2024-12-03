@@ -47,16 +47,6 @@ input:-webkit-autofill:active {
   height: 100%;
 }
 
-.custom-navbar {
-  background: #3176b1;
-  border: none;
-  height: 77px;
-  width: 100vw;
-  position: sticky;
-  top: 0;
-  z-index: 2;
-}
-
 .infovariant {
   cursor: pointer;
   display: inline-block;
@@ -142,8 +132,34 @@ body {
   min-height: 100%;
 }
 
+/* Navbar CSS */
+
+.custom-navbar {
+  background: #3176b1;
+  border: none;
+  height: 77px;
+  width: 100vw;
+  position: sticky;
+  top: 0;
+  z-index: 2;
+}
+
+.navbar-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 10px;
+}
+
+.egalogo {
+  height: 45.2px;
+  cursor: pointer;
+  margin: 0;
+}
+
 .beacon {
   text-align: center;
+  flex: 1;
   margin-left: 15%;
   margin-top: 1%;
   color: white;
@@ -151,11 +167,6 @@ body {
   font-size: 20px;
   font-weight: 700;
   line-height: 27.24px;
-}
-
-.egalogo {
-  height: 45.2px;
-  cursor: pointer;
 }
 
 .login-button {
@@ -221,6 +232,20 @@ body {
   color: #3176b1 !important;
 }
 
+@media (max-width: 1180px) {
+  .beacon {
+    margin-top: 10px;
+    text-align: center;
+    margin-left: 10%;
+  }
+
+  .egalogo {
+    height: 40.2px;
+  }
+}
+
+/* Search CSS */
+
 .search-row {
   margin-top: 90px;
 }
@@ -253,6 +278,23 @@ body {
   list-style-type: disc;
   padding-left: 20px;
 }
+
+@media (max-width: 1180px) {
+  .search-row {
+    display: flex;
+  }
+
+  .input-field,
+  .genome-field {
+    width: 20px; /* Limit the width of input fields */
+  }
+
+  .searchbutton-div {
+    flex-shrink: 0;
+  }
+}
+
+/* Network CSS */
 
 .bnmembers-container {
   height: auto;
@@ -650,28 +692,4 @@ tbody tr:hover {
   margin: auto auto;
   position: absolute;
   text-align: center;
-}
-
-@media (max-width: 1800px) {
-  .egalogo {
-    margin-left: 10%;
-  }
-}
-
-@media (max-width: 1600px) {
-  .egalogo {
-    margin-left: 8%;
-  }
-}
-
-@media (max-width: 1500px) {
-  .egalogo {
-    margin-left: 5%;
-  }
-}
-
-@media (max-width: 700px) {
-  .egalogo {
-    margin-left: 0%;
-  }
 }

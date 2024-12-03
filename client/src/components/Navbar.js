@@ -6,7 +6,7 @@ import LoggedIn from "./SignIn/LoggedIn";
 const CustomNavbar = ({ onClickHandler }) => {
   return (
     <Navbar className="custom-navbar">
-      <Container>
+      <Container className="navbar-container">
         <a
           className="egalogo"
           onClick={() => {
