@@ -1,11 +1,8 @@
-// client/src/components/Search.js
-
 import * as React from "react";
 import Tooltip from "@mui/material/Tooltip";
 import { Formik } from "formik";
 import { Col, Form, Row } from "react-bootstrap";
 import * as Yup from "yup";
-import { color, maxHeight } from "@mui/system";
 import { styled } from "@mui/material/styles";
 import TextField from "@mui/material/TextField";
 import Autocomplete from "@mui/material/Autocomplete";
@@ -22,7 +19,7 @@ const SignupSchema = Yup.object().shape({
   genome: Yup.string().required("Required"),
 });
 
-//Dropdown Menu
+//Dropdown Menu for refGenome
 const refGenome = [{ label: "GRCh37" }, { label: "GRCh38" }];
 
 // values.variant saves the variant written in the inputfield.
@@ -33,7 +30,7 @@ function Search({ search, setVariant }) {
     await search(values.variant, values.genome);
   };
 
-  // Tooltip
+  // Tooltip for Variant query
   const CustomTooltip = styled(({ className, ...props }) => (
     <Tooltip {...props} classes={{ popper: className }} />
   ))({
@@ -87,20 +84,13 @@ function Search({ search, setVariant }) {
             <Form noValidate onSubmit={handleSubmit}>
               {/* <Form.Group controlId="country"> */}
               <Form.Group>
-                <Row style={{ marginTop: "85px" }}>
-                  <Col lg={8} className="variant">
+                <Row className="search-row">
+                  <Col lg={8}>
                     <Form.Label>
-                      <b style={{ marginRight: "10px" }}>Variant query</b>
+                      <b className="variant-query">Variant query</b>
                       <CustomTooltip
                         title={
-                          <ul
-                            style={{
-                              margin: 0,
-                              padding: 0,
-                              listStyleType: "disc",
-                              paddingLeft: "20px",
-                            }}
-                          >
+                          <ul className="tooltip-bullets">
                             <li>
                               Type your variant or copy from Excel with this
                               specific structure: chr / position / ref. base /
@@ -112,12 +102,7 @@ function Search({ search, setVariant }) {
                         placement="top-start"
                         arrow
                       >
-                        <b
-                          className="infovariant"
-                          style={{ cursor: "pointer" }}
-                        >
-                          i
-                        </b>
+                        <b className="infovariant">i</b>
                       </CustomTooltip>
                     </Form.Label>
 
@@ -184,9 +169,9 @@ function Search({ search, setVariant }) {
                     />
                   </Col>
                   {/* Search button */}
-                  <div style={{ width: "150px", display: "inline" }}>
+                  <div className="searchbutton-div">
                     <button
-                      className="button1"
+                      className="searchbutton"
                       type="submit"
                       variant="primary"
                       disabled={errors.variant || errors.genome}
@@ -201,13 +186,13 @@ function Search({ search, setVariant }) {
               {/* {touched.variant && errors.variant && (
                 <div className="errors">{errors.variant}</div>
               )} */}
-              <div style={{ marginTop: "10px" }}>
+              <div className="example-span">
                 <span>Example: </span>
                 <a
                   type="reset"
                   onClick={() => setFieldValue("variant", "22-16050921-T-G")}
                 >
-                  <u style={{ color: "blue" }}>22-16050921-T-G</u>
+                  <u className="example">22-16050921-T-G</u>
                 </a>
               </div>
             </Form>

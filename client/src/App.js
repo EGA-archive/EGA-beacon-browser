@@ -120,34 +120,6 @@ function App() {
   return (
     <div class="bigparent">
       <div class="parentwrapper">
-        {/* <Navbar
-          style={{
-            background: "#3176B1",
-            height: "77px",
-            width: "100vw",
-            borderWidth: "0",
-            position: "sticky",
-            top: "0",
-            zIndex: "2",
-          }}
-        >
-          <Container className="navbarContainer">
-            <a
-              className="egalogo"
-              onClick={() => {
-                window.location.href = "/";
-              }}
-            >
-              <img
-                src="/../egalogo.png"
-                className="egalogo"
-                alt="egalogo"
-              ></img>
-            </a>
-            <h1 className="beacon">EGA Allele Frequency Browser</h1>
-            <LoggedIn onClickHandler={onClickHandler} />
-          </Container>
-        </Navbar> */}
         <CustomNavbar onClickHandler={onClickHandler} />
         <Container>
           <Row>

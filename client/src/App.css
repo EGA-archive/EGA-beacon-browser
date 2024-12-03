@@ -58,6 +58,7 @@ input:-webkit-autofill:active {
 }
 
 .infovariant {
+  cursor: pointer;
   display: inline-block;
   width: 14.67px;
   height: 14.67px;
@@ -216,6 +217,10 @@ body {
   color: #3176b1 !important;
 }
 
+.search-row {
+  margin-top: 90px;
+}
+
 .input-field {
   border: 1px solid #0234524d;
   border-radius: 10px;
@@ -234,20 +239,15 @@ body {
   height: 46px;
 }
 
-/* Not yet finished */
-.green-clear-button::-webkit-search-cancel-button {
-  -webkit-appearance: none; /* Remove default styling */
-  height: 14px;
-  width: 14px;
-  background-color: grey;
-  color: green;
-  font-weight: bold;
-  cursor: pointer;
+.variant-query {
+  margin-right: 10px;
 }
 
-.variant-field::-webkit-search-cancel-button:hover {
-  background-color: green; /* Add a hover effect */
-  color: white;
+.tooltip-bullets {
+  margin: 0;
+  padding: 0;
+  list-style-type: disc;
+  padding-left: 20px;
 }
 
 .bnmembers-container {
@@ -278,7 +278,17 @@ body {
   object-fit: contain;
 }
 
-.button1 {
+.egaembllogo {
+  width: 248px;
+  height: 71.97px;
+}
+
+.crglogo {
+  width: 164.49px;
+  height: 94.45px;
+}
+
+.searchbutton {
   border: 1px solid #3176b1;
   width: Hug (122px) px;
   height: 40px;
@@ -297,7 +307,7 @@ body {
   top: 30px;
 }
 
-.button1:disabled {
+.searchbutton:disabled {
   color: #0234524d;
   background-color: transparent;
   border: 1px solid #0234524d;
@@ -317,43 +327,44 @@ body {
   top: 3px;
 }
 
-.button1:hover {
+.searchbutton-div {
+  width: 150px;
+  display: inline;
+}
+
+.searchbutton:hover {
   background-color: #023452;
   color: white;
   border: 1px solid #023452;
 }
 
-.button1:disabled:hover {
+.searchbutton:disabled:hover {
   color: #0234524d;
   background-color: transparent;
   border: 1px solid #0234524d;
 }
 
-.button1:hover .lupared {
+.searchbutton:hover .lupared {
   background-image: url("../public/lupawhite.svg");
 }
 
-.button1:disabled:hover .lupared {
+.searchbutton:disabled:hover .lupared {
   background-image: url("../public/lupapink.svg");
 }
 
-.button1:disabled .lupared {
+.searchbutton:disabled .lupared {
   background-image: url("../public/lupapink.svg");
 }
 
-.button2 {
-  border-radius: 5px;
-  border: 1px solid black;
-  height: 35px;
-  width: 80px;
+.example-span {
+  margin-top: 10px;
 }
 
-.button2:hover {
-  background-color: #7276b1;
-  color: white;
+.example {
+  color: blue;
 }
 
-.customButton {
+/* .customButton {
   background-color: "#0B0C10";
   border: "#45A293";
   color: "#45A293";
@@ -364,7 +375,7 @@ body {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-}
+} */
 
 .centered-header {
   text-align: center;
