@@ -166,51 +166,36 @@ function ResultList({
           <p>
             {queriedVariant && <span> Queried Variant: {queriedVariant}</span>}
           </p>
-          <div style={{ overflowX: "auto" }}>
-            <table style={{ width: "100%", marginBottom: "32px" }}>
+          <div className="table-container">
+            <table className="data-table">
               <tr>
                 <th>Beacon</th>
-                <th style={{ width: "20%" }}>Dataset</th>
-                <th className="centered-header" style={{ width: "11%" }}>
+                <th className="dataset-column">Dataset</th>
+                <th className="centered-header population-column">
                   Population
                 </th>
                 <TooltipHeader title={tooltipTexts[0]}>
-                  <th
-                    className="centered-header underlined"
-                    style={{ width: "11%" }}
-                  >
+                  <th className="centered-header underlined allele-count-column">
                     Allele Count
                   </th>
                 </TooltipHeader>
                 <TooltipHeader title={tooltipTexts[1]}>
-                  <th
-                    className="centered-header underlined"
-                    style={{ width: "11%" }}
-                  >
+                  <th className="centered-header underlined allele-number-column">
                     Allele Number
                   </th>
                 </TooltipHeader>
                 <TooltipHeader title={tooltipTexts[2]}>
-                  <th
-                    className="centered-header underlined"
-                    style={{ width: "16%" }}
-                  >
+                  <th className="centered-header underlined homozygous-count-column">
                     Homozygous/ Hemizygous Count
                   </th>
                 </TooltipHeader>
                 <TooltipHeader title={tooltipTexts[3]}>
-                  <th
-                    className="centered-header underlined"
-                    style={{ width: "16%" }}
-                  >
+                  <th className="centered-header underlined heterozygous-count-column">
                     Heterozygous Count
                   </th>
                 </TooltipHeader>
                 <TooltipHeader title={tooltipTexts[4]}>
-                  <th
-                    className="centered-header underlined"
-                    style={{ width: "11%" }}
-                  >
+                  <th className="centered-header underlined allele-frequency-column">
                     Allele Frequency
                   </th>
                 </TooltipHeader>

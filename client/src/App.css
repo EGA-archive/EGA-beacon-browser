@@ -185,6 +185,10 @@ body {
   color: #3176b1;
 }
 
+.user-icon-active {
+  color: #3176b1;
+}
+
 .user-icon {
   width: 19px;
   height: 19px;
@@ -377,12 +381,41 @@ body {
   box-sizing: border-box;
 } */
 
+.table-container {
+  overflow-x: auto;
+}
+
+.data-table {
+  width: 100%;
+  margin-bottom: 32px;
+}
+
+.dataset-column {
+  width: 20%;
+}
+
+.population-column {
+  width: 11%;
+}
+
+.allele-count-column,
+.allele-number-column,
+.homozygous-count-column,
+.heterozygous-count-column,
+.allele-frequency-column {
+  width: 11%;
+}
+
+.homozygous-count-column,
+.heterozygous-count-column {
+  width: 16%;
+}
+
 .centered-header {
   text-align: center;
   vertical-align: middle;
   word-wrap: break-word;
   white-space: normal;
-  height: 62.78px;
 }
 .underlined {
   text-decoration: underline;

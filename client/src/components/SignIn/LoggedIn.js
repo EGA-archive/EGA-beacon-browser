@@ -1,4 +1,3 @@
-// client/src/components/SignIn/LoggedIn.js
 import React, { useState, useEffect } from "react";
 import { useAuth } from "oidc-react";
 import ExitToAppRoundedIcon from "@mui/icons-material/ExitToAppRounded";
@@ -42,8 +41,7 @@ const LoggedIn = ({ onClickHandler }) => {
         onClick={handleLogoutClick}
       >
         <ExitToAppRoundedIcon
-          style={{ color: logoutIsActive ? "#3176b1" : "" }} // Icon color based on active state
-          className="user-icon"
+          className={`user-icon ${logoutIsActive ? "user-icon-active" : ""}`} // Conditional class for active state
         />
         Log Out
       </button>
