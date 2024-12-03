@@ -31,6 +31,7 @@ function Search({ search, setVariant }) {
   };
 
   // Tooltip for Variant query
+
   const CustomTooltip = styled(({ className, ...props }) => (
     <Tooltip {...props} classes={{ popper: className }} />
   ))({
@@ -45,6 +46,8 @@ function Search({ search, setVariant }) {
     },
     [`& .MuiTooltip-arrow`]: {
       color: "#023452",
+      transform: "translate(1px, 0px) !important",
+      //       transform: "none !important",
     },
   });
 

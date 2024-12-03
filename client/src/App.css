@@ -653,25 +653,25 @@ tbody tr:hover {
 }
 
 @media (max-width: 1800px) {
-  .gdilogo {
+  .egalogo {
     margin-left: 10%;
   }
 }
 
 @media (max-width: 1600px) {
-  .gdilogo {
+  .egalogo {
     margin-left: 8%;
   }
 }
 
 @media (max-width: 1500px) {
-  .gdilogo {
+  .egalogo {
     margin-left: 5%;
   }
 }
 
 @media (max-width: 700px) {
-  .gdilogo {
+  .egalogo {
     margin-left: 0%;
   }
 }
