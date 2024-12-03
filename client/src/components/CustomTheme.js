@@ -1,4 +1,5 @@
 import { createTheme } from "@mui/material/styles";
+import { width } from "@mui/system";
 
 const customTheme = createTheme({
   components: {
@@ -15,6 +16,11 @@ const customTheme = createTheme({
           },
           "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
             border: "1px solid #3176B1 !important",
+          },
+          "@media (max-width: 1180px)": {
+            // Reduce size for smaller screens
+            maxWidth: "270px",
+            width: "100%", // Ensure it fits within its parent
           },
         },
         paper: {

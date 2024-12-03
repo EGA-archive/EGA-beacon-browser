@@ -88,7 +88,7 @@ function Search({ search, setVariant }) {
               {/* <Form.Group controlId="country"> */}
               <Form.Group>
                 <Row className="search-row">
-                  <Col lg={8}>
+                  <Col className="col-variant">
                     <Form.Label>
                       <b className="variant-query">Variant query</b>
                       <CustomTooltip
@@ -109,6 +109,7 @@ function Search({ search, setVariant }) {
                       </CustomTooltip>
                     </Form.Label>
 
+                    {/* Varaint Field */}
                     <Autocomplete
                       freeSolo
                       options={[]}
@@ -140,7 +141,7 @@ function Search({ search, setVariant }) {
                     />
                   </Col>
 
-                  <Col className="refgenome">
+                  <Col className="col-refgenome">
                     <Form.Label htmlFor="points">
                       <b>Ref Genome</b>
                     </Form.Label>
@@ -172,7 +173,7 @@ function Search({ search, setVariant }) {
                     />
                   </Col>
                   {/* Search button */}
-                  <div className="searchbutton-div">
+                  <Col className="col-searchbutton">
                     <button
                       className="searchbutton"
                       type="submit"
@@ -181,7 +182,7 @@ function Search({ search, setVariant }) {
                     >
                       <div className="lupared"></div>Search
                     </button>
-                  </div>
+                  </Col>
                 </Row>
               </Form.Group>
               <Form.Group as={Row}></Form.Group>
