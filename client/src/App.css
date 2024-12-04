@@ -290,7 +290,9 @@ body {
 }
 
 .col-searchbutton {
-  width: Hug (122px) px;
+  width: 92px;
+  height: 42px;
+  background-color: chocolate;
   flex: 0 0 15%;
   max-width: 100%;
 }

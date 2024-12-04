@@ -9,9 +9,9 @@ const CustomNavbar = ({ onClickHandler }) => {
       <Container className="navbar-container">
         <a
           className="egalogo"
-          onClick={() => {
-            window.location.href = "/";
-          }}
+          href="https://ega-archive.org/about/ega/"
+          target="_blank"
+          rel="noopener noreferrer"
         >
           <img src="/../egalogo.png" className="egalogo" alt="egalogo" />
         </a>
