@@ -1,6 +1,6 @@
 // client/src/App.js
 import axios from "axios";
-import React, { useState } from "react"; // changed
+import React, { useState } from "react";
 import "./App.css";
 import { Col, Container, Row } from "react-bootstrap";
 import ResultList from "./components/ResultList";
@@ -8,9 +8,8 @@ import Search from "./components/Search";
 import SignInForm from "./components/SignIn/SignInForm";
 import { useAuth } from "oidc-react";
 import Footer from "./components/Footer.js";
-import LoggedIn from "./components/SignIn/LoggedIn.js";
 import NetworkMembers from "./components/NetworkMembers.js";
-import CustomNavbar from "./components/Navbar.js";
+import CustomNavbar from "./components/CustomNavbar.js";
 
 function App() {
   // new
@@ -134,9 +133,7 @@ function App() {
               {auth && auth.userData && <SignInForm />}
               {!auth.userData && isQuizePageVisible && <SignInForm />}
             </Col>
-            {/* <div className="mt-5"></div> */}
             <Search search={search} setVariant={setQueriedVariant} />{" "}
-            {/* changed */}
           </Row>
           {isLoading === true && error === false && <div class="loader"></div>}
           {isLoading === false && error === false && (
@@ -147,12 +144,11 @@ function App() {
               error={error}
               queriedVariant={queriedVariant}
             />
-          )}{" "}
+          )}
           {/* Show NetworkMembers only if no search results */}
           {isLoading === false && error === false && results?.length === 0 && (
             <NetworkMembers />
           )}
-          {/* changed */}
           {error !== false && (
             <ResultList
               results={results}
@@ -161,8 +157,7 @@ function App() {
               error={error}
               // queriedVariant={queriedVariant}
             />
-          )}{" "}
-          {/* changed */}
+          )}
         </Container>
       </div>
       <Footer />

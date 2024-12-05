@@ -55,5 +55,12 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "@babel/preset-env": "^7.26.0",
+    "@cypress/code-coverage": "^3.13.8",
+    "@cypress/instrument-cra": "^1.4.0",
+    "babel-plugin-istanbul": "^7.0.0",
+    "cypress": "10.11.0"
   }
 }
