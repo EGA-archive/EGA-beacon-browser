@@ -1,9 +1,8 @@
 import React from "react";
 import Navbar from "react-bootstrap/Navbar";
 import Container from "react-bootstrap/Container";
-import LoggedIn from "./SignIn/LoggedIn";
 
-const CustomNavbar = ({ onClickHandler }) => {
+const CustomNavbar = () => {
   return (
     <Navbar className="custom-navbar">
       <Container className="navbar-container">
@@ -16,7 +15,6 @@ const CustomNavbar = ({ onClickHandler }) => {
           <img src="/../egalogo.png" className="egalogo" alt="egalogo" />
         </a>
         <h1 className="beacon">EGA Allele Frequency Browser</h1>
-        <LoggedIn onClickHandler={onClickHandler} />
       </Container>
     </Navbar>
   );

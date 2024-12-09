@@ -24,9 +24,20 @@ const oidcConfig = {
   automaticSilentRenew: true,
   redirectUri:
     process.env.NODE_ENV === "development" && configData.REDIRECT_URL,
+  postLogoutRedirectUri:
+    process.env.NODE_ENV === "development" &&
+    configData.POST_LOGOUT_REDIRECT_URL,
   scope: "openid profile email ga4gh_passport_v1 offline_access",
   revokeAccessTokenOnSignout: true,
+  silentRedirectUri: `${window.location.origin}/silent-renew.html`,
 };
+
+console.log("Redirect URI:", oidcConfig.redirectUri);
+console.log("postLogoutRedirectUri:", oidcConfig.postLogoutRedirectUri);
+console.log("silentRedirectUri:", oidcConfig.silentRedirectUri);
+console.log("Window Location Origin:", window.location.origin);
+console.log("oidcConfig:", oidcConfig);
+
 root.render(
   <React.StrictMode>
     <AuthProvider {...oidcConfig}>

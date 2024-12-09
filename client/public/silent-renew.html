@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Silent Renew</title>
+  </head>
+  <body>
+    <script>
+      // This script helps the OIDC library to handle silent authentication
+      window.addEventListener("message", (event) => {
+        if (event.data.type === "oidcSilentRenewMessage") {
+          window.parent.postMessage(event.data, event.origin);
+        }
+      });
+    </script>
+  </body>
+</html>

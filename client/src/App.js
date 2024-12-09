@@ -1,11 +1,9 @@
-// client/src/App.js
 import axios from "axios";
 import React, { useState } from "react";
 import "./App.css";
 import { Col, Container, Row } from "react-bootstrap";
 import ResultList from "./components/ResultList";
 import Search from "./components/Search";
-import SignInForm from "./components/SignIn/SignInForm";
 import { useAuth } from "oidc-react";
 import Footer from "./components/Footer.js";
 import NetworkMembers from "./components/NetworkMembers.js";
@@ -21,11 +19,6 @@ function App() {
   const [isLoading, setLoading] = useState(false);
   const [queriedVariant, setQueriedVariant] = useState("");
   const auth = useAuth();
-
-  const onClickHandler = () => {
-    // Set the visibility flag to true when the button is clicked
-    setIsQuizePageVisible(true);
-  };
 
   // new
   const search = async (variant, genome) => {
@@ -119,20 +112,9 @@ function App() {
   return (
     <div class="bigparent">
       <div class="parentwrapper">
-        <CustomNavbar onClickHandler={onClickHandler} />
+        <CustomNavbar />
         <Container>
           <Row>
-            <Col lg={3}></Col>
-            <Col lg={7}></Col>
-            <Col>
-              {/*<button onClick={onClickHandler} style={{backgroundImage:"url('/../ls-login.png')",backgroundSize:"cover",backgroundColor:"transparent",height:"35px",width:"160px",borderWidth:"0"}}></button>*/}
-              {/*<button></button>*/}
-
-              {/* When the flag is true, the page will be shown */}
-
-              {auth && auth.userData && <SignInForm />}
-              {!auth.userData && isQuizePageVisible && <SignInForm />}
-            </Col>
             <Search search={search} setVariant={setQueriedVariant} />{" "}
           </Row>
           {isLoading === true && error === false && <div class="loader"></div>}

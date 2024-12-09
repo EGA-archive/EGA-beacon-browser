@@ -10,12 +10,12 @@ function ResultList({
   queriedVariant,
   error,
 }) {
-  console.log("Results from RL", results);
-  console.log("Raw Results from RL", results);
-  results.forEach((result, index) => {
-    console.log(`Result ${index}:`, result);
-  });
-  console.log("Metaresults from RL", metaresults);
+  // console.log("Results from RL", results);
+  // console.log("Raw Results from RL", results);
+  // results.forEach((result, index) => {
+  //   console.log(`Result ${index}:`, result);
+  // });
+  // console.log("Metaresults from RL", metaresults);
 
   var i = 0;
   var dataset = "";
@@ -160,11 +160,16 @@ function ResultList({
             },
           }}
         >
-          <p className="lead mt-2 mb-2">
+          <p className="lead mt-2">
             <b>Results </b>
           </p>
-          <p>
-            {queriedVariant && <span> Queried Variant: {queriedVariant}</span>}
+          <p className="queried-variant">
+            {
+              <span>
+                Queried Variant:{" "}
+                <span className="queried-variant-input">{queriedVariant}</span>
+              </span>
+            }
           </p>
           <div className="table-container">
             <table className="data-table">
