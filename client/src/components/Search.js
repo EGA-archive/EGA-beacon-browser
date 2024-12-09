@@ -1,7 +1,7 @@
 import * as React from "react";
 import Tooltip from "@mui/material/Tooltip";
 import { Formik } from "formik";
-import { Col, Form, Row } from "react-bootstrap";
+import { Col, Container, Form, Row } from "react-bootstrap";
 import * as Yup from "yup";
 import { styled } from "@mui/material/styles";
 import TextField from "@mui/material/TextField";
@@ -53,156 +53,165 @@ function Search({ search, setVariant }) {
 
   return (
     <ThemeProvider theme={CustomTheme}>
-      <Formik
-        initialValues={{
-          variant: "",
-          genome: "GRCh37", // Preselect GRCh37
-        }}
-        validationSchema={SignupSchema}
-        onSubmit={onSubmit}
-      >
-        {({
-          handleChange,
-          handleSubmit,
-          setFieldValue,
-          values,
-          errors,
-          touched,
-        }) => {
-          const handlePaste = (event) => {
-            event.preventDefault();
-            const pastedData = event.clipboardData.getData("text");
-            const cleanedData = pastedData
-              .trim() // Remove leading/trailing whitespace
-              .replace(/\./g, "") // Remove all periods
-              .replace(/\s+/g, " ") // Replace multiple spaces with a single space
-              .replace(/\t/g, "-") // Replace tabs with a single hyphen
-              .replace(/\s/g, "-") // Replace remaining spaces with a single hyphen
-              .replace(/-+/g, "-"); // Replace multiple consecutive hyphens with a single hyphen
-            // .replace(/\s+/g, "-");
-            setFieldValue("variant", cleanedData);
-          };
+      <Container>
+        <Formik
+          initialValues={{
+            variant: "",
+            genome: "GRCh37", // Preselect GRCh37
+          }}
+          validationSchema={SignupSchema}
+          onSubmit={onSubmit}
+        >
+          {({
+            handleChange,
+            handleSubmit,
+            setFieldValue,
+            values,
+            errors,
+            touched,
+          }) => {
+            const handlePaste = (event) => {
+              event.preventDefault();
+              const pastedData = event.clipboardData.getData("text");
+              const cleanedData = pastedData
+                .trim() // Remove leading/trailing whitespace
+                .replace(/\./g, "") // Remove all periods
+                .replace(/\s+/g, " ") // Replace multiple spaces with a single space
+                .replace(/\t/g, "-") // Replace tabs with a single hyphen
+                .replace(/\s/g, "-") // Replace remaining spaces with a single hyphen
+                .replace(/-+/g, "-"); // Replace multiple consecutive hyphens with a single hyphen
+              // .replace(/\s+/g, "-");
+              setFieldValue("variant", cleanedData);
+            };
 
-          return (
-            <Form noValidate onSubmit={handleSubmit}>
-              {/* <Form.Group controlId="country"> */}
-              <Form.Group>
-                <Row className="search-row">
-                  <Col className="col-variant">
-                    <Form.Label>
-                      <b className="variant-query">Variant query</b>
-                      <CustomTooltip
-                        title={
-                          <ul className="tooltip-bullets">
-                            <li>
-                              Type your variant or copy from Excel with this
-                              specific structure: chr / position / ref. base /
-                              alt. base.
-                            </li>
-                            <li>Queries need to be in 0-based format.</li>
-                          </ul>
-                        }
-                        placement="top-start"
-                        arrow
-                      >
-                        <b className="infovariant">i</b>
-                      </CustomTooltip>
-                    </Form.Label>
-
-                    {/* Varaint Field */}
-                    <Autocomplete
-                      freeSolo
-                      options={[]}
-                      value={values.variant}
-                      onInputChange={(event, newValue) => {
-                        setFieldValue("variant", newValue);
-                      }}
-                      renderInput={(params) => (
-                        <TextField
-                          {...params}
-                          placeholder="Insert your variant"
-                          size="small"
-                          onPaste={handlePaste}
-                          error={Boolean(touched.variant && errors.variant)}
-                          helperText={
-                            touched.variant && errors.variant
-                              ? errors.variant
-                              : ""
+            return (
+              <Form noValidate onSubmit={handleSubmit}>
+                {/* <Form.Group controlId="country"> */}
+                <Form.Group>
+                  <Row className="search-row">
+                    <Col className="col-variant">
+                      <Form.Label>
+                        <b className="variant-query">Variant query</b>
+                        <CustomTooltip
+                          title={
+                            <ul className="tooltip-bullets">
+                              <li>
+                                Type your variant or copy from Excel with this
+                                specific structure: chr / position / ref. base /
+                                alt. base.
+                              </li>
+                              <li>Queries need to be in 0-based format.</li>
+                            </ul>
                           }
-                          sx={{
-                            marginBottom: "20px",
-                            "& .MuiOutlinedInput-root": {
-                              borderColor:
-                                touched.variant && errors.variant ? "red" : "",
-                            },
-                          }}
-                        />
-                      )}
-                    />
-                  </Col>
+                          placement="top-start"
+                          arrow
+                        >
+                          <b className="infovariant">i</b>
+                        </CustomTooltip>
+                      </Form.Label>
 
-                  <Col className="col-refgenome">
-                    <Form.Label htmlFor="points">
-                      <b>Ref Genome</b>
-                    </Form.Label>
-                    <Autocomplete
-                      disablePortal
-                      options={refGenome}
-                      name="genome"
-                      // className="input-field genome-field shadow-none"
-                      // onChange={handleChange}
-                      // value={values.genome}
-                      value={refGenome.find(
-                        (option) => option.label === values.genome
-                      )}
-                      onChange={(event, newValue) => {
-                        setFieldValue("genome", newValue ? newValue.label : "");
-                      }}
-                      // className="input-field genome-field shadow-none"
-                      renderInput={(params) => (
-                        <TextField
-                          {...params}
-                          size="small"
-                          // label="Ref Genome"
-                          error={Boolean(errors.genome && touched.genome)}
-                          helperText={
-                            errors.genome && touched.genome ? errors.genome : ""
-                          } // Show error message
-                        />
-                      )}
-                    />
-                  </Col>
-                  {/* Search button */}
-                  <Col className="col-searchbutton">
-                    <button
-                      className="searchbutton"
-                      type="submit"
-                      variant="primary"
-                      disabled={errors.variant || errors.genome}
-                    >
-                      <div className="lupared"></div>Search
-                    </button>
-                  </Col>
-                </Row>
-              </Form.Group>
-              <Form.Group as={Row}></Form.Group>
-              {/* Example */}
-              {/* {touched.variant && errors.variant && (
+                      {/* Varaint Field */}
+                      <Autocomplete
+                        freeSolo
+                        options={[]}
+                        value={values.variant}
+                        onInputChange={(event, newValue) => {
+                          setFieldValue("variant", newValue);
+                        }}
+                        renderInput={(params) => (
+                          <TextField
+                            {...params}
+                            placeholder="Insert your variant"
+                            size="small"
+                            onPaste={handlePaste}
+                            error={Boolean(touched.variant && errors.variant)}
+                            helperText={
+                              touched.variant && errors.variant
+                                ? errors.variant
+                                : ""
+                            }
+                            sx={{
+                              marginBottom: "20px",
+                              "& .MuiOutlinedInput-root": {
+                                borderColor:
+                                  touched.variant && errors.variant
+                                    ? "red"
+                                    : "",
+                              },
+                            }}
+                          />
+                        )}
+                      />
+                    </Col>
+
+                    <Col className="col-refgenome">
+                      <Form.Label htmlFor="points">
+                        <b>Ref Genome</b>
+                      </Form.Label>
+                      <Autocomplete
+                        disablePortal
+                        options={refGenome}
+                        name="genome"
+                        // className="input-field genome-field shadow-none"
+                        // onChange={handleChange}
+                        // value={values.genome}
+                        value={refGenome.find(
+                          (option) => option.label === values.genome
+                        )}
+                        onChange={(event, newValue) => {
+                          setFieldValue(
+                            "genome",
+                            newValue ? newValue.label : ""
+                          );
+                        }}
+                        // className="input-field genome-field shadow-none"
+                        renderInput={(params) => (
+                          <TextField
+                            {...params}
+                            size="small"
+                            // label="Ref Genome"
+                            error={Boolean(errors.genome && touched.genome)}
+                            helperText={
+                              errors.genome && touched.genome
+                                ? errors.genome
+                                : ""
+                            } // Show error message
+                          />
+                        )}
+                      />
+                    </Col>
+                    {/* Search button */}
+                    <Col className="col-searchbutton">
+                      <button
+                        className="searchbutton"
+                        type="submit"
+                        variant="primary"
+                        disabled={errors.variant || errors.genome}
+                      >
+                        <div className="lupared"></div>Search
+                      </button>
+                    </Col>
+                  </Row>
+                </Form.Group>
+                <Form.Group as={Row}></Form.Group>
+                {/* Example */}
+                {/* {touched.variant && errors.variant && (
                 <div className="errors">{errors.variant}</div>
               )} */}
-              <div className="example-span">
-                <span>Example: </span>
-                <a
-                  type="reset"
-                  onClick={() => setFieldValue("variant", "22-16050921-T-G")}
-                >
-                  <u className="example">22-16050921-T-G</u>
-                </a>
-              </div>
-            </Form>
-          );
-        }}
-      </Formik>
+                <div className="example-span">
+                  <span>Example: </span>
+                  <a
+                    type="reset"
+                    onClick={() => setFieldValue("variant", "22-16050921-T-G")}
+                  >
+                    <u className="example">22-16050921-T-G</u>
+                  </a>
+                </div>
+              </Form>
+            );
+          }}
+        </Formik>
+      </Container>
     </ThemeProvider>
   );
 }

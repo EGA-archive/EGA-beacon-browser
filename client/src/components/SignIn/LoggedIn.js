@@ -14,13 +14,6 @@ const LoggedIn = ({ onClickHandler }) => {
     console.log("Logout handleLoginClick:", logoutIsActive);
   };
 
-  // const handleLogoutClick = () => {
-  //   auth.signOut();
-  //   setLogoutIsActive(false); // Reset logout button state
-  //   console.log("Login handleLogoutClick:", isActive)
-  //   console.log("Logout handleLogoutClick:", logoutIsActive)
-  // };
-
   const handleLogoutClick = () => {
     setLogoutIsActive(true);
   };
