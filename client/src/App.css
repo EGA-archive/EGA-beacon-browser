@@ -374,12 +374,23 @@ body {
 
 /* Queried Variant CSS */
 
+.features-row {
+  display: flex;
+  justify-content: space-between;
+}
+
 .queried-variant {
   margin-bottom: 25px;
 }
 
 .queried-variant-input {
   font-weight: 700;
+}
+
+.sortby {
+  margin-bottom: 25px;
+  margin-top: 4px;
+  margin-left: 60%;
 }
 
 .table-container {

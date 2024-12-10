@@ -1,7 +1,9 @@
-import React from "react";
+import React, { useState } from "react";
 import { Box } from "@mui/system";
 import { Row } from "react-bootstrap";
 import TooltipHeader from "./TooltipHeader.js";
+import ToggleButton from "@mui/material/ToggleButton";
+import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
 
 function ResultList({
   results,
@@ -16,6 +18,12 @@ function ResultList({
   //   console.log(`Result ${index}:`, result);
   // });
   // console.log("Metaresults from RL", metaresults);
+
+  const [toggle, setToggle] = useState([]);
+
+  const handleToggle = (event, newToggle) => {
+    setToggle(newToggle);
+  };
 
   var i = 0;
   var dataset = "";
@@ -160,17 +168,103 @@ function ResultList({
             },
           }}
         >
-          <p className="lead mt-2">
-            <b>Results </b>
-          </p>
-          <p className="queried-variant">
-            {
-              <span>
-                Queried Variant:{" "}
-                <span className="queried-variant-input">{queriedVariant}</span>
-              </span>
-            }
-          </p>
+          <Row>
+            <p className="lead mt-2">
+              <b>Results </b>
+            </p>
+            <div className="features-row">
+              <p className="queried-variant">
+                {
+                  <span>
+                    Queried Variant:{" "}
+                    <span className="queried-variant-input">
+                      {queriedVariant}
+                    </span>
+                  </span>
+                }
+              </p>
+              <p className="sortby">Sort By:</p>
+              <ToggleButtonGroup
+                value={toggle}
+                exclusive
+                onChange={handleToggle}
+                aria-label="Sort options"
+                sx={{
+                  display: "flex",
+                  marginBottom: "25px",
+                  gap: "16px",
+                  "& .MuiToggleButtonGroup-firstButton": {
+                    borderRadius: "100px",
+                    border: "1px solid #3176B1",
+                  },
+                  "& .MuiToggleButtonGroup-lastButton": {
+                    borderRadius: "100px",
+                    border: "1px solid #3176B1",
+                  },
+                }}
+              >
+                <ToggleButton
+                  value="ancestry"
+                  aria-label="Sort by ancestry"
+                  size="small"
+                  sx={{
+                    width: "95px",
+                    height: "32px",
+                    fontFamily: "sans-serif",
+                    fontSize: "14px",
+                    fontWeight: 700,
+                    lineHeight: "20px",
+                    letterSpacing: "0.1px",
+                    textTransform: "none",
+                    color: "#3176B1",
+                    background: "#F4F9FE",
+                    "&.Mui-selected": {
+                      backgroundColor: "#3176B1",
+                      color: "white",
+                      border: "1px solid #3176B1",
+                    },
+                    "&.Mui-selected:hover": {
+                      backgroundColor: "#3176B1",
+                      color: "white",
+                      border: "1px solid #3176B1",
+                    },
+                  }}
+                >
+                  Ancestry
+                </ToggleButton>
+                <ToggleButton
+                  value="sex"
+                  aria-label="Sort by sex"
+                  size="small"
+                  sx={{
+                    width: "57px",
+                    height: "32px",
+                    border: "1px solid #3176B1",
+                    fontFamily: "sans-serif",
+                    fontSize: "14px",
+                    fontWeight: 700,
+                    lineHeight: "20px",
+                    letterSpacing: "0.1px",
+                    textTransform: "none",
+                    color: "#3176B1",
+                    background: "#F4F9FE",
+                    "&.Mui-selected": {
+                      backgroundColor: "#3176B1",
+                      color: "white",
+                      border: "1px solid #3176B1",
+                    },
+                    "&.Mui-selected:hover": {
+                      backgroundColor: "#3176B1",
+                      color: "white",
+                      border: "1px solid #3176B1",
+                    },
+                  }}
+                >
+                  Sex
+                </ToggleButton>
+              </ToggleButtonGroup>
+            </div>
+          </Row>
           <div className="table-container">
             <table className="data-table">
               <tr>
