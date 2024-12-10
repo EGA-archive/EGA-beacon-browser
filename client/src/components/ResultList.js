@@ -19,7 +19,7 @@ function ResultList({
   // });
   // console.log("Metaresults from RL", metaresults);
 
-  const [toggle, setToggle] = useState([]);
+  const [toggle, setToggle] = useState(["ancestry", "sex"]);
 
   const handleToggle = (event, newToggle) => {
     setToggle(newToggle);
@@ -111,7 +111,7 @@ function ResultList({
         populationrow = rows.map((pr) => (
           <tr key={pr.id}>
             <td></td>
-            <td>{dataset}</td>
+            <td></td>
             <td className="centered-header">{pr.population}</td>
             <td className="centered-header">{pr.alleleCount}</td>
             <td className="centered-header">{pr.alleleNumber}</td>
@@ -130,8 +130,26 @@ function ResultList({
             beaconName = meta.response.name;
             beaconized = (
               <tr>
-                <td className="beaconized" colSpan="8">
-                  <b>{beaconName}</b>
+                <td className="beaconized" colSpan="2">
+                  <b>{dataset}</b>
+                </td>
+                <td className="beaconized" colSpan="1">
+                  <b>Total</b>
+                </td>
+                <td className="beaconized centered" colSpan="1">
+                  <b>Total</b>
+                </td>
+                <td className="beaconized centered" colSpan="1">
+                  <b>Total</b>
+                </td>
+                <td className="beaconized centered" colSpan="1">
+                  <b>Total</b>
+                </td>
+                <td className="beaconized centered" colSpan="1">
+                  <b>Total</b>
+                </td>
+                <td className="beaconized centered" colSpan="1">
+                  <b>Total</b>
                 </td>
               </tr>
             );
@@ -274,8 +292,8 @@ function ResultList({
           <div className="table-container">
             <table className="data-table">
               <tr>
-                <th>Beacon</th>
-                <th className="dataset-column">Dataset</th>
+                <th>Dataset</th>
+                <th className="dataset-column"></th>
                 <th className="centered-header population-column">
                   Population
                 </th>

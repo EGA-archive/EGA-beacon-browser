@@ -449,6 +449,10 @@ body {
   border-bottom-color: #023452;
 }
 
+.centered {
+  text-align: center;
+}
+
 table {
   border-spacing: 0;
   border-collapse: separate;
@@ -576,7 +580,7 @@ tbody tr:hover {
   height: 48px;
   color: #7276b1;
   position: absolute;
-  left: 45%;
+  left: 50%;
   margin-top: 50px;
 }
 .loader:before,
