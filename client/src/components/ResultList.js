@@ -25,6 +25,12 @@ function ResultList({
     setToggle(newToggle);
   };
 
+  // const handleToggle = (event, newToggle) => {
+  //   if (newToggle) {
+  //     setToggle(newToggle); // Update the state with selected values
+  //   }
+  // };
+
   var i = 0;
   var dataset = "";
   var rows = [];
@@ -41,7 +47,7 @@ function ResultList({
   var popu = "";
   if (results !== undefined) {
     const resultItems = results.map((result, index) => {
-      console.log(`Processing result at index ${index}:`, result);
+      // console.log(`Processing result at index ${index}:`, result);
       if (result.results) {
         isresponse = "True";
         rows = [];
@@ -95,7 +101,6 @@ function ResultList({
                       frequency.alleleFrequency.toString().substring(0, 6)
                     ),
                   });
-                  console.log("All pushed rows so far:", rows);
                 });
               });
             }
@@ -186,7 +191,7 @@ function ResultList({
               <p className="sortby">Sort By:</p>
               <ToggleButtonGroup
                 value={toggle}
-                exclusive
+                exclusive={false}
                 onChange={handleToggle}
                 aria-label="Sort options"
                 sx={{
@@ -205,7 +210,7 @@ function ResultList({
               >
                 <ToggleButton
                   value="ancestry"
-                  aria-label="Sort by ancestry"
+                  aria-label="ancestry"
                   size="small"
                   sx={{
                     width: "95px",
@@ -234,7 +239,8 @@ function ResultList({
                 </ToggleButton>
                 <ToggleButton
                   value="sex"
-                  aria-label="Sort by sex"
+                  exclusive
+                  aria-label="sex"
                   size="small"
                   sx={{
                     width: "57px",
