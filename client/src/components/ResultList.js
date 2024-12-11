@@ -4,6 +4,7 @@ import { Row } from "react-bootstrap";
 import TooltipHeader from "./TooltipHeader.js";
 import ToggleButton from "@mui/material/ToggleButton";
 import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
+import Tooltip from "@mui/material/Tooltip";
 
 function ResultList({
   results,
@@ -88,6 +89,11 @@ function ResultList({
                     frequency.population === "COVID_pop13_ger_2"
                   ) {
                     popu = "German";
+                  } else {
+                    popu =
+                      frequency.population.length > 10
+                        ? frequency.population.substring(0, 10) + ".." // Add ellipsis for truncation
+                        : frequency.population; // Use the full population if <= 10 characters
                   }
 
                   rows.push({
@@ -109,16 +115,55 @@ function ResultList({
       }
       if (isresponse === "True") {
         populationrow = rows.map((pr) => (
-          <tr key={pr.id}>
-            <td></td>
-            <td></td>
-            <td className="centered-header">{pr.population}</td>
-            <td className="centered-header">{pr.alleleCount}</td>
-            <td className="centered-header">{pr.alleleNumber}</td>
-            <td className="centered-header">{pr.alleleCountHomozygous}</td>
-            <td className="centered-header">{pr.alleleCountHeterozygous}</td>
-            <td className="centered-header">{pr.alleleFrequency}</td>
-          </tr>
+          <>
+            <tr key={pr.id}>
+              <td></td>
+              <td className="">{pr.population}</td>
+              <td className="centered-header">{pr.alleleCount}</td>
+              <td className="centered-header">{pr.alleleNumber}</td>
+              <td className="centered-header">{pr.alleleCountHomozygous}</td>
+              <td className="centered-header">{pr.alleleCountHeterozygous}</td>
+              <td className="centered-header">{pr.alleleFrequency}</td>
+            </tr>
+            <tr key={pr.id}>
+              <td></td>
+              <td className="sex-background">XX</td>
+              <td className="centered-header sex-background">
+                {pr.alleleCount}
+              </td>
+              <td className="centered-header sex-background">
+                {pr.alleleNumber}
+              </td>
+              <td className="centered-header sex-background">
+                {pr.alleleCountHomozygous}
+              </td>
+              <td className="centered-header sex-background">
+                {pr.alleleCountHeterozygous}
+              </td>
+              <td className="centered-header sex-background">
+                {pr.alleleFrequency}
+              </td>
+            </tr>
+            <tr key={pr.id}>
+              <td></td>
+              <td className="sex-background sex-background">XY</td>
+              <td className="centered-header sex-background">
+                {pr.alleleCount}
+              </td>
+              <td className="centered-header sex-background">
+                {pr.alleleNumber}
+              </td>
+              <td className="centered-header sex-background">
+                {pr.alleleCountHomozygous}
+              </td>
+              <td className="centered-header sex-background">
+                {pr.alleleCountHeterozygous}
+              </td>
+              <td className="centered-header sex-background">
+                {pr.alleleFrequency}
+              </td>
+            </tr>
+          </>
         ));
 
         metaresults.map((meta) => {
@@ -128,10 +173,21 @@ function ResultList({
             meta.response.id === result.beaconId
           ) {
             beaconName = meta.response.name;
+            const isTruncated = dataset.length > 20;
+            const truncatedName = isTruncated
+              ? dataset.substring(0, 26) + ".."
+              : dataset;
             beaconized = (
               <tr>
-                <td className="beaconized" colSpan="2">
-                  <b>{dataset}</b>
+                <td className="beaconized" colSpan="1">
+                  {isTruncated ? (
+                    // Render tooltip only if the name is truncated
+                    <Tooltip title={dataset} arrow>
+                      <b>{truncatedName}</b>
+                    </Tooltip>
+                  ) : (
+                    <b>{dataset}</b>
+                  )}
                 </td>
                 <td className="beaconized" colSpan="1">
                   <b>Total</b>
@@ -293,10 +349,8 @@ function ResultList({
             <table className="data-table">
               <tr>
                 <th>Dataset</th>
-                <th className="dataset-column"></th>
-                <th className="centered-header population-column">
-                  Population
-                </th>
+                {/* <th className="dataset-column"></th> */}
+                <th className="population-column pp">Population</th>
                 <TooltipHeader title={tooltipTexts[0]}>
                   <th className="centered-header underlined allele-count-column">
                     Allele Count

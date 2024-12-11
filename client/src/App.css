@@ -442,7 +442,7 @@ body {
 }
 
 .beaconized {
-  background: #f4f9fe;
+  background: #dbeefd;
   border-width: 0.5px 0px 0.5px 0px;
   border-style: solid;
   border-top-color: #023452;
@@ -451,6 +451,19 @@ body {
 
 .centered {
   text-align: center;
+}
+
+.total-header {
+  width: 132px;
+  background-color: cornflowerblue;
+  text-align: center;
+  margin-left: 100px;
+  margin-right: 100px;
+  margin: 200px;
+}
+
+.sex-background {
+  background-color: #f4f9fe;
 }
 
 table {
@@ -575,7 +588,7 @@ tbody tr:hover {
 .loader {
   transform: rotateZ(45deg);
   perspective: 1000px;
-  border-radius: 50%;
+  border-radius: 55%;
   width: 48px;
   height: 48px;
   color: #7276b1;
