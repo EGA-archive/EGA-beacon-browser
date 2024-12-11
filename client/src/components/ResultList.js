@@ -114,57 +114,126 @@ function ResultList({
         });
       }
       if (isresponse === "True") {
-        populationrow = rows.map((pr) => (
-          <>
-            <tr key={pr.id}>
-              <td></td>
-              <td className="">{pr.population}</td>
-              <td className="centered-header">{pr.alleleCount}</td>
-              <td className="centered-header">{pr.alleleNumber}</td>
-              <td className="centered-header">{pr.alleleCountHomozygous}</td>
-              <td className="centered-header">{pr.alleleCountHeterozygous}</td>
-              <td className="centered-header">{pr.alleleFrequency}</td>
-            </tr>
-            <tr key={pr.id}>
-              <td></td>
-              <td className="sex-background">XX</td>
-              <td className="centered-header sex-background">
-                {pr.alleleCount}
-              </td>
-              <td className="centered-header sex-background">
-                {pr.alleleNumber}
-              </td>
-              <td className="centered-header sex-background">
-                {pr.alleleCountHomozygous}
-              </td>
-              <td className="centered-header sex-background">
-                {pr.alleleCountHeterozygous}
-              </td>
-              <td className="centered-header sex-background">
-                {pr.alleleFrequency}
-              </td>
-            </tr>
-            <tr key={pr.id}>
-              <td></td>
-              <td className="sex-background sex-background">XY</td>
-              <td className="centered-header sex-background">
-                {pr.alleleCount}
-              </td>
-              <td className="centered-header sex-background">
-                {pr.alleleNumber}
-              </td>
-              <td className="centered-header sex-background">
-                {pr.alleleCountHomozygous}
-              </td>
-              <td className="centered-header sex-background">
-                {pr.alleleCountHeterozygous}
-              </td>
-              <td className="centered-header sex-background">
-                {pr.alleleFrequency}
-              </td>
-            </tr>
-          </>
-        ));
+        // Render table rows based on toggle state
+        populationrow = rows.map((pr) => {
+          if (toggle.includes("ancestry") && toggle.includes("sex")) {
+            // Render full table when both "ancestry" and "sex" are toggled
+            return (
+              <>
+                <tr key={`ancestry-${pr.id}`}>
+                  <td></td>
+                  <td className="">{pr.population}</td>
+                  <td className="centered-header">{pr.alleleCount}</td>
+                  <td className="centered-header">{pr.alleleNumber}</td>
+                  <td className="centered-header">
+                    {pr.alleleCountHomozygous}
+                  </td>
+                  <td className="centered-header">
+                    {pr.alleleCountHeterozygous}
+                  </td>
+                  <td className="centered-header">{pr.alleleFrequency}</td>
+                </tr>
+                <tr key={`sex-XX-${pr.id}`}>
+                  <td></td>
+                  <td className="sex-background">XX</td>
+                  <td className="centered-header sex-background">
+                    {pr.alleleCount}
+                  </td>
+                  <td className="centered-header sex-background">
+                    {pr.alleleNumber}
+                  </td>
+                  <td className="centered-header sex-background">
+                    {pr.alleleCountHomozygous}
+                  </td>
+                  <td className="centered-header sex-background">
+                    {pr.alleleCountHeterozygous}
+                  </td>
+                  <td className="centered-header sex-background">
+                    {pr.alleleFrequency}
+                  </td>
+                </tr>
+                <tr key={`sex-XY-${pr.id}`}>
+                  <td></td>
+                  <td className="sex-background">XY</td>
+                  <td className="centered-header sex-background">
+                    {pr.alleleCount}
+                  </td>
+                  <td className="centered-header sex-background">
+                    {pr.alleleNumber}
+                  </td>
+                  <td className="centered-header sex-background">
+                    {pr.alleleCountHomozygous}
+                  </td>
+                  <td className="centered-header sex-background">
+                    {pr.alleleCountHeterozygous}
+                  </td>
+                  <td className="centered-header sex-background">
+                    {pr.alleleFrequency}
+                  </td>
+                </tr>
+              </>
+            );
+          } else if (toggle.includes("sex")) {
+            // Render only the "sex" table when "sex" is toggled
+            return (
+              <>
+                <tr key={`sex-XX-${pr.id}`}>
+                  <td></td>
+                  <td className="sex-background">XX</td>
+                  <td className="centered-header sex-background">
+                    {pr.alleleCount}
+                  </td>
+                  <td className="centered-header sex-background">
+                    {pr.alleleNumber}
+                  </td>
+                  <td className="centered-header sex-background">
+                    {pr.alleleCountHomozygous}
+                  </td>
+                  <td className="centered-header sex-background">
+                    {pr.alleleCountHeterozygous}
+                  </td>
+                  <td className="centered-header sex-background">
+                    {pr.alleleFrequency}
+                  </td>
+                </tr>
+                <tr key={`sex-XY-${pr.id}`}>
+                  <td></td>
+                  <td className="sex-background">XY</td>
+                  <td className="centered-header sex-background">
+                    {pr.alleleCount}
+                  </td>
+                  <td className="centered-header sex-background">
+                    {pr.alleleNumber}
+                  </td>
+                  <td className="centered-header sex-background">
+                    {pr.alleleCountHomozygous}
+                  </td>
+                  <td className="centered-header sex-background">
+                    {pr.alleleCountHeterozygous}
+                  </td>
+                  <td className="centered-header sex-background">
+                    {pr.alleleFrequency}
+                  </td>
+                </tr>
+              </>
+            );
+          } else if (toggle.includes("ancestry")) {
+            // Render only the "ancestry" table when "ancestry" is toggled
+            return (
+              <tr key={`ancestry-${pr.id}`}>
+                <td></td>
+                <td className="">{pr.population}</td>
+                <td className="centered-header">{pr.alleleCount}</td>
+                <td className="centered-header">{pr.alleleNumber}</td>
+                <td className="centered-header">{pr.alleleCountHomozygous}</td>
+                <td className="centered-header">
+                  {pr.alleleCountHeterozygous}
+                </td>
+                <td className="centered-header">{pr.alleleFrequency}</td>
+              </tr>
+            );
+          }
+        });
 
         metaresults.map((meta) => {
           if (
