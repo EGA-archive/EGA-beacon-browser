@@ -19,6 +19,22 @@ function ResultList({
     setToggle(newToggle);
   };
 
+  // console.log("All my results", results);
+  // console.log(
+  //   "MY RESULTS - female",
+  //   results[0]?.results?.[0]?.frequencyInPopulations?.[0]?.frequencies?.[0]
+  // );
+  // console.log(
+  //   "MY RESULTS - male",
+  //   results[0]?.results?.[1]?.frequencyInPopulations?.[0]?.frequencies?.[0]
+  // );
+  // console.log(
+  //   "MY RESULTS - ancestry",
+  //   results[0]?.results?.[2]?.frequencyInPopulations?.[0]?.frequencies?.[0]
+  // );
+
+  // https://beacon-apis-test.ega-archive.org/api/g_variants?start=60636&alternateBases=G&referenceBases=A&referenceName=10&assemblyId=GRCh37
+  // https://beacon-apis-test.ega-archive.org/api/g_variants?start=60636&alternateBases=G&referenceBases=A&referenceName=10&limit=1&assemblyId=GRCh37
   // const handleToggle = (event, newToggle) => {
   //   if (newToggle.length > 0) {
   //     setToggle(newToggle); // Ensure the toggle state doesn't become empty
@@ -38,259 +54,6 @@ function ResultList({
   var alleleC = "";
   var alleleCHet = "";
   var alleleCHom = "";
-  var popu = "";
-  // if (results !== undefined) {
-  //   const resultItems = results.map((result, index) => {
-  //     // console.log(`Processing result at index ${index}:`, result);
-  //     if (result.results) {
-  //       isresponse = "True";
-  //       rows = [];
-  //       dataset = result.id;
-
-  //       result.results.map((variant) => {
-  //         if (variant.variation.location.interval.start.value === finalstart) {
-  //           if (variant.frequencyInPopulations) {
-  //             exists = "True";
-  //             isresponse = "True";
-
-  //             variant.frequencyInPopulations.map((frequencyInPopulation) => {
-  //               frequencyInPopulation.frequencies.map((frequency) => {
-  //                 alleleC = Array.isArray(frequency.alleleCount)
-  //                   ? frequency.alleleCount[0]
-  //                   : frequency.alleleCount;
-
-  //                 alleleCHet = Array.isArray(frequency.alleleCountHeterozygous)
-  //                   ? frequency.alleleCountHeterozygous[0]
-  //                   : frequency.alleleCountHeterozygous;
-
-  //                 alleleCHom = Array.isArray(frequency.alleleCountHomozygous)
-  //                   ? frequency.alleleCountHomozygous[0]
-  //                   : frequency.alleleCountHomozygous;
-
-  //                 if (
-  //                   frequency.population === "COVID_pop11_fin_2" ||
-  //                   frequency.population === "COVID_pop11_fin_1"
-  //                 ) {
-  //                   popu = "Finnish";
-  //                 } else if (
-  //                   frequency.population === "COVID_pop12_ita_1" ||
-  //                   frequency.population === "COVID_pop12_ita_2"
-  //                 ) {
-  //                   popu = "Italian";
-  //                 } else if (
-  //                   frequency.population === "COVID_pop13_ger_1" ||
-  //                   frequency.population === "COVID_pop13_ger_2"
-  //                 ) {
-  //                   popu = "German";
-  //                 } else {
-  //                   popu =
-  //                     frequency.population.length > 10
-  //                       ? frequency.population.substring(0, 10) + ".." // Add ellipsis for truncation
-  //                       : frequency.population; // Use the full population if <= 10 characters
-  //                 }
-
-  //                 rows.push({
-  //                   id: (i += 1),
-  //                   population: popu,
-  //                   alleleCount: alleleC,
-  //                   alleleNumber: frequency.alleleNumber,
-  //                   alleleCountHomozygous: alleleCHom,
-  //                   alleleCountHeterozygous: alleleCHet,
-  //                   alleleFrequency: parseFloat(
-  //                     frequency.alleleFrequency.toString().substring(0, 6)
-  //                   ),
-  //                 });
-  //               });
-  //             });
-  //           }
-  //         }
-  //       });
-  //     }
-  //     if (isresponse === "True") {
-  //       // Render table rows based on toggle state
-  //       populationrow = rows.map((pr) => {
-  //         if (toggle.includes("ancestry") && toggle.includes("sex")) {
-  //           // Render full table when both "ancestry" and "sex" are toggled
-  //           return (
-  //             <>
-  //               <React.Fragment key={`row-${pr.id}`}>
-  //                 <tr key={`ancestry-${pr.id}`}>
-  //                   <td></td>
-  //                   <td className="">{pr.population}</td>
-  //                   <td className="centered-header">{pr.alleleCount}</td>
-  //                   <td className="centered-header">{pr.alleleNumber}</td>
-  //                   <td className="centered-header">
-  //                     {pr.alleleCountHomozygous}
-  //                   </td>
-  //                   <td className="centered-header">
-  //                     {pr.alleleCountHeterozygous}
-  //                   </td>
-  //                   <td className="centered-header">{pr.alleleFrequency}</td>
-  //                 </tr>
-  //                 <tr key={`sex-XX-${pr.id}`}>
-  //                   <td></td>
-  //                   <td className="sex-background">XX</td>
-  //                   <td className="centered-header sex-background">
-  //                     {pr.alleleCount}
-  //                   </td>
-  //                   <td className="centered-header sex-background">
-  //                     {pr.alleleNumber}
-  //                   </td>
-  //                   <td className="centered-header sex-background">
-  //                     {pr.alleleCountHomozygous}
-  //                   </td>
-  //                   <td className="centered-header sex-background">
-  //                     {pr.alleleCountHeterozygous}
-  //                   </td>
-  //                   <td className="centered-header sex-background">
-  //                     {pr.alleleFrequency}
-  //                   </td>
-  //                 </tr>
-  //                 <tr key={`sex-XY-${pr.id}`}>
-  //                   <td></td>
-  //                   <td className="sex-background">XY</td>
-  //                   <td className="centered-header sex-background">
-  //                     {pr.alleleCount}
-  //                   </td>
-  //                   <td className="centered-header sex-background">
-  //                     {pr.alleleNumber}
-  //                   </td>
-  //                   <td className="centered-header sex-background">
-  //                     {pr.alleleCountHomozygous}
-  //                   </td>
-  //                   <td className="centered-header sex-background">
-  //                     {pr.alleleCountHeterozygous}
-  //                   </td>
-  //                   <td className="centered-header sex-background">
-  //                     {pr.alleleFrequency}
-  //                   </td>
-  //                 </tr>
-  //               </React.Fragment>
-  //             </>
-  //           );
-  //         } else if (toggle.includes("sex")) {
-  //           // Render only the "sex" table when "sex" is toggled
-  //           return (
-  //             <>
-  //               <React.Fragment key={`row-${pr.id}`}>
-  //                 <tr key={`sex-XX-${pr.id}`}>
-  //                   <td></td>
-  //                   <td className="sex-background">XX</td>
-  //                   <td className="centered-header sex-background">
-  //                     {pr.alleleCount}
-  //                   </td>
-  //                   <td className="centered-header sex-background">
-  //                     {pr.alleleNumber}
-  //                   </td>
-  //                   <td className="centered-header sex-background">
-  //                     {pr.alleleCountHomozygous}
-  //                   </td>
-  //                   <td className="centered-header sex-background">
-  //                     {pr.alleleCountHeterozygous}
-  //                   </td>
-  //                   <td className="centered-header sex-background">
-  //                     {pr.alleleFrequency}
-  //                   </td>
-  //                 </tr>
-  //                 <tr key={`sex-XY-${pr.id}`}>
-  //                   <td></td>
-  //                   <td className="sex-background">XY</td>
-  //                   <td className="centered-header sex-background">
-  //                     {pr.alleleCount}
-  //                   </td>
-  //                   <td className="centered-header sex-background">
-  //                     {pr.alleleNumber}
-  //                   </td>
-  //                   <td className="centered-header sex-background">
-  //                     {pr.alleleCountHomozygous}
-  //                   </td>
-  //                   <td className="centered-header sex-background">
-  //                     {pr.alleleCountHeterozygous}
-  //                   </td>
-  //                   <td className="centered-header sex-background">
-  //                     {pr.alleleFrequency}
-  //                   </td>
-  //                 </tr>
-  //               </React.Fragment>
-  //             </>
-  //           );
-  //         } else if (toggle.includes("ancestry")) {
-  //           // Render only the "ancestry" table when "ancestry" is toggled
-  //           return (
-  //             <tr key={`ancestry-${pr.id}`}>
-  //               <td></td>
-  //               <td className="">{pr.population}</td>
-  //               <td className="centered-header">{pr.alleleCount}</td>
-  //               <td className="centered-header">{pr.alleleNumber}</td>
-  //               <td className="centered-header">{pr.alleleCountHomozygous}</td>
-  //               <td className="centered-header">
-  //                 {pr.alleleCountHeterozygous}
-  //               </td>
-  //               <td className="centered-header">{pr.alleleFrequency}</td>
-  //             </tr>
-  //           );
-  //         }
-  //       });
-
-  //       metaresults.map((meta) => {
-  //         if (
-  //           meta.response &&
-  //           dataset !== "" &&
-  //           meta.response.id === result.beaconId
-  //         ) {
-  //           beaconName = meta.response.name;
-  //           // console.log("This is my beaconName", { beaconName });
-  // const isTruncated = dataset.length > 20;
-  // const truncatedName = isTruncated
-  //   ? dataset.substring(0, 26) + ".."
-  //   : dataset;
-  //           beaconized = (
-  //             <tr>
-  // <td className="beaconized" colSpan="1">
-  //   {isTruncated ? (
-  //     // Render tooltip only if the name is truncated
-  //     <Tooltip title={dataset} arrow>
-  //       <b>{truncatedName}</b>
-  //     </Tooltip>
-  //   ) : (
-  //     <b>{dataset}</b>
-  //   )}
-  // </td>
-  // <td className="beaconized" colSpan="1">
-  //   <b>Total</b>
-  // </td>
-  // <td className="beaconized centered" colSpan="1">
-  //   <b>Total</b>
-  // </td>
-  // <td className="beaconized centered" colSpan="1">
-  //   <b>Total</b>
-  // </td>
-  // <td className="beaconized centered" colSpan="1">
-  //   <b>Total</b>
-  // </td>
-  // <td className="beaconized centered" colSpan="1">
-  //   <b>Total</b>
-  // </td>
-  // <td className="beaconized centered" colSpan="1">
-  //   <b>Total</b>
-  // </td>
-  //             </tr>
-  //           );
-  //           addedBeacons.push(beaconized);
-  //           addedBeacons.push(populationrow);
-  //           isresponse = "True";
-  //         }
-  //       });
-  //     }
-  //     rows = [];
-  //     dataset = "";
-  //     beaconized = "";
-  //     total_count += 1;
-  //   });
-  // } else {
-  //   exists = "False";
-  //   isresponse = "False";
-  // }
 
   if (results !== undefined) {
     // Find the first beacon with valid results
@@ -320,31 +83,9 @@ function ResultList({
                   ? frequency.alleleCountHomozygous[0]
                   : frequency.alleleCountHomozygous;
 
-                if (
-                  frequency.population === "COVID_pop11_fin_2" ||
-                  frequency.population === "COVID_pop11_fin_1"
-                ) {
-                  popu = "Finnish";
-                } else if (
-                  frequency.population === "COVID_pop12_ita_1" ||
-                  frequency.population === "COVID_pop12_ita_2"
-                ) {
-                  popu = "Italian";
-                } else if (
-                  frequency.population === "COVID_pop13_ger_1" ||
-                  frequency.population === "COVID_pop13_ger_2"
-                ) {
-                  popu = "German";
-                } else {
-                  popu =
-                    frequency.population.length > 10
-                      ? frequency.population.substring(0, 10) + ".."
-                      : frequency.population;
-                }
-
                 rows.push({
                   id: (i += 1),
-                  population: popu,
+                  population: "popu",
                   alleleCount: alleleC,
                   alleleNumber: frequency.alleleNumber,
                   alleleCountHomozygous: alleleCHom,
@@ -359,131 +100,113 @@ function ResultList({
         }
       });
 
+      const female =
+        results[0]?.results?.[0]?.frequencyInPopulations?.[0]?.frequencies?.[0];
+      const male =
+        results[0]?.results?.[1]?.frequencyInPopulations?.[0]?.frequencies?.[0];
+      const ancestry =
+        results[0]?.results?.[2]?.frequencyInPopulations?.[0]?.frequencies?.[0];
+
+      let popu = "";
+      if (ancestry?.population?.toLowerCase().includes("fin")) {
+        popu = "Finnish";
+      } else if (ancestry?.population?.toLowerCase().includes("ita")) {
+        popu = "Italian";
+      } else if (ancestry?.population?.toLowerCase().includes("ger")) {
+        popu = "German";
+      } else {
+        popu =
+          ancestry?.population.length > 10
+            ? ancestry?.population.substring(0, 10) + ".."
+            : ancestry?.population;
+      }
+
+      const femaleTable = (
+        <tr key={`sex-XX-${female?.id || "x"}`}>
+          <td></td>
+          <td className="sex-background">XX</td>
+          <td className="centered-header sex-background">
+            {female?.alleleCount || "x"}
+          </td>
+          <td className="centered-header sex-background">
+            {female?.alleleNumber || "x"}
+          </td>
+          <td className="centered-header sex-background">
+            {female?.alleleCountHomozygous || "x"}
+          </td>
+          <td className="centered-header sex-background">
+            {female?.alleleCountHeterozygous || "x"}
+          </td>
+          <td className="centered-header sex-background">
+            {parseFloat(female?.alleleFrequency.toString().substring(0, 6)) ||
+              "x"}
+          </td>
+        </tr>
+      );
+      const maleTable = (
+        <tr key={`sex-XY-${male?.id || "X"}`}>
+          <td></td>
+          <td className="sex-background">XY</td>
+          <td className="centered-header sex-background">
+            {male?.alleleCount || "x"}
+          </td>
+          <td className="centered-header sex-background">
+            {male?.alleleNumber || "x"}
+          </td>
+          <td className="centered-header sex-background">
+            {male?.alleleCountHomozygous || "x"}
+          </td>
+          <td className="centered-header sex-background">
+            {male?.alleleCountHeterozygous || "x"}
+          </td>
+          <td className="centered-header sex-background">
+            {parseFloat(male?.alleleFrequency.toString().substring(0, 6)) ||
+              "x"}
+          </td>
+        </tr>
+      );
+      const ancestryTable = (
+        <tr key={`ancestry-${ancestry?.id || "x"}`}>
+          <td></td>
+          <td className="">{popu || "x"}</td>
+          <td className="centered-header">{ancestry?.alleleCount || "x"}</td>
+          <td className="centered-header">{ancestry?.alleleNumber || "x"}</td>
+          <td className="centered-header">
+            {ancestry?.alleleCountHomozygous || "x"}
+          </td>
+          <td className="centered-header">
+            {ancestry?.alleleCountHeterozygous || "x"}
+          </td>
+          <td className="centered-header">
+            {parseFloat(ancestry?.alleleFrequency.toString().substring(0, 6)) ||
+              "x"}
+          </td>
+        </tr>
+      );
+
       // Render table rows based on toggle state
-      populationrow = rows.map((pr) => {
-        if (toggle.includes("ancestry") && toggle.includes("sex")) {
-          // Render full table when both "ancestry" and "sex" are toggled
-          return (
-            <>
-              <React.Fragment key={`row-${pr.id}`}>
-                {/* Ancestry Table */}
-                <tr key={`ancestry-${pr.id}`}>
-                  <td></td>
-                  <td className="">{pr.population}</td>
-                  <td className="centered-header">{pr.alleleCount}</td>
-                  <td className="centered-header">{pr.alleleNumber}</td>
-                  <td className="centered-header">
-                    {pr.alleleCountHomozygous}
-                  </td>
-                  <td className="centered-header">
-                    {pr.alleleCountHeterozygous}
-                  </td>
-                  <td className="centered-header">{pr.alleleFrequency}</td>
-                </tr>
-                {/* Female Table */}
-                <tr key={`sex-XX-${pr.id}`}>
-                  <td></td>
-                  <td className="sex-background">XX</td>
-                  <td className="centered-header sex-background">
-                    {pr.alleleCount}
-                  </td>
-                  <td className="centered-header sex-background">
-                    {pr.alleleNumber}
-                  </td>
-                  <td className="centered-header sex-background">
-                    {pr.alleleCountHomozygous}
-                  </td>
-                  <td className="centered-header sex-background">
-                    {pr.alleleCountHeterozygous}
-                  </td>
-                  <td className="centered-header sex-background">
-                    {pr.alleleFrequency}
-                  </td>
-                </tr>
-                {/* Male Table */}
-                <tr key={`sex-XY-${pr.id}`}>
-                  <td></td>
-                  <td className="sex-background">XY</td>
-                  <td className="centered-header sex-background">
-                    {pr.alleleCount}
-                  </td>
-                  <td className="centered-header sex-background">
-                    {pr.alleleNumber}
-                  </td>
-                  <td className="centered-header sex-background">
-                    {pr.alleleCountHomozygous}
-                  </td>
-                  <td className="centered-header sex-background">
-                    {pr.alleleCountHeterozygous}
-                  </td>
-                  <td className="centered-header sex-background">
-                    {pr.alleleFrequency}
-                  </td>
-                </tr>
-              </React.Fragment>
-            </>
-          );
-        } else if (toggle.includes("sex")) {
-          // Render only the "sex" table when "sex" is toggled
-          return (
-            <>
-              <React.Fragment key={`row-${pr.id}`}>
-                <tr key={`sex-XX-${pr.id}`}>
-                  <td></td>
-                  <td className="sex-background">XX</td>
-                  <td className="centered-header sex-background">
-                    {pr.alleleCount}
-                  </td>
-                  <td className="centered-header sex-background">
-                    {pr.alleleNumber}
-                  </td>
-                  <td className="centered-header sex-background">
-                    {pr.alleleCountHomozygous}
-                  </td>
-                  <td className="centered-header sex-background">
-                    {pr.alleleCountHeterozygous}
-                  </td>
-                  <td className="centered-header sex-background">
-                    {pr.alleleFrequency}
-                  </td>
-                </tr>
-                <tr key={`sex-XY-${pr.id}`}>
-                  <td></td>
-                  <td className="sex-background">XY</td>
-                  <td className="centered-header sex-background">
-                    {pr.alleleCount}
-                  </td>
-                  <td className="centered-header sex-background">
-                    {pr.alleleNumber}
-                  </td>
-                  <td className="centered-header sex-background">
-                    {pr.alleleCountHomozygous}
-                  </td>
-                  <td className="centered-header sex-background">
-                    {pr.alleleCountHeterozygous}
-                  </td>
-                  <td className="centered-header sex-background">
-                    {pr.alleleFrequency}
-                  </td>
-                </tr>
-              </React.Fragment>
-            </>
-          );
-        } else if (toggle.includes("ancestry")) {
-          // Render only the "ancestry" table when "ancestry" is toggled
-          return (
-            <tr key={`ancestry-${pr.id}`}>
-              <td></td>
-              <td className="">{pr.population}</td>
-              <td className="centered-header">{pr.alleleCount}</td>
-              <td className="centered-header">{pr.alleleNumber}</td>
-              <td className="centered-header">{pr.alleleCountHomozygous}</td>
-              <td className="centered-header">{pr.alleleCountHeterozygous}</td>
-              <td className="centered-header">{pr.alleleFrequency}</td>
-            </tr>
-          );
-        }
-      });
+      let populationrow;
+      if (toggle.includes("ancestry") && toggle.includes("sex")) {
+        // Render full table when both "ancestry" and "sex" are toggled
+        populationrow = (
+          <React.Fragment>
+            {ancestryTable}
+            {femaleTable}
+            {maleTable}
+          </React.Fragment>
+        );
+      } else if (toggle.includes("sex")) {
+        // Render only the "sex" table when "sex" is toggled
+        populationrow = (
+          <React.Fragment>
+            {femaleTable}
+            {maleTable}
+          </React.Fragment>
+        );
+      } else if (toggle.includes("ancestry")) {
+        // Render only the "ancestry" table when "ancestry" is toggled
+        populationrow = ancestryTable;
+      }
 
       // Generate totals row for beaconized
       const isTruncated = dataset.length > 20;
