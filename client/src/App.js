@@ -43,8 +43,8 @@ function App() {
         },
         data: jsonData1,
       });
-      setMetaResults(metaresponse.data.responses);
-      console.log("This is my Metaresult", metaresponse.data.responses);
+      setMetaResults(metaresponse.data.response);
+      console.log("This is my Metaresult", metaresponse.data.response);
     } catch (error) {
       console.error(error);
       setError(error);

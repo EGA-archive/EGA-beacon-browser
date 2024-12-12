@@ -13,13 +13,6 @@ function ResultList({
   queriedVariant,
   error,
 }) {
-  // console.log("Results from RL", results);
-  // console.log("Raw Results from RL", results);
-  // results.forEach((result, index) => {
-  //   console.log(`Result ${index}:`, result);
-  // });
-  // console.log("Metaresults from RL", metaresults);
-
   const [toggle, setToggle] = useState(["ancestry", "sex"]);
 
   const handleToggle = (event, newToggle) => {
