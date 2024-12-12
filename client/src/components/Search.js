@@ -145,7 +145,7 @@ function Search({ search, setVariant }) {
                     </Col>
 
                     <Col className="col-refgenome">
-                      <Form.Label htmlFor="points">
+                      <Form.Label htmlFor="ref-genome">
                         <b>Ref Genome</b>
                       </Form.Label>
                       <Autocomplete
@@ -202,9 +202,9 @@ function Search({ search, setVariant }) {
                   <span>Example: </span>
                   <a
                     type="reset"
-                    onClick={() => setFieldValue("variant", "22-16050606-G-A")}
+                    onClick={() => setFieldValue("variant", "10-60636-A-G")}
                   >
-                    <u className="example">22-16050606-G-A</u>
+                    <u className="example">10-60636-A-G</u>
                   </a>
                 </div>
               </Form>

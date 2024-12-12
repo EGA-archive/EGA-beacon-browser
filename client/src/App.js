@@ -10,17 +10,14 @@ import NetworkMembers from "./components/NetworkMembers.js";
 import CustomNavbar from "./components/CustomNavbar.js";
 
 function App() {
-  // new
   const [results, setResults] = useState([]);
   const [metaresults, setMetaResults] = useState([]);
   const [finalstart, setFinalStart] = useState([]);
   const [error, setError] = useState(false);
-  const [isQuizePageVisible, setIsQuizePageVisible] = useState(false);
   const [isLoading, setLoading] = useState(false);
   const [queriedVariant, setQueriedVariant] = useState("");
   const auth = useAuth();
 
-  // new
   const search = async (variant, genome) => {
     setLoading(true);
     let jsonData1 = {};
@@ -33,22 +30,21 @@ function App() {
     var finalend = end.toString();
     var finalstart = parseInt(arr[1]);
     setFinalStart(finalstart);
-    //console.log(auth.userData.access_token);
-    // console.log(auth)
 
     try {
       let metaresponse;
       metaresponse = await axios({
         method: "get",
-        url: `https://beacon-network-backend-test.ega-archive.org/beacon-network/v2.0.0/`,
+        url: `https://beacon-apis-test.ega-archive.org/api`,
+        // url: `https://beacon-network-backend-test.ega-archive.org/beacon-network/v2.0.0/`,
         // url: `https://af-gdi-bn-api-demo.ega-archive.org/beacon-network/v2.0.0/`,
         headers: {
           "Content-Type": "application/json",
         },
         data: jsonData1,
       });
-      console.log(metaresponse.data.responses);
       setMetaResults(metaresponse.data.responses);
+      console.log("This is my Metaresult", metaresponse.data.responses);
     } catch (error) {
       console.error(error);
       setError(error);
@@ -82,7 +78,8 @@ function App() {
         // console.log(auth)
         response = await axios({
           method: "post",
-          url: `https://beacon-network-backend-test.ega-archive.org/beacon-network/v2.0.0/g_variants`,
+          url: `https://beacon-apis-test.ega-archive.org/api/g_variants`,
+          // url: `https://beacon-network-backend-test.ega-archive.org/beacon-network/v2.0.0/g_variants`,
           // url: `https://af-gdi-bn-api-demo.ega-archive.org/beacon-network/v2.0.0/g_variants`,
           headers: {
             "Content-Type": "application/json",
@@ -93,7 +90,8 @@ function App() {
       } else {
         response = await axios({
           method: "get",
-          url: `https://beacon-network-backend-test.ega-archive.org/beacon-network/v2.0.0/g_variants?start=${arr[1]}&alternateBases=${arr[3]}&referenceBases=${arr[2]}&referenceName=${arr[0]}&limit=1&assemblyId=${genome}`,
+          url: `https://beacon-apis-test.ega-archive.org/api/g_variants?start=${arr[1]}&alternateBases=${arr[3]}&referenceBases=${arr[2]}&referenceName=${arr[0]}&limit=1&assemblyId=${genome}`,
+          // url: `https://beacon-network-backend-test.ega-archive.org/beacon-network/v2.0.0/g_variants?start=${arr[1]}&alternateBases=${arr[3]}&referenceBases=${arr[2]}&referenceName=${arr[0]}&limit=1&assemblyId=${genome}`,
           // url: `https://af-gdi-bn-api-demo.ega-archive.org/beacon-network/v2.0.0/g_variants?start=${arr[1]}&alternateBases=${arr[3]}&referenceBases=${arr[2]}&referenceName=${arr[0]}&limit=1&assemblyId=GRCh37`,
           headers: {
             "Content-Type": "application/json",
@@ -101,8 +99,8 @@ function App() {
           data: jsonData1,
         });
       }
-      console.log(response);
       setResults(response.data.response.resultSets);
+      console.log("This is my resultSets", response.data.response.resultSets);
       setLoading(false);
     } catch (error) {
       console.error(error);
@@ -110,14 +108,16 @@ function App() {
   };
 
   return (
-    <div class="bigparent">
-      <div class="parentwrapper">
+    <div className="bigparent">
+      <div className="parentwrapper">
         <CustomNavbar />
         <Container>
           <Row>
             <Search search={search} setVariant={setQueriedVariant} />{" "}
           </Row>
-          {isLoading === true && error === false && <div class="loader"></div>}
+          {isLoading === true && error === false && (
+            <div className="loader"></div>
+          )}
           {isLoading === false && error === false && (
             <ResultList
               results={results}

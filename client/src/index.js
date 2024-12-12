@@ -32,11 +32,11 @@ const oidcConfig = {
   silentRedirectUri: `${window.location.origin}/silent-renew.html`,
 };
 
-console.log("Redirect URI:", oidcConfig.redirectUri);
-console.log("postLogoutRedirectUri:", oidcConfig.postLogoutRedirectUri);
-console.log("silentRedirectUri:", oidcConfig.silentRedirectUri);
-console.log("Window Location Origin:", window.location.origin);
-console.log("oidcConfig:", oidcConfig);
+// console.log("Redirect URI:", oidcConfig.redirectUri);
+// console.log("postLogoutRedirectUri:", oidcConfig.postLogoutRedirectUri);
+// console.log("silentRedirectUri:", oidcConfig.silentRedirectUri);
+// console.log("Window Location Origin:", window.location.origin);
+// console.log("oidcConfig:", oidcConfig);
 
 root.render(
   <React.StrictMode>
