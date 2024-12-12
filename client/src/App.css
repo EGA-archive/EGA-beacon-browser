@@ -157,7 +157,7 @@ body {
   margin: 0;
 }
 
-.beacon {
+.beacon-title {
   text-align: center;
   flex: 1;
   margin-top: 1%;
@@ -169,10 +169,10 @@ body {
 }
 
 @media (max-width: 1180px) {
-  .beacon {
+  .beacon-title {
     margin-top: 10px;
     text-align: center;
-    margin-left: 10%;
+    margin-left: -10%;
   }
 
   .egalogo {
@@ -184,24 +184,6 @@ body {
 
 .search-row {
   margin-top: 90px;
-}
-
-.input-field {
-  border: 1px solid #0234524d;
-  border-radius: 10px;
-}
-
-.input-field:focus {
-  border-color: #3176b1;
-}
-
-.input-field:hover {
-  border-color: #3176b1;
-}
-
-.genome-field {
-  width: 240px;
-  height: 46px;
 }
 
 .variant-query {
@@ -220,6 +202,75 @@ body {
   max-width: 100%;
 }
 
+@media (max-width: 1180px) {
+  .search-row {
+    margin-top: 90px;
+    display: flex;
+    flex-wrap: nowrap; /* Ensure all columns stay on the same row */
+    justify-content: flex-start;
+  }
+
+  .searchbutton {
+    width: 122px;
+    height: 40px;
+  }
+
+  .col-variant {
+    flex: 1; /* Make this column take up more space */
+
+    max-width: 40%;
+  }
+
+  .col-refgenome {
+    flex: 2; /* Smaller relative size */
+  }
+
+  .col-searchbutton {
+    flex: 1; /* Smaller relative size */
+    max-width: 30% !important;
+    margin-left: 112px;
+  }
+}
+
+@media (max-width: 1399px) and (min-width: 1200px) {
+  .search-row {
+    margin-top: 70px;
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: space-between;
+  }
+
+  .searchbutton {
+    width: 122px;
+    height: 40px;
+  }
+
+  .beacon-title {
+    margin-top: 10px;
+    text-align: center;
+  }
+}
+
+@media (max-width: 1199px) and (min-width: 1181px) {
+  .search-row {
+    margin-top: 70px;
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: space-between;
+    background-color: cornflowerblue;
+  }
+
+  .searchbutton {
+    width: 122px;
+    height: 40px;
+  }
+
+  .beacon-title {
+    margin-top: 10px;
+    text-align: center;
+  }
+}
+
 .col-refgenome {
   width: 92px;
   flex: 0 0 24%;
@@ -229,6 +280,7 @@ body {
 .col-searchbutton {
   flex: 0 0 11%;
   max-width: 100%;
+  margin-top: 2px;
 }
 
 .searchbutton {
@@ -249,22 +301,6 @@ body {
   position: relative;
   top: 30px;
   margin: 0;
-}
-
-@media (max-width: 1180px) {
-  .search-row {
-    display: flex;
-  }
-
-  .col-variant {
-    flex: 0 0 40%;
-    max-width: 100%;
-  }
-
-  .col-searchbutton {
-    width: 92px !important;
-    flex: 0 0 92px;
-  }
 }
 
 /* Network CSS */

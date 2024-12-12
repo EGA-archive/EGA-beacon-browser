@@ -18,9 +18,7 @@ const customTheme = createTheme({
             border: "1px solid #3176B1 !important",
           },
           "@media (max-width: 1180px)": {
-            // Reduce size for smaller screens
-            maxWidth: "270px",
-            width: "100%", // Ensure it fits within its parent
+            width: "270px",
           },
         },
         paper: {

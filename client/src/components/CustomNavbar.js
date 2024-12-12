@@ -14,7 +14,7 @@ const CustomNavbar = () => {
         >
           <img src="/../egalogo.png" className="egalogo" alt="egalogo" />
         </a>
-        <h1 className="beacon">EGA Allele Frequency Browser</h1>
+        <h1 className="beacon-title">EGA Allele Frequency Browser</h1>
       </Container>
     </Navbar>
   );
