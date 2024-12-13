@@ -121,65 +121,90 @@ function ResultList({
             : ancestry?.population;
       }
 
+      const femaleAlleleCount = female?.alleleCount || 0;
+      const maleAlleleCount = male?.alleleCount || 0;
+      const totalAlleleCount = femaleAlleleCount + maleAlleleCount;
+
+      const femaleAlleleNumber = female?.alleleNumber || 0;
+      const maleAlleleNumber = male?.alleleNumber || 0;
+      const totalAlleleNumber = femaleAlleleNumber + maleAlleleNumber;
+
+      const femaleAlleleCountHomozygous = female?.alleleCountHomozygous || 0;
+      const maleAlleleCountHomozygous = male?.alleleCountHomozygous || 0;
+      const totalAlleleCountHomozygous =
+        femaleAlleleCountHomozygous + maleAlleleCountHomozygous;
+
+      const femaleAlleleCountHeterozygous =
+        female?.alleleCountHeterozygous || 0;
+      const maleAlleleCountHeterozygous = male?.alleleCountHeterozygous || 0;
+      const totalAlleleCountHeterozygous =
+        femaleAlleleCountHeterozygous + maleAlleleCountHeterozygous;
+
+      const totalAlleleFrequency = totalAlleleNumber
+        ? parseFloat((totalAlleleCount / totalAlleleNumber).toFixed(4))
+        : "-";
+
       const femaleTable = (
-        <tr key={`sex-XX-${female?.id || "x"}`}>
+        <tr key={`sex-XX-${female?.id || "-"}`}>
+          {/* <td>Sex</td> */}
           <td></td>
           <td className="sex-background">XX</td>
           <td className="centered-header sex-background">
-            {female?.alleleCount || "x"}
+            {female?.alleleCount || "-"}
           </td>
           <td className="centered-header sex-background">
-            {female?.alleleNumber || "x"}
+            {female?.alleleNumber || "-"}
           </td>
           <td className="centered-header sex-background">
-            {female?.alleleCountHomozygous || "x"}
+            {female?.alleleCountHomozygous || "-"}
           </td>
           <td className="centered-header sex-background">
-            {female?.alleleCountHeterozygous || "x"}
+            {female?.alleleCountHeterozygous || "-"}
           </td>
           <td className="centered-header sex-background">
             {parseFloat(female?.alleleFrequency.toString().substring(0, 6)) ||
-              "x"}
+              "-"}
           </td>
         </tr>
       );
       const maleTable = (
-        <tr key={`sex-XY-${male?.id || "X"}`}>
+        <tr key={`sex-XY-${male?.id || "-"}`}>
           <td></td>
           <td className="sex-background">XY</td>
           <td className="centered-header sex-background">
-            {male?.alleleCount || "x"}
+            {male?.alleleCount || "-"}
           </td>
           <td className="centered-header sex-background">
-            {male?.alleleNumber || "x"}
+            {male?.alleleNumber || "-"}
           </td>
           <td className="centered-header sex-background">
-            {male?.alleleCountHomozygous || "x"}
+            {male?.alleleCountHomozygous || "-"}
           </td>
           <td className="centered-header sex-background">
-            {male?.alleleCountHeterozygous || "x"}
+            {male?.alleleCountHeterozygous || "-"}
           </td>
           <td className="centered-header sex-background">
             {parseFloat(male?.alleleFrequency.toString().substring(0, 6)) ||
-              "x"}
+              "-"}
           </td>
         </tr>
       );
       const ancestryTable = (
-        <tr key={`ancestry-${ancestry?.id || "x"}`}>
+        <tr key={`ancestry-${ancestry?.id || "-"}`}>
+          {/* <td>Ancestry</td> */}
           <td></td>
-          <td className="">{popu || "x"}</td>
-          <td className="centered-header">{ancestry?.alleleCount || "x"}</td>
-          <td className="centered-header">{ancestry?.alleleNumber || "x"}</td>
+          <td className="">{popu || "-"}</td>
+          <td className="centered-header">{ancestry?.alleleCount || "-"}</td>
+          <td className="centered-header">{ancestry?.alleleNumber || "-"}</td>
           <td className="centered-header">
-            {ancestry?.alleleCountHomozygous || "x"}
+            {ancestry?.alleleCountHomozygous || "-"}
           </td>
           <td className="centered-header">
-            {ancestry?.alleleCountHeterozygous || "x"}
+            {ancestry?.alleleCountHeterozygous || "-"}
           </td>
           <td className="centered-header">
             {parseFloat(ancestry?.alleleFrequency.toString().substring(0, 6)) ||
-              "x"}
+              "-"}
           </td>
         </tr>
       );
@@ -229,19 +254,19 @@ function ResultList({
             <b>Total</b>
           </td>
           <td className="beaconized centered" colSpan="1">
-            <b>Total</b>
+            <b>{totalAlleleCount || "-"}</b>
           </td>
           <td className="beaconized centered" colSpan="1">
-            <b>Total</b>
+            <b>{totalAlleleNumber || "-"}</b>
           </td>
           <td className="beaconized centered" colSpan="1">
-            <b>Total</b>
+            <b>{totalAlleleCountHomozygous || "-"}</b>
           </td>
           <td className="beaconized centered" colSpan="1">
-            <b>Total</b>
+            <b>{totalAlleleCountHeterozygous || "-"}</b>
           </td>
           <td className="beaconized centered" colSpan="1">
-            <b>Total</b>
+            <b>{totalAlleleFrequency || "-"}</b>
           </td>
         </tr>
       );
@@ -378,8 +403,10 @@ function ResultList({
             <table className="data-table">
               <tr>
                 <th>Dataset</th>
-                {/* <th className="dataset-column"></th> */}
-                <th className="population-column pp">Population</th>
+                <TooltipHeader title={tooltipTexts[0]}>
+                  {/* <th className="dataset-column"></th> */}
+                  <th className="population-column underlined">Population</th>
+                </TooltipHeader>
                 <TooltipHeader title={tooltipTexts[0]}>
                   <th className="centered-header underlined allele-count-column">
                     Allele Count
