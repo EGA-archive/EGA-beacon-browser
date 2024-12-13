@@ -111,7 +111,9 @@ function Search({ search, setVariant }) {
                       </Form.Label>
 
                       {/* Varaint Field */}
+
                       <Autocomplete
+                        className="variant-autocomplete"
                         freeSolo
                         options={[]}
                         value={values.variant}
@@ -145,10 +147,14 @@ function Search({ search, setVariant }) {
                     </Col>
 
                     <Col className="col-refgenome">
-                      <Form.Label htmlFor="ref-genome">
+                      <Form.Label
+                        htmlFor="ref-genome"
+                        className="ref-genome-label"
+                      >
                         <b>Ref Genome</b>
                       </Form.Label>
                       <Autocomplete
+                        className="genome-autocomplete"
                         disablePortal
                         options={refGenome}
                         name="genome"
@@ -180,6 +186,7 @@ function Search({ search, setVariant }) {
                         )}
                       />
                     </Col>
+
                     {/* Search button */}
                     <Col className="col-searchbutton">
                       <button
@@ -188,7 +195,9 @@ function Search({ search, setVariant }) {
                         variant="primary"
                         disabled={errors.variant || errors.genome}
                       >
-                        <div className="lupared"></div>Search
+                        <div className="button-text-icon">
+                          <div className="lupared"></div>Search
+                        </div>
                       </button>
                     </Col>
                   </Row>

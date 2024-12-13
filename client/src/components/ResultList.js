@@ -100,12 +100,23 @@ function ResultList({
         }
       });
 
-      const female =
-        results[0]?.results?.[0]?.frequencyInPopulations?.[0]?.frequencies?.[0];
-      const male =
-        results[0]?.results?.[1]?.frequencyInPopulations?.[0]?.frequencies?.[0];
-      const ancestry =
-        results[0]?.results?.[2]?.frequencyInPopulations?.[0]?.frequencies?.[0];
+      const getFrequencyByPopulation = (population) => {
+        return results?.[0]?.results
+          ?.find((variant) =>
+            variant.frequencyInPopulations?.[0]?.frequencies?.some(
+              (freq) =>
+                freq.population?.toLowerCase() === population.toLowerCase()
+            )
+          )
+          ?.frequencyInPopulations?.[0]?.frequencies?.find(
+            (freq) =>
+              freq.population?.toLowerCase() === population.toLowerCase()
+          );
+      };
+
+      const female = getFrequencyByPopulation("Female");
+      const male = getFrequencyByPopulation("Male");
+      const ancestry = getFrequencyByPopulation("Ancestry");
 
       let popu = "";
       if (ancestry?.population?.toLowerCase().includes("fin")) {
@@ -285,6 +296,7 @@ function ResultList({
     "Number of individuals homozygous for the allele.",
     "Number of individuals heterozygous for the allele.",
     "Incidence of the allele in a population.",
+    "Miao.",
   ];
 
   return (
@@ -403,9 +415,9 @@ function ResultList({
             <table className="data-table">
               <tr>
                 <th>Dataset</th>
-                <TooltipHeader title={tooltipTexts[0]}>
+                <TooltipHeader title={tooltipTexts[5]}>
                   {/* <th className="dataset-column"></th> */}
-                  <th className="population-column underlined">Population</th>
+                  <th className="underlined population-column">Population</th>
                 </TooltipHeader>
                 <TooltipHeader title={tooltipTexts[0]}>
                   <th className="centered-header underlined allele-count-column">

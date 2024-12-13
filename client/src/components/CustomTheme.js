@@ -20,6 +20,30 @@ const customTheme = createTheme({
           "@media (max-width: 1180px)": {
             width: "270px",
           },
+          "@media (max-width: 1199px) and (min-width: 1181px)": {
+            "&.variant-autocomplete .MuiOutlinedInput-root": {
+              width: "520px", // Width for the variant Autocomplete
+            },
+            "&.genome-autocomplete .MuiOutlinedInput-root": {
+              width: "270px", // Width for the genome Autocomplete
+            },
+          },
+          "@media (max-width: 1180px) and (min-width: 992px)": {
+            "&.variant-autocomplete .MuiOutlinedInput-root": {
+              width: "502px", // Width for the variant Autocomplete
+            },
+            "&.genome-autocomplete .MuiOutlinedInput-root": {
+              width: "300px", // Width for the genome Autocomplete
+            },
+          },
+          "@media (max-width: 767px) and (min-width: 726px)": {
+            "&.variant-autocomplete .MuiOutlinedInput-root": {
+              width: "510px", // Width for the variant Autocomplete
+            },
+            "&.genome-autocomplete .MuiOutlinedInput-root": {
+              width: "510px", // Width for the genome Autocomplete
+            },
+          },
         },
         paper: {
           // Styles for the dropdown popover

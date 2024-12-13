@@ -257,9 +257,21 @@ body {
     display: flex;
     flex-wrap: nowrap;
     justify-content: space-between;
-    background-color: cornflowerblue;
   }
 
+  .col-variant {
+    width: 520px;
+    flex: 1;
+  }
+
+  .col-refgenome {
+    margin-left: 0%;
+    margin-right: 6%;
+  }
+
+  .col-searchbutton {
+    padding-right: 0;
+  }
   .searchbutton {
     width: 122px;
     height: 40px;
@@ -268,6 +280,87 @@ body {
   .beacon-title {
     margin-top: 10px;
     text-align: center;
+  }
+}
+
+@media (max-width: 1180px) and (min-width: 992px) {
+  .search-row {
+    margin-top: 70px;
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: space-between;
+  }
+
+  .col-variant {
+    flex: 1;
+  }
+
+  .col-refgenome {
+    margin-right: -17%;
+  }
+
+  .col-searchbutton {
+    padding-right: 0;
+  }
+  .searchbutton {
+    width: 122px;
+    height: 40px;
+  }
+
+  .beacon-title {
+    margin-top: 10px;
+    text-align: center;
+    margin-left: 50px;
+  }
+}
+
+@media (max-width: 767px) and (min-width: 726px) {
+  .search-row {
+    display: flex;
+    flex-direction: column; /* Stack items vertically */
+    align-items: flex-start; /* Align items to the left */
+    margin-top: 60px;
+    height: auto; /* Adjust height to fit content */
+  }
+
+  .col-variant,
+  .col-refgenome,
+  .col-searchbutton {
+    width: 100%; /* Take full width */
+  }
+
+  .col-searchbutton {
+    margin-left: 0;
+    margin-top: 0;
+  }
+
+  .searchbutton {
+    width: 515px;
+    text-align: center;
+  }
+
+  .button-text-icon {
+    margin-left: 40%;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .beacon-title {
+    margin-top: 10px;
+    font-size: 18px;
+    margin-left: 10px;
+  }
+
+  .egalogo {
+    height: 35.2px;
+  }
+
+  .ref-genome-label {
+    white-space: nowrap; /* Prevents text wrapping */
+  }
+
+  .example-span {
+    margin-top: 60px !important;
   }
 }
 
