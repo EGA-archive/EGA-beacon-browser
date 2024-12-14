@@ -36,7 +36,7 @@ const customTheme = createTheme({
               width: "300px", // Width for the genome Autocomplete
             },
           },
-          "@media (max-width: 767px) and (min-width: 726px)": {
+          "@media (max-width: 767px) and (min-width: 606px)": {
             "&.variant-autocomplete .MuiOutlinedInput-root": {
               width: "510px", // Width for the variant Autocomplete
             },

@@ -2,7 +2,7 @@ import axios from "axios";
 import React, { useState } from "react";
 import "./App.css";
 import { Col, Container, Row } from "react-bootstrap";
-import ResultList from "./components/ResultList";
+import ResultListA from "./components/ResultListA";
 import Search from "./components/Search";
 import { useAuth } from "oidc-react";
 import Footer from "./components/Footer.js";
@@ -44,7 +44,7 @@ function App() {
         data: jsonData1,
       });
       setMetaResults(metaresponse.data.response);
-      console.log("This is my Metaresult", metaresponse.data.response);
+      // console.log("This is my Metaresult", metaresponse.data.response);
     } catch (error) {
       console.error(error);
       setError(error);
@@ -120,7 +120,7 @@ function App() {
             <div className="loader"></div>
           )}
           {isLoading === false && error === false && (
-            <ResultList
+            <ResultListA
               results={results}
               metaresults={metaresults}
               finalstart={finalstart}
@@ -129,11 +129,9 @@ function App() {
             />
           )}
           {/* Show NetworkMembers only if no search results */}
-          {isLoading === false && error === false && results?.length === 0 && (
-            <NetworkMembers />
-          )}
+          {!queriedVariant && <NetworkMembers />}
           {error !== false && (
-            <ResultList
+            <ResultListA
               results={results}
               metaresults={metaresults}
               finalstart={finalstart}

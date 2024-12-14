@@ -112,6 +112,8 @@ input:-webkit-autofill:active {
   width: 100vw;
   height: Fixed (49px) px;
   padding: 12px 143px 12px 143px;
+  padding-left: 5%;
+  min-width: 100%;
   gap: 174px;
   opacity: 0px;
   background: #e2e2e2;
@@ -139,6 +141,7 @@ body {
   border: none;
   height: 77px;
   width: 100vw;
+  min-width: 100%;
   position: sticky;
   top: 0;
   z-index: 2;
@@ -314,7 +317,7 @@ body {
   }
 }
 
-@media (max-width: 767px) and (min-width: 726px) {
+@media (max-width: 767px) and (min-width: 606px) {
   .search-row {
     display: flex;
     flex-direction: column; /* Stack items vertically */
@@ -361,6 +364,93 @@ body {
 
   .example-span {
     margin-top: 60px !important;
+  }
+
+  .bnmembers-container {
+    display: block !important;
+  }
+
+  .egaembllogo {
+    width: 248px;
+    height: 71.97px;
+  }
+
+  .crglogo {
+    width: 164.49px;
+    height: 94.45px;
+  }
+
+  .footer {
+    padding-left: 5%;
+  }
+}
+
+@media (max-width: 605px) and (min-width: 425px) {
+  .search-row {
+    display: flex;
+    flex-direction: column; /* Stack items vertically */
+    align-items: flex-start; /* Align items to the left */
+    margin-top: 60px;
+    height: auto; /* Adjust height to fit content */
+  }
+
+  .col-variant,
+  .col-refgenome,
+  .col-searchbutton {
+    width: 100%; /* Take full width */
+  }
+
+  .col-searchbutton {
+    margin-left: 0;
+    margin-top: 0;
+  }
+
+  .searchbutton {
+    width: 515px;
+    text-align: center;
+  }
+
+  .button-text-icon {
+    margin-left: 40%;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .beacon-title {
+    margin-top: 10px;
+    font-size: 18px;
+    margin-left: 10px;
+  }
+
+  .egalogo {
+    height: 35.2px;
+  }
+
+  .ref-genome-label {
+    white-space: nowrap; /* Prevents text wrapping */
+  }
+
+  .example-span {
+    margin-top: 60px !important;
+  }
+
+  .bnmembers-container {
+    display: block !important;
+  }
+
+  .egaembllogo {
+    width: 248px;
+    height: 71.97px;
+  }
+
+  .crglogo {
+    width: 164.49px;
+    height: 94.45px;
+  }
+
+  .footer {
+    padding-left: 5%;
+    white-space: nowrap;
   }
 }
 
