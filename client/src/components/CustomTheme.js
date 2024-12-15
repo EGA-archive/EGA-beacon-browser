@@ -44,6 +44,14 @@ const customTheme = createTheme({
               width: "510px", // Width for the genome Autocomplete
             },
           },
+          "@media (max-width: 605px) and (min-width: 600px)": {
+            "&.variant-autocomplete .MuiOutlinedInput-root": {
+              width: "510px", // Width for the variant Autocomplete
+            },
+            "&.genome-autocomplete .MuiOutlinedInput-root": {
+              width: "510px", // Width for the genome Autocomplete
+            },
+          },
         },
         paper: {
           // Styles for the dropdown popover

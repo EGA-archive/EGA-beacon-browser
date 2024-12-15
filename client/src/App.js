@@ -2,7 +2,7 @@ import axios from "axios";
 import React, { useState } from "react";
 import "./App.css";
 import { Col, Container, Row } from "react-bootstrap";
-import ResultListA from "./components/ResultListA";
+import ResultList from "./components/ResultList.js";
 import Search from "./components/Search";
 import { useAuth } from "oidc-react";
 import Footer from "./components/Footer.js";
@@ -101,7 +101,7 @@ function App() {
         });
       }
       setResults(response.data.response.resultSets);
-      console.log("This is my resultSets", response.data.response.resultSets);
+      // console.log("This is my resultSets", response.data.response.resultSets);
       setLoading(false);
     } catch (error) {
       console.error(error);
@@ -120,7 +120,7 @@ function App() {
             <div className="loader"></div>
           )}
           {isLoading === false && error === false && (
-            <ResultListA
+            <ResultList
               results={results}
               metaresults={metaresults}
               finalstart={finalstart}
@@ -131,7 +131,7 @@ function App() {
           {/* Show NetworkMembers only if no search results */}
           {!queriedVariant && <NetworkMembers />}
           {error !== false && (
-            <ResultListA
+            <ResultList
               results={results}
               metaresults={metaresults}
               finalstart={finalstart}

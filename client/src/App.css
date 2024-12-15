@@ -320,10 +320,10 @@ body {
 @media (max-width: 767px) and (min-width: 606px) {
   .search-row {
     display: flex;
-    flex-direction: column; /* Stack items vertically */
-    align-items: flex-start; /* Align items to the left */
+    flex-direction: column;
+    align-items: flex-start;
     margin-top: 60px;
-    height: auto; /* Adjust height to fit content */
+    height: auto;
   }
 
   .col-variant,
@@ -679,6 +679,10 @@ body {
   margin-left: 100px;
   margin-right: 100px;
   margin: 200px;
+}
+
+.type-wrap {
+  white-space: nowrap;
 }
 
 .sex-background {
