@@ -2,10 +2,11 @@ import React, { useState, useEffect } from "react";
 import { Box } from "@mui/system";
 import { Row } from "react-bootstrap";
 import TooltipHeader from "./TooltipHeader.js";
+import Tooltip from "@mui/material/Tooltip";
 import ToggleButton from "@mui/material/ToggleButton";
 import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
-import Tooltip from "@mui/material/Tooltip";
-import { boolean } from "yup";
+import { ThemeProvider } from "@mui/material/styles";
+import CustomTheme from "../components/CustomTheme";
 
 function ResultList({
   results,
@@ -35,7 +36,7 @@ function ResultList({
     "Number of individuals homozygous for the allele.",
     "Number of individuals heterozygous for the allele.",
     "Incidence of the allele in a population.",
-    "Miao.",
+    "This term is referring to biological sex and ancestry or ethnicity as reported by individual studies.",
   ];
 
   const subHeader = (
@@ -47,7 +48,7 @@ function ResultList({
     totalAlleleFrequency
   ) => (
     <tr>
-      <td className="beaconized" colSpan="1">
+      <td className="beaconized dataset-col" colSpan="1">
         <b>{dataset}</b>
       </td>
       <td className="beaconized" colSpan="1">
@@ -91,7 +92,9 @@ function ResultList({
       <tr>
         {/* <td>Sex</td> */}
         <td></td>
-        <td className={`type-wrap ${backgroundColor}`}>{type}</td>
+        <Tooltip title={type.length > 20 ? type : ""} arrow>
+          <td className={`type-wrap ${backgroundColor}`}>{type}</td>
+        </Tooltip>
         <td className={`centered-header ${backgroundColor}`}>
           {alleleCount || 0}
         </td>
@@ -113,12 +116,12 @@ function ResultList({
   };
 
   //    Finding the logic
-  const gcatData = results.find((result) => result.id === "EGAD00001007774");
-  // const gcatData = results.find((result) => result.resultsCount > 1);
-  const genomAdData = results.find(
-    (result) => result.id === "gnomad_exome_v2.1.1"
-    // const gcatData = results.find((result) => result.resultsCount === 1);
-  );
+  // const gcatData = results.find((result) => result.id === "EGAD00001007774");
+  const gcatData = results.find((result) => result.resultsCount > 1);
+  // const genomAdData = results.find(
+  //   (result) => result.id === "gnomad_exome_v2.1.1"
+  // );
+  const genomAdData = results.find((result) => result.resultsCount === 1);
 
   //   General GCAT Logic
   const gcatTable = () => {
@@ -233,6 +236,7 @@ function ResultList({
 
       return (
         <>
+          {/* TODO: Handle edge case of not having total */}
           {subHeader(
             genomAdData.id,
             total?.alleleCount,
@@ -316,7 +320,7 @@ function ResultList({
                 aria-label="Sort options"
                 sx={{
                   display: "flex",
-                  marginBottom: "25px",
+                  marginBottom: "35px",
                   gap: "16px",
                   "& .MuiToggleButtonGroup-firstButton": {
                     borderRadius: "100px",
@@ -394,11 +398,14 @@ function ResultList({
           <div className="table-container">
             <table className="data-table">
               <tr>
-                <th>Dataset</th>
-                <TooltipHeader title={tooltipTexts[5]}>
-                  {/* <th className="dataset-column"></th> */}
+                <th className="dataset-column">Dataset</th>
+                <TooltipHeader
+                  title={tooltipTexts[5]}
+                  customClass="custom-margin-right"
+                >
                   <th className="underlined population-column">Population</th>
                 </TooltipHeader>
+
                 <TooltipHeader title={tooltipTexts[0]}>
                   <th className="centered-header underlined allele-count-column">
                     Allele Count

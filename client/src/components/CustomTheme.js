@@ -22,34 +22,34 @@ const customTheme = createTheme({
           },
           "@media (max-width: 1199px) and (min-width: 1181px)": {
             "&.variant-autocomplete .MuiOutlinedInput-root": {
-              width: "520px", // Width for the variant Autocomplete
+              width: "520px",
             },
             "&.genome-autocomplete .MuiOutlinedInput-root": {
-              width: "270px", // Width for the genome Autocomplete
+              width: "270px",
             },
           },
           "@media (max-width: 1180px) and (min-width: 992px)": {
             "&.variant-autocomplete .MuiOutlinedInput-root": {
-              width: "502px", // Width for the variant Autocomplete
+              width: "502px",
             },
             "&.genome-autocomplete .MuiOutlinedInput-root": {
-              width: "300px", // Width for the genome Autocomplete
+              width: "300px",
             },
           },
           "@media (max-width: 767px) and (min-width: 606px)": {
             "&.variant-autocomplete .MuiOutlinedInput-root": {
-              width: "510px", // Width for the variant Autocomplete
+              width: "510px",
             },
             "&.genome-autocomplete .MuiOutlinedInput-root": {
-              width: "510px", // Width for the genome Autocomplete
+              width: "510px",
             },
           },
           "@media (max-width: 605px) and (min-width: 600px)": {
             "&.variant-autocomplete .MuiOutlinedInput-root": {
-              width: "510px", // Width for the variant Autocomplete
+              width: "510px",
             },
             "&.genome-autocomplete .MuiOutlinedInput-root": {
-              width: "510px", // Width for the genome Autocomplete
+              width: "510px",
             },
           },
         },
@@ -77,6 +77,23 @@ const customTheme = createTheme({
           marginLeft: "0px",
           marginRight: "0px",
           color: "#FF0000",
+        },
+      },
+    },
+    MuiTooltip: {
+      styleOverrides: {
+        tooltip: {
+          backgroundColor: "#FFFFFF",
+          color: "#000000",
+          border: "1px solid #023452",
+          fontSize: "14px",
+          padding: "5px 10.83px",
+          borderRadius: "5px",
+          maxWidth: "430px",
+        },
+        arrow: {
+          color: "#023452",
+          transform: "translate(1px, 0px) !important",
         },
       },
     },

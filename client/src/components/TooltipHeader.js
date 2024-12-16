@@ -19,12 +19,17 @@ const CustomTooltip = styled(({ className, ...props }) => (
   [`& .MuiTooltip-arrow`]: {
     color: "#023452",
   },
+  "&.custom-margin-right": {
+    [`& .MuiTooltip-tooltip`]: {
+      marginRight: "30px",
+    },
+  },
 });
 
 // TooltipHeader component
-const TooltipHeader = ({ title, children }) => {
+const TooltipHeader = ({ title, children, customClass }) => {
   return (
-    <CustomTooltip title={title} placement="top" arrow>
+    <CustomTooltip title={title} placement="top" arrow className={customClass}>
       {children}
     </CustomTooltip>
   );

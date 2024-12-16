@@ -30,27 +30,6 @@ function Search({ search, setVariant }) {
     await search(values.variant, values.genome);
   };
 
-  // Tooltip for Variant query
-
-  const CustomTooltip = styled(({ className, ...props }) => (
-    <Tooltip {...props} classes={{ popper: className }} />
-  ))({
-    [`& .MuiTooltip-tooltip`]: {
-      backgroundColor: "#FFFFFF",
-      color: "#000000",
-      border: "1px solid #023452",
-      fontSize: "14px",
-      padding: "5px 10.83px",
-      borderRadius: "5px",
-      maxWidth: "430px",
-    },
-    [`& .MuiTooltip-arrow`]: {
-      color: "#023452",
-      transform: "translate(1px, 0px) !important",
-      //       transform: "none !important",
-    },
-  });
-
   return (
     <ThemeProvider theme={CustomTheme}>
       <Container>
@@ -92,7 +71,7 @@ function Search({ search, setVariant }) {
                     <Col className="col-variant">
                       <Form.Label>
                         <b className="variant-query">Variant query</b>
-                        <CustomTooltip
+                        <Tooltip
                           title={
                             <ul className="tooltip-bullets">
                               <li>
@@ -107,7 +86,7 @@ function Search({ search, setVariant }) {
                           arrow
                         >
                           <b className="infovariant">i</b>
-                        </CustomTooltip>
+                        </Tooltip>
                       </Form.Label>
 
                       {/* Varaint Field */}

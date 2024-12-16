@@ -608,7 +608,6 @@ body {
 
 .sortby {
   margin-bottom: 25px;
-  margin-top: 4px;
   margin-left: 60%;
 }
 
@@ -622,11 +621,11 @@ body {
 }
 
 .dataset-column {
-  width: 20%;
+  width: 16%;
 }
 
 .population-column {
-  width: 11%;
+  width: 15%;
 }
 
 .allele-count-column,
@@ -668,6 +667,11 @@ body {
   border-bottom-color: #023452;
 }
 
+.dataset-col {
+  width: 20px !important;
+  padding-right: 0;
+}
+
 .centered {
   text-align: center;
 }
@@ -682,7 +686,12 @@ body {
 }
 
 .type-wrap {
+  visibility: visible;
+  opacity: 1;
   white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 12em;
 }
 
 .sex-background {
