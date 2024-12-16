@@ -118,7 +118,8 @@ function ResultList({
           {alleleCountHeterozygous || alleleCount - alleleCountHomozygous}
         </td>
         <td className={`centered-header ${backgroundColor}`}>
-          {parseFloat(alleleFrequency.toString().substring(0, 6)) || "-"}
+          {parseFloat(alleleFrequency.toString().substring(0, 6)) ||
+            parseFloat((alleleCount / alleleNumber).toFixed(5))}
         </td>
       </tr>
     );
