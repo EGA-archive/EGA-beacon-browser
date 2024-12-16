@@ -625,7 +625,8 @@ body {
 }
 
 .population-column {
-  width: 15%;
+  width: 31%;
+  padding-left: 5%;
 }
 
 .allele-count-column,
@@ -660,6 +661,13 @@ body {
 }
 
 .beaconized {
+  border-width: 0.5px 0px 0px 0px;
+  border-style: solid;
+  border-top-color: #023452;
+  border-bottom-color: #023452;
+}
+
+.dataset {
   background: #dbeefd;
   border-width: 0.5px 0px 0.5px 0px;
   border-style: solid;
@@ -685,6 +693,10 @@ body {
   margin: 200px;
 }
 
+.beaconized.dataset-col {
+  padding-left: 5%;
+}
+
 .type-wrap {
   visibility: visible;
   opacity: 1;
@@ -692,6 +704,7 @@ body {
   overflow: hidden;
   text-overflow: ellipsis;
   max-width: 12em;
+  padding-left: 5%;
 }
 
 .sex-background {

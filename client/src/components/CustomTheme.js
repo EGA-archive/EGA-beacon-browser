@@ -80,6 +80,7 @@ const customTheme = createTheme({
         },
       },
     },
+    // Variant query tooltip
     MuiTooltip: {
       styleOverrides: {
         tooltip: {

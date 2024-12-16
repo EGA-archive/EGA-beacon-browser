@@ -49,11 +49,13 @@ function ResultList({
   ) => (
     <tr>
       <td className="beaconized dataset-col" colSpan="1">
-        <b>{dataset}</b>
-      </td>
-      <td className="beaconized" colSpan="1">
+        {/* <b>{dataset}</b> */}
+        {/* <b style={{ marginLeft: "50%" }}>Total</b> */}
         <b>Total</b>
       </td>
+      {/* <td className="beaconized" colSpan="1">
+        <b>Total</b>
+      </td> */}
       <td className="beaconized centered" colSpan="1">
         <b>{totalAlleleCount}</b>
       </td>
@@ -78,6 +80,16 @@ function ResultList({
     </tr>
   );
 
+  const dataset = (dataset) => (
+    <tr>
+      <td className="dataset dataset-col" colSpan="6">
+        <div>
+          Dataset: <b> {dataset}</b>
+        </div>
+      </td>
+    </tr>
+  );
+
   const tableRow = (
     type,
     alleleCount,
@@ -91,10 +103,7 @@ function ResultList({
     return (
       <tr>
         {/* <td>Sex</td> */}
-        <td></td>
-        <Tooltip title={type.length > 20 ? type : ""} arrow>
-          <td className={`type-wrap ${backgroundColor}`}>{type}</td>
-        </Tooltip>
+        <td className={`type-wrap ${backgroundColor}`}>{type}</td>
         <td className={`centered-header ${backgroundColor}`}>
           {alleleCount || 0}
         </td>
@@ -151,43 +160,37 @@ function ResultList({
 
       return (
         <>
-          {/* TODO: Change numbers with actual logic */}
-          {subHeader(
-            gcatData.id,
-            female && male
-              ? female?.alleleCount + male?.alleleCount
-              : ancestriesSumAlleleCount,
-            female && male
-              ? female?.alleleNumber + male?.alleleNumber
-              : ancestriesSumAlleleNumber,
-            female && male
-              ? female?.alleleCountHomozygous + male?.alleleCountHomozygous
-              : ancestriesSumAlleleCountHomozygous,
-            female && male
-              ? female?.alleleCountHeterozygous + male?.alleleCountHeterozygous
-              : ancestriesSumAlleleCountHeterozygous,
-            female && male
-              ? (female?.alleleCount + male?.alleleCount) /
-                  (female?.alleleNumber + male?.alleleNumber)
-              : ancestriesSumAlleleCount / ancestriesSumAlleleNumber
-          )}
-
+          {dataset(gcatData.id)}
           {toggle.includes("ancestry") &&
-            ancestries.map((ancestry) => {
-              const ancestryObj =
-                ancestry?.frequencyInPopulations?.[0]?.frequencies?.[0];
-              // TODO
-              ancestriesSumAlleleCount += ancestryObj?.alleleCount;
-              return tableRow(
-                ancestryObj?.population,
-                ancestryObj?.alleleCount,
-                ancestryObj?.alleleNumber,
-                ancestryObj?.alleleCountHomozygous,
-                ancestryObj?.alleleCountHeterozygous,
-                ancestryObj?.alleleFrequency,
-                true
-              );
-            })}
+            (ancestries && ancestries.length > 0
+              ? ancestries.map((ancestry) => {
+                  const ancestryObj =
+                    ancestry?.frequencyInPopulations?.[0]?.frequencies?.[0];
+                  // Accumulate the allele count
+                  ancestriesSumAlleleCount += ancestryObj?.alleleCount;
+
+                  return tableRow(
+                    ancestryObj?.population,
+                    ancestryObj?.alleleCount,
+                    ancestryObj?.alleleNumber,
+                    ancestryObj?.alleleCountHomozygous,
+                    ancestryObj?.alleleCountHeterozygous,
+                    ancestryObj?.alleleFrequency,
+                    true
+                  );
+                })
+              : // Render hard-coded row for "European" if no ancestry data
+                tableRow(
+                  "European",
+                  female?.alleleCount + male?.alleleCount,
+                  female?.alleleNumber + male?.alleleNumber,
+                  female?.alleleCountHomozygous + male?.alleleCountHomozygous,
+                  female?.alleleCountHeterozygous +
+                    male?.alleleCountHeterozygous,
+                  (female?.alleleCount + male?.alleleCount) /
+                    (female?.alleleNumber + male?.alleleNumber),
+                  true
+                ))}
           {/* Female */}
           {female &&
             toggle.includes("sex") &&
@@ -210,6 +213,26 @@ function ResultList({
               male?.alleleCountHeterozygous,
               male?.alleleFrequency
             )}
+
+          {subHeader(
+            gcatData.id,
+            female && male
+              ? female?.alleleCount + male?.alleleCount
+              : ancestriesSumAlleleCount,
+            female && male
+              ? female?.alleleNumber + male?.alleleNumber
+              : ancestriesSumAlleleNumber,
+            female && male
+              ? female?.alleleCountHomozygous + male?.alleleCountHomozygous
+              : ancestriesSumAlleleCountHomozygous,
+            female && male
+              ? female?.alleleCountHeterozygous + male?.alleleCountHeterozygous
+              : ancestriesSumAlleleCountHeterozygous,
+            female && male
+              ? (female?.alleleCount + male?.alleleCount) /
+                  (female?.alleleNumber + male?.alleleNumber)
+              : ancestriesSumAlleleCount / ancestriesSumAlleleNumber
+          )}
         </>
       );
     }
@@ -236,15 +259,7 @@ function ResultList({
 
       return (
         <>
-          {/* TODO: Handle edge case of not having total */}
-          {subHeader(
-            genomAdData.id,
-            total?.alleleCount,
-            total?.alleleNumber,
-            total?.alleleCountHomozygous,
-            total?.alleleCountHeterozygous,
-            total?.alleleFrequency
-          )}
+          {dataset(genomAdData.id)}
           {toggle.includes("ancestry") &&
             ancestries.map((ancestry) =>
               tableRow(
@@ -277,6 +292,14 @@ function ResultList({
               males?.alleleCountHeterozygous,
               males?.alleleFrequency
             )}
+          {subHeader(
+            genomAdData.id,
+            total?.alleleCount,
+            total?.alleleNumber,
+            total?.alleleCountHomozygous,
+            total?.alleleCountHeterozygous,
+            total?.alleleFrequency
+          )}
         </>
       );
     }
@@ -398,7 +421,7 @@ function ResultList({
           <div className="table-container">
             <table className="data-table">
               <tr>
-                <th className="dataset-column">Dataset</th>
+                {/* <th className="dataset-column">Dataset & Population</th> */}
                 <TooltipHeader
                   title={tooltipTexts[5]}
                   customClass="custom-margin-right"
