@@ -2,11 +2,8 @@ import React, { useState, useEffect } from "react";
 import { Box } from "@mui/system";
 import { Row } from "react-bootstrap";
 import TooltipHeader from "./TooltipHeader.js";
-import Tooltip from "@mui/material/Tooltip";
 import ToggleButton from "@mui/material/ToggleButton";
 import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
-import { ThemeProvider } from "@mui/material/styles";
-import CustomTheme from "../components/CustomTheme";
 
 function ResultList({
   results,
@@ -39,46 +36,43 @@ function ResultList({
     "This term is referring to biological sex and ancestry or ethnicity as reported by individual studies.",
   ];
 
-  const subHeader = (
-    dataset,
+  const totalResults = (
     totalAlleleCount,
     totalAlleleNumber,
     totalAlleleCountHomozygous,
     totalAlleleCountHeterozygous,
     totalAlleleFrequency
-  ) => (
-    <tr>
-      <td className="beaconized dataset-col" colSpan="1">
-        {/* <b>{dataset}</b> */}
-        {/* <b style={{ marginLeft: "50%" }}>Total</b> */}
-        <b>Total</b>
-      </td>
-      {/* <td className="beaconized" colSpan="1">
-        <b>Total</b>
-      </td> */}
-      <td className="beaconized centered" colSpan="1">
-        <b>{totalAlleleCount}</b>
-      </td>
-      <td className="beaconized centered" colSpan="1">
-        <b>{totalAlleleNumber}</b>
-      </td>
-      <td className="beaconized centered" colSpan="1">
-        <b>
-          {totalAlleleCountHomozygous ||
-            totalAlleleCount - totalAlleleCountHeterozygous}
-        </b>
-      </td>
-      <td className="beaconized centered" colSpan="1">
-        <b>
-          {totalAlleleCountHeterozygous ||
-            totalAlleleCount - totalAlleleCountHomozygous}
-        </b>
-      </td>
-      <td className="beaconized centered" colSpan="1">
-        <b>{parseFloat(totalAlleleFrequency.toString().substring(0, 6))}</b>
-      </td>
-    </tr>
-  );
+  ) => {
+    const borderClass = toggle.length === 0 ? "no-border" : "beaconized";
+    return (
+      <tr>
+        <td className={`${borderClass} dataset-col`} colSpan="1">
+          <b>Total</b>
+        </td>
+        <td className={`${borderClass} centered`} colSpan="1">
+          <b>{totalAlleleCount}</b>
+        </td>
+        <td className={`${borderClass} centered`} colSpan="1">
+          <b>{totalAlleleNumber}</b>
+        </td>
+        <td className={`${borderClass} centered`} colSpan="1">
+          <b>
+            {totalAlleleCountHomozygous ||
+              totalAlleleCount - totalAlleleCountHeterozygous}
+          </b>
+        </td>
+        <td className={`${borderClass} centered`} colSpan="1">
+          <b>
+            {totalAlleleCountHeterozygous ||
+              totalAlleleCount - totalAlleleCountHomozygous}
+          </b>
+        </td>
+        <td className={`${borderClass} centered`} colSpan="1">
+          <b>{parseFloat(totalAlleleFrequency).toFixed(5)}</b>
+        </td>
+      </tr>
+    );
+  };
 
   const dataset = (dataset) => (
     <tr>
@@ -102,7 +96,6 @@ function ResultList({
     const backgroundColor = nonBackgroundColor ? "" : "sex-background";
     return (
       <tr>
-        {/* <td>Sex</td> */}
         <td className={`type-wrap ${backgroundColor}`}>{type}</td>
         <td className={`centered-header ${backgroundColor}`}>
           {alleleCount || 0}
@@ -118,7 +111,7 @@ function ResultList({
           {alleleCountHeterozygous || alleleCount - alleleCountHomozygous}
         </td>
         <td className={`centered-header ${backgroundColor}`}>
-          {parseFloat(alleleFrequency.toString().substring(0, 6)) ||
+          {parseFloat(alleleFrequency).toFixed(5) ||
             parseFloat((alleleCount / alleleNumber).toFixed(5))}
         </td>
       </tr>
@@ -126,12 +119,12 @@ function ResultList({
   };
 
   //    Finding the logic
-  // const gcatData = results.find((result) => result.id === "EGAD00001007774");
-  const gcatData = results.find((result) => result.resultsCount > 1);
-  // const genomAdData = results.find(
-  //   (result) => result.id === "gnomad_exome_v2.1.1"
-  // );
-  const genomAdData = results.find((result) => result.resultsCount === 1);
+  const gcatData = results.find((result) => result.id === "EGAD00001007774");
+  // const gcatData = results.find((result) => result.resultsCount > 1);
+  const genomAdData = results.find(
+    (result) => result.id === "gnomad_exome_v2.1.1"
+  );
+  // const genomAdData = results.find((result) => result.resultsCount === 1);
 
   //   General GCAT Logic
   const gcatTable = () => {
@@ -183,13 +176,23 @@ function ResultList({
               : // Render hard-coded row for "European" if no ancestry data
                 tableRow(
                   "European",
-                  female?.alleleCount + male?.alleleCount,
-                  female?.alleleNumber + male?.alleleNumber,
-                  female?.alleleCountHomozygous + male?.alleleCountHomozygous,
+                  female?.alleleCount + male?.alleleCount ||
+                    female?.alleleCount ||
+                    male?.alleleCount,
+                  female?.alleleNumber + male?.alleleNumber ||
+                    female?.alleleNumber ||
+                    male?.alleleNumber,
+                  female?.alleleCountHomozygous + male?.alleleCountHomozygous ||
+                    female?.alleleCountHomozygous ||
+                    male?.alleleCountHomozygous,
                   female?.alleleCountHeterozygous +
+                    male?.alleleCountHeterozygous ||
+                    female?.alleleCountHeterozygous ||
                     male?.alleleCountHeterozygous,
                   (female?.alleleCount + male?.alleleCount) /
-                    (female?.alleleNumber + male?.alleleNumber),
+                    (female?.alleleNumber + male?.alleleNumber) ||
+                    female?.alleleFrequency ||
+                    male?.alleleFrequency,
                   true
                 ))}
           {/* Female */}
@@ -215,24 +218,34 @@ function ResultList({
               male?.alleleFrequency
             )}
 
-          {subHeader(
-            gcatData.id,
+          {totalResults(
+            // gcatData.id,
             female && male
               ? female?.alleleCount + male?.alleleCount
-              : ancestriesSumAlleleCount,
+              : ancestriesSumAlleleCount ||
+                  female?.alleleCount ||
+                  male?.alleleCount,
             female && male
               ? female?.alleleNumber + male?.alleleNumber
-              : ancestriesSumAlleleNumber,
+              : ancestriesSumAlleleNumber ||
+                  female?.alleleNumber ||
+                  male?.alleleNumber,
             female && male
               ? female?.alleleCountHomozygous + male?.alleleCountHomozygous
-              : ancestriesSumAlleleCountHomozygous,
+              : ancestriesSumAlleleCountHomozygous ||
+                  female?.alleleCountHomozygous ||
+                  male?.alleleCountHomozygous,
             female && male
               ? female?.alleleCountHeterozygous + male?.alleleCountHeterozygous
-              : ancestriesSumAlleleCountHeterozygous,
+              : ancestriesSumAlleleCountHeterozygous ||
+                  female?.alleleCountHeterozygous ||
+                  male?.alleleCountHeterozygous,
             female && male
               ? (female?.alleleCount + male?.alleleCount) /
                   (female?.alleleNumber + male?.alleleNumber)
-              : ancestriesSumAlleleCount / ancestriesSumAlleleNumber
+              : ancestriesSumAlleleCount / ancestriesSumAlleleNumber ||
+                  female?.alleleCount / female?.alleleNumber ||
+                  male?.alleleCount / male?.alleleNumber
           )}
         </>
       );
@@ -293,13 +306,21 @@ function ResultList({
               males?.alleleCountHeterozygous,
               males?.alleleFrequency
             )}
-          {subHeader(
-            genomAdData.id,
-            total?.alleleCount,
-            total?.alleleNumber,
-            total?.alleleCountHomozygous,
-            total?.alleleCountHeterozygous,
-            total?.alleleFrequency
+          {totalResults(
+            // genomAdData.id,
+            total?.alleleCount || females?.alleleCount + males?.alleleCount,
+            total?.alleleNumber || females?.alleleNumber + males?.alleleNumber,
+            total?.alleleCountHomozygous ||
+              females?.alleleCountHomozygous + males?.alleleCountHomozygous,
+            total?.alleleCountHeterozygous ||
+              females?.alleleCountHeterozygous + males?.alleleCountHeterozygous,
+            total?.alleleFrequency ||
+              parseFloat(
+                (
+                  (females?.alleleCount + males?.alleleCount) /
+                  (females?.alleleNumber + males?.alleleNumber)
+                ).toFixed(5)
+              )
           )}
         </>
       );
