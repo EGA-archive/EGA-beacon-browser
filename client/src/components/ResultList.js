@@ -103,7 +103,7 @@ function ResultList({
         <td className={`centered-header ${backgroundColor}`}>
           {alleleNumber || 0}
         </td>
-        {/* TODO: to change - with the calculation  */}
+
         <td className={`centered-header ${backgroundColor}`}>
           {alleleCountHomozygous || alleleCount - alleleCountHeterozygous}
         </td>

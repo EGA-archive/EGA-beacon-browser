@@ -140,11 +140,11 @@ body {
   background: #3176b1;
   border: none;
   height: 77px;
-  width: 100vw;
-  min-width: 100%;
+  width: 100%;
   position: sticky;
   top: 0;
   z-index: 2;
+  overflow-x: hidden;
 }
 
 .navbar-container {
@@ -316,8 +316,8 @@ body {
     margin-left: 50px;
   }
 }
-
-@media (max-width: 767px) and (min-width: 606px) {
+/* Working here: */
+@media (max-width: 767px) and (min-width: 600px) {
   .search-row {
     display: flex;
     flex-direction: column;
@@ -385,7 +385,83 @@ body {
   }
 }
 
-@media (max-width: 605px) and (min-width: 425px) {
+/* TODO: Start working from here */
+@media (max-width: 575px) and (min-width: 425px) {
+  .search-row {
+    width: 600px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    margin-top: 60px;
+    height: auto;
+  }
+
+  .col-variant,
+  .col-refgenome,
+  .col-searchbutton {
+    width: 100%;
+  }
+
+  .col-searchbutton {
+    margin-left: 0;
+    margin-top: 0;
+  }
+
+  .searchbutton {
+    width: 580px;
+    text-align: center;
+  }
+
+  .button-text-icon {
+    margin-left: 40%;
+    justify-content: center;
+    align-items: center;
+  }
+  .beacon-title {
+    margin-right: 10%;
+  }
+
+  .beacon-title {
+    margin-top: 10px;
+    font-size: 18px;
+    margin-left: 10px;
+  }
+
+  .egalogo {
+    height: 35.2px;
+    margin-left: 6%;
+  }
+
+  .ref-genome-label {
+    white-space: nowrap; /* Prevents text wrapping */
+  }
+
+  .example-span {
+    margin-top: 60px !important;
+  }
+
+  .bnmembers-container {
+    display: block !important;
+  }
+
+  .egaembllogo {
+    width: 248px;
+    height: 71.97px;
+  }
+
+  .crglogo {
+    width: 164.49px;
+    height: 94.45px;
+  }
+
+  .footer {
+    padding-left: 5%;
+    white-space: nowrap;
+  }
+}
+
+@media (max-width: 605px) and (min-width: 576px) {
   .search-row {
     display: flex;
     flex-direction: column; /* Stack items vertically */
@@ -397,7 +473,7 @@ body {
   .col-variant,
   .col-refgenome,
   .col-searchbutton {
-    width: 100%; /* Take full width */
+    width: 100%;
   }
 
   .col-searchbutton {

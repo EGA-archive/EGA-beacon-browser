@@ -36,7 +36,7 @@ const customTheme = createTheme({
               width: "300px",
             },
           },
-          "@media (max-width: 767px) and (min-width: 606px)": {
+          "@media (max-width: 767px) and (min-width: 576px)": {
             "&.variant-autocomplete .MuiOutlinedInput-root": {
               width: "510px",
             },
@@ -44,12 +44,12 @@ const customTheme = createTheme({
               width: "510px",
             },
           },
-          "@media (max-width: 605px) and (min-width: 600px)": {
+          "@media (max-width: 575px) and (min-width: 425px)": {
             "&.variant-autocomplete .MuiOutlinedInput-root": {
-              width: "510px",
+              width: "580px",
             },
             "&.genome-autocomplete .MuiOutlinedInput-root": {
-              width: "510px",
+              width: "580px",
             },
           },
         },

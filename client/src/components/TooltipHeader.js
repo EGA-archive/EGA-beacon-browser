@@ -22,7 +22,9 @@ const CustomTooltip = styled(({ className, ...props }) => (
   "&.custom-margin-right": {
     [`& .MuiTooltip-tooltip`]: {
       // TODONOW: Need to place the tooltip better
-      marginRight: "46%",
+      transform: "translateY(100%)",
+      right: "25%",
+      transformOrigin: "center bottom",
     },
   },
 });

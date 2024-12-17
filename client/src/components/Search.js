@@ -32,7 +32,7 @@ function Search({ search, setVariant }) {
 
   return (
     <ThemeProvider theme={CustomTheme}>
-      <Container>
+      <Container className="preventover">
         <Formik
           initialValues={{
             variant: "",
