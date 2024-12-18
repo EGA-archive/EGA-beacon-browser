@@ -51,25 +51,29 @@ function ResultList({
           <b>Total {isGenomAd ? "*" : ""}</b>
         </td>
         <td className={`${borderClass} centered`} colSpan="1">
-          <b>{totalAlleleCount}</b>
+          <b>{totalAlleleCount || 0}</b>
         </td>
         <td className={`${borderClass} centered`} colSpan="1">
-          <b>{totalAlleleNumber}</b>
+          <b>{totalAlleleNumber || 0}</b>
         </td>
         <td className={`${borderClass} centered`} colSpan="1">
           <b>
             {totalAlleleCountHomozygous ||
-              totalAlleleCount - totalAlleleCountHeterozygous}
+              totalAlleleCount - totalAlleleCountHeterozygous ||
+              0}
           </b>
         </td>
         <td className={`${borderClass} centered`} colSpan="1">
           <b>
             {totalAlleleCountHeterozygous ||
-              totalAlleleCount - totalAlleleCountHomozygous}
+              totalAlleleCount - totalAlleleCountHomozygous ||
+              0}
           </b>
         </td>
         <td className={`${borderClass} centered`} colSpan="1">
-          <b>{parseFloat(totalAlleleFrequency).toFixed(5)}</b>
+          {totalAlleleFrequency
+            ? parseFloat(totalAlleleFrequency).toFixed(5)
+            : "0"}
         </td>
       </tr>
     );
@@ -98,12 +102,8 @@ function ResultList({
     return (
       <tr>
         <td className={`type-wrap ${backgroundColor}`}>{type}</td>
-        <td className={`centered-header ${backgroundColor}`}>
-          {alleleCount || 0}
-        </td>
-        <td className={`centered-header ${backgroundColor}`}>
-          {alleleNumber || 0}
-        </td>
+        <td className={`centered-header ${backgroundColor}`}>{alleleCount}</td>
+        <td className={`centered-header ${backgroundColor}`}>{alleleNumber}</td>
 
         <td className={`centered-header ${backgroundColor}`}>
           {alleleCountHomozygous || alleleCount - alleleCountHeterozygous}
@@ -120,13 +120,33 @@ function ResultList({
   };
 
   //    Finding the logic
-  const gcatData = results.find((result) => result.id === "EGAD00001007774");
-  // const gcatData = results.find((result) => result.resultsCount > 1);
-  // const gcatData = results.find((result) => result.resultsCount >= 1);
-  const genomAdData = results.find(
-    (result) => result.id === "gnomad_exome_v2.1.1"
+  // const gcatData = results.find((result) => result.id === "EGAD00001007774"); // New logic do or if resultsCount ===1 and array length equal to 1
+  const gcatData = results.find(
+    (result) =>
+      result.resultsCount > 1 || // gCat datasets typically have multiple populations
+      (result.resultsCount === 1 &&
+        result.results?.some((res) =>
+          res.frequencyInPopulations?.some(
+            (pop) => pop.frequencies?.length === 1 // Check for one frequency
+          )
+        ))
   );
-  // const genomAdData = results.find((result) => result.resultsCount === 1);
+  // const gcatData = results.find((result) => result.resultsCount >= 1);
+  // const genomAdData = results.find(
+  //   (result) => result.id === "gnomad_exome_v2.1.1"
+  // );
+  const genomAdData = results.find(
+    (result) =>
+      result.resultsCount === 1 &&
+      result.results?.some((res) =>
+        res.frequencyInPopulations?.some((pop) => pop.frequencies?.length > 1)
+      )
+  );
+
+  // console.log(
+  //   "Finding arrays length",
+  //   results?.[0].results?.[0]?.frequencyInPopulations?.[0]?.frequencies.length
+  // );
 
   //   General GCAT Logic
   const gcatTable = () => {
@@ -136,10 +156,17 @@ function ResultList({
           (result) =>
             result?.frequencyInPopulations?.[0]?.frequencies?.[0]
               ?.population === population
-        )?.frequencyInPopulations?.[0]?.frequencies?.[0];
+        )?.frequencyInPopulations?.[0]?.frequencies;
       };
 
       const female = getData("Female");
+      console.log("Test: Female Data", female);
+      console.log("Allele Count Female", female?.[0]?.alleleCount);
+
+      // console.log("gcatData", gcatData);
+      // console.log("population", gcatData.results);
+      // console.log(222, female?.alleleCount); // Debug the female allele count
+
       const male = getData("Male");
 
       const ancestries = gcatData.results.filter(
@@ -178,23 +205,24 @@ function ResultList({
               : // Render hard-coded row for "European" if no ancestry data
                 tableRow(
                   "European",
-                  female?.alleleCount + male?.alleleCount ||
-                    female?.alleleCount ||
-                    male?.alleleCount,
-                  female?.alleleNumber + male?.alleleNumber ||
-                    female?.alleleNumber ||
-                    male?.alleleNumber,
-                  female?.alleleCountHomozygous + male?.alleleCountHomozygous ||
-                    female?.alleleCountHomozygous ||
-                    male?.alleleCountHomozygous,
-                  female?.alleleCountHeterozygous +
-                    male?.alleleCountHeterozygous ||
-                    female?.alleleCountHeterozygous ||
-                    male?.alleleCountHeterozygous,
-                  (female?.alleleCount + male?.alleleCount) /
-                    (female?.alleleNumber + male?.alleleNumber) ||
-                    female?.alleleFrequency ||
-                    male?.alleleFrequency,
+                  female?.[0]?.alleleCount + male?.[0]?.alleleCount ||
+                    female?.[0]?.alleleCount ||
+                    male?.[0]?.alleleCount,
+                  female?.[0]?.alleleNumber + male?.[0]?.alleleNumber ||
+                    female?.[0]?.alleleNumber ||
+                    male?.[0]?.alleleNumber,
+                  female?.[0]?.alleleCountHomozygous +
+                    male?.[0]?.alleleCountHomozygous ||
+                    female?.[0]?.alleleCountHomozygous ||
+                    male?.[0]?.alleleCountHomozygous,
+                  female?.[0]?.alleleCountHeterozygous +
+                    male?.[0]?.alleleCountHeterozygous ||
+                    female?.[0]?.alleleCountHeterozygous ||
+                    male?.[0]?.alleleCountHeterozygous,
+                  (female?.[0]?.alleleCount + male?.[0]?.alleleCount) /
+                    (female?.[0]?.alleleNumber + male?.[0]?.alleleNumber) ||
+                    female?.[0]?.alleleFrequency ||
+                    male?.[0]?.alleleFrequency,
                   true
                 ))}
           {/* Female */}
@@ -202,52 +230,53 @@ function ResultList({
             toggle.includes("sex") &&
             tableRow(
               "XX",
-              female?.alleleCount,
-              female?.alleleNumber,
-              female?.alleleCountHomozygous,
-              female?.alleleCountHeterozygous,
-              female?.alleleFrequency
+              female?.[0]?.alleleCount,
+              female?.[0]?.alleleNumber,
+              female?.[0]?.alleleCountHomozygous,
+              female?.[0]?.alleleCountHeterozygous,
+              female?.[0]?.alleleFrequency
             )}
           {/* Male */}
           {male &&
             toggle.includes("sex") &&
             tableRow(
               "XY",
-              male?.alleleCount,
-              male?.alleleNumber,
-              male?.alleleCountHomozygous,
-              male?.alleleCountHeterozygous,
-              male?.alleleFrequency
+              male?.[0]?.alleleCount,
+              male?.[0]?.alleleNumber,
+              male?.[0]?.alleleCountHomozygous,
+              male?.[0]?.alleleCountHeterozygous,
+              male?.[0]?.alleleFrequency
             )}
-
           {totalResults(
             // gcatData.id,
             female && male
-              ? female?.alleleCount + male?.alleleCount
+              ? female?.[0]?.alleleCount + male?.[0]?.alleleCount
               : ancestriesSumAlleleCount ||
-                  female?.alleleCount ||
-                  male?.alleleCount,
+                  female?.[0]?.alleleCount ||
+                  male?.[0]?.alleleCount,
             female && male
-              ? female?.alleleNumber + male?.alleleNumber
+              ? female?.[0]?.alleleNumber + male?.[0]?.alleleNumber
               : ancestriesSumAlleleNumber ||
-                  female?.alleleNumber ||
-                  male?.alleleNumber,
+                  female?.[0]?.alleleNumber ||
+                  male?.[0]?.alleleNumber,
             female && male
-              ? female?.alleleCountHomozygous + male?.alleleCountHomozygous
+              ? female?.[0]?.alleleCountHomozygous +
+                  male?.[0]?.alleleCountHomozygous
               : ancestriesSumAlleleCountHomozygous ||
-                  female?.alleleCountHomozygous ||
-                  male?.alleleCountHomozygous,
+                  female?.[0]?.alleleCountHomozygous ||
+                  male?.[0]?.alleleCountHomozygous,
             female && male
-              ? female?.alleleCountHeterozygous + male?.alleleCountHeterozygous
+              ? female?.[0]?.alleleCountHeterozygous +
+                  male?.[0]?.alleleCountHeterozygous
               : ancestriesSumAlleleCountHeterozygous ||
-                  female?.alleleCountHeterozygous ||
-                  male?.alleleCountHeterozygous,
+                  female?.[0]?.alleleCountHeterozygous ||
+                  male?.[0]?.alleleCountHeterozygous,
             female && male
-              ? (female?.alleleCount + male?.alleleCount) /
-                  (female?.alleleNumber + male?.alleleNumber)
+              ? (female?.[0]?.alleleCount + male?.[0]?.alleleCount) /
+                  (female?.[0]?.alleleNumber + male?.[0]?.alleleNumber)
               : ancestriesSumAlleleCount / ancestriesSumAlleleNumber ||
-                  female?.alleleCount / female?.alleleNumber ||
-                  male?.alleleCount / male?.alleleNumber,
+                  female?.[0]?.alleleCount / female?.[0]?.alleleNumber ||
+                  male?.[0]?.alleleCount / male?.[0]?.alleleNumber,
             false
           )}
         </>
