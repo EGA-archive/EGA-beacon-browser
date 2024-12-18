@@ -41,13 +41,14 @@ function ResultList({
     totalAlleleNumber,
     totalAlleleCountHomozygous,
     totalAlleleCountHeterozygous,
-    totalAlleleFrequency
+    totalAlleleFrequency,
+    isGenomAd
   ) => {
     const borderClass = toggle.length === 0 ? "no-border" : "beaconized";
     return (
       <tr>
         <td className={`${borderClass} dataset-col`} colSpan="1">
-          <b>Total</b>
+          <b>Total {isGenomAd ? "*" : ""}</b>
         </td>
         <td className={`${borderClass} centered`} colSpan="1">
           <b>{totalAlleleCount}</b>
@@ -121,6 +122,7 @@ function ResultList({
   //    Finding the logic
   const gcatData = results.find((result) => result.id === "EGAD00001007774");
   // const gcatData = results.find((result) => result.resultsCount > 1);
+  // const gcatData = results.find((result) => result.resultsCount >= 1);
   const genomAdData = results.find(
     (result) => result.id === "gnomad_exome_v2.1.1"
   );
@@ -245,7 +247,8 @@ function ResultList({
                   (female?.alleleNumber + male?.alleleNumber)
               : ancestriesSumAlleleCount / ancestriesSumAlleleNumber ||
                   female?.alleleCount / female?.alleleNumber ||
-                  male?.alleleCount / male?.alleleNumber
+                  male?.alleleCount / male?.alleleNumber,
+            false
           )}
         </>
       );
@@ -320,7 +323,8 @@ function ResultList({
                   (females?.alleleCount + males?.alleleCount) /
                   (females?.alleleNumber + males?.alleleNumber)
                 ).toFixed(5)
-              )
+              ),
+            true
           )}
         </>
       );
@@ -481,6 +485,13 @@ function ResultList({
               {genomAdTable()}
             </table>
           </div>
+          {genomAdData && (
+            <div className="disclaimer">
+              * In the gnomAD dataset, ancestry totals may not match the "Total"
+              because hierarchical subpopulations (e.g., Southern European under
+              non-Finnish European) are included.
+            </div>
+          )}
         </Box>
       )}
       {!dataExists && queriedVariant && (

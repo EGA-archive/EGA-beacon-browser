@@ -689,11 +689,12 @@ body {
 
 .table-container {
   overflow-x: auto;
+  height: auto;
 }
 
 .data-table {
   width: 100%;
-  margin-bottom: 32px;
+  margin-bottom: 20px;
 }
 
 .dataset-column {
@@ -726,6 +727,13 @@ body {
 }
 .underlined {
   text-decoration: underline;
+}
+
+.disclaimer {
+  font-style: italic;
+  font-size: 12px;
+  text-align: right;
+  margin-bottom: 2%;
 }
 
 .mail-icon {
