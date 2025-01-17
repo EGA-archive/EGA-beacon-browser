@@ -19,11 +19,9 @@ const SignupSchema = Yup.object().shape({
   genome: Yup.string().required("Required"),
 });
 
-//Dropdown Menu for refGenome
+// Dropdown Menu for Reference Genome
 const refGenome = [{ label: "GRCh37" }, { label: "GRCh38" }];
 
-// values.variant saves the variant written in the inputfield.
-// search comes from App.js - it is the big api call
 function Search({ search, setVariant }) {
   const onSubmit = async (values, actions) => {
     setVariant(values.variant);
@@ -52,20 +50,42 @@ function Search({ search, setVariant }) {
             const handlePaste = (event) => {
               event.preventDefault();
               const pastedData = event.clipboardData.getData("text");
+
+              // Apply text cleanup rules
               const cleanedData = pastedData
-                .trim() // Remove leading/trailing whitespace
+                .trim()
                 .replace(/\./g, "") // Remove all periods
                 .replace(/\s+/g, " ") // Replace multiple spaces with a single space
                 .replace(/\t/g, "-") // Replace tabs with a single hyphen
                 .replace(/\s/g, "-") // Replace remaining spaces with a single hyphen
                 .replace(/-+/g, "-"); // Replace multiple consecutive hyphens with a single hyphen
-              // .replace(/\s+/g, "-");
-              setFieldValue("variant", cleanedData);
+
+              // Get input field selection range
+              const inputElement = event.target;
+              const start = inputElement.selectionStart;
+              const end = inputElement.selectionEnd;
+
+              if (start !== null && end !== null) {
+                // Preserve surrounding text and insert the cleaned pasted data
+                const newValue =
+                  values.variant.substring(0, start) +
+                  cleanedData +
+                  values.variant.substring(end);
+
+                setFieldValue("variant", newValue);
+
+                // Move cursor to the end of the pasted text
+                setTimeout(() => {
+                  inputElement.setSelectionRange(
+                    start + cleanedData.length,
+                    start + cleanedData.length
+                  );
+                }, 0);
+              }
             };
 
             return (
               <Form noValidate onSubmit={handleSubmit}>
-                {/* <Form.Group controlId="country"> */}
                 <Form.Group>
                   <Row className="search-row">
                     <Col className="col-variant">
@@ -89,15 +109,16 @@ function Search({ search, setVariant }) {
                         </Tooltip>
                       </Form.Label>
 
-                      {/* Varaint Field */}
-
+                      {/* Variant Field */}
                       <Autocomplete
                         className="variant-autocomplete"
                         freeSolo
                         options={[]}
                         value={values.variant}
                         onInputChange={(event, newValue) => {
-                          setFieldValue("variant", newValue);
+                          if (event && event.type !== "paste") {
+                            setFieldValue("variant", newValue);
+                          }
                         }}
                         renderInput={(params) => (
                           <TextField
@@ -137,9 +158,6 @@ function Search({ search, setVariant }) {
                         disablePortal
                         options={refGenome}
                         name="genome"
-                        // className="input-field genome-field shadow-none"
-                        // onChange={handleChange}
-                        // value={values.genome}
                         value={refGenome.find(
                           (option) => option.label === values.genome
                         )}
@@ -149,18 +167,16 @@ function Search({ search, setVariant }) {
                             newValue ? newValue.label : ""
                           );
                         }}
-                        // className="input-field genome-field shadow-none"
                         renderInput={(params) => (
                           <TextField
                             {...params}
                             size="small"
-                            // label="Ref Genome"
                             error={Boolean(errors.genome && touched.genome)}
                             helperText={
                               errors.genome && touched.genome
                                 ? errors.genome
                                 : ""
-                            } // Show error message
+                            }
                           />
                         )}
                       />
@@ -181,11 +197,8 @@ function Search({ search, setVariant }) {
                     </Col>
                   </Row>
                 </Form.Group>
-                <Form.Group as={Row}></Form.Group>
-                {/* Example */}
-                {/* {touched.variant && errors.variant && (
-                <div className="errors">{errors.variant}</div>
-              )} */}
+
+                {/* Example Section */}
                 <div className="example-span">
                   <span>Example: </span>
                   <a
