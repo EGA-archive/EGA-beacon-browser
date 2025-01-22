@@ -108,7 +108,7 @@ input:-webkit-autofill:active {
   margin-top: 50px;
 }
 
-.footer {
+/* .footer {
   width: 100vw;
   height: Fixed (49px) px;
   padding: 12px 143px 12px 143px;
@@ -120,6 +120,20 @@ input:-webkit-autofill:active {
   position: fixed;
   z-index: 2;
   bottom: 0;
+} */
+
+.footer {
+  background: #e2e2e2;
+  width: 100vw;
+  height: 49px !important;
+  padding: 10px 0px 0px 0px;
+  z-index: 2;
+}
+
+.custom-footer {
+  background: #e2e2e2;
+  border: none;
+  height: 49px !important;
 }
 
 .footer-text {
@@ -143,7 +157,8 @@ body {
   border: none;
   height: 77px;
   width: 100%;
-  position: sticky;
+  /* To comment with Sara */
+  /* position: sticky; */
   top: 0;
   z-index: 2;
   overflow-x: hidden;
@@ -153,6 +168,10 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  padding: 0 10px;
+}
+
+.container-footer {
   padding: 0 10px;
 }
 
@@ -382,9 +401,9 @@ body {
     height: 94.45px;
   }
 
-  .footer {
+  /* .footer {
     padding-left: 5%;
-  }
+  } */
 }
 
 /* TODO: Start working from here */
@@ -457,7 +476,7 @@ body {
   }
 
   .footer {
-    padding-left: 5%;
+    /* padding-left: 5%; */
     white-space: nowrap;
   }
 }
@@ -526,7 +545,7 @@ body {
   }
 
   .footer {
-    padding-left: 5%;
+    /* padding-left: 5%; */
     white-space: nowrap;
   }
 }
@@ -730,9 +749,16 @@ body {
   text-decoration: underline;
 }
 
+.ega-link {
+  color: black;
+}
+
+.ega-link:hover {
+  color: #3176b1;
+}
+
 .disclaimer {
   font-style: italic;
-  height: 100px;
   font-size: 12px;
   text-align: right;
   margin-bottom: 4%;

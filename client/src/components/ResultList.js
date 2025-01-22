@@ -83,9 +83,35 @@ function ResultList({
     let displayDatasetName = dataset;
 
     if (dataset === "EGAD00001007774") {
-      displayDatasetName = "GCAT (EGAD00001007774)";
+      displayDatasetName = (
+        <>
+          GCAT (
+          <a
+            href={`https://ega-archive.org/datasets/${dataset}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="ega-link"
+          >
+            {dataset}
+          </a>
+          )
+        </>
+      );
     } else if (dataset === "gnomad_exome_v2.1.1") {
       displayDatasetName = "gnomAD GRCh37 (v2.1.1 exomes)";
+    } else if (dataset.startsWith("EGAD")) {
+      displayDatasetName = (
+        <>
+          <a
+            href={`https://ega-archive.org/datasets/${dataset}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="ega-link"
+          >
+            {dataset}
+          </a>
+        </>
+      );
     }
 
     return (
