@@ -391,7 +391,6 @@ body {
 @media (max-width: 575px) and (min-width: 425px) {
   .search-row {
     width: 600px;
-
     display: flex;
     flex-direction: column;
     align-items: flex-start;

@@ -1,5 +1,4 @@
 import React from "react";
-import { Container } from "react-bootstrap";
 
 function NetworkMembers() {
   return (
@@ -10,26 +9,45 @@ function NetworkMembers() {
       <div className="bnmembers-container">
         <div className="bnmembers-grid">
           <div className="cell">
-            <img
-              src="./egalogocolor.png"
-              alt="EGA Logo"
-              className="cell-image egaembllogo"
-            />
+            <a
+              href="https://ega-archive.org/"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <img
+                src="./egalogocolor.png"
+                alt="EGA Logo"
+                className="cell-image egaembllogo"
+              />
+            </a>
           </div>
 
           <div className="cell">
-            <img
-              src="./crglogo.png"
-              alt="CRG Logo"
-              className="cell-image crglogo"
-            />
+            <a
+              href="https://www.crg.eu/"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <img
+                src="./crglogo.png"
+                alt="CRG Logo"
+                className="cell-image crglogo"
+              />
+            </a>
           </div>
+
           <div className="cell">
-            <img
-              src="./embllogo.png"
-              alt="EMBL Logo"
-              className="cell-image egaembllogo"
-            />
+            <a
+              href="https://www.ebi.ac.uk/"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <img
+                src="./embllogo.png"
+                alt="EMBL Logo"
+                className="cell-image egaembllogo"
+              />
+            </a>
           </div>
         </div>
       </div>
