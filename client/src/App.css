@@ -732,9 +732,10 @@ body {
 
 .disclaimer {
   font-style: italic;
+  height: 100px;
   font-size: 12px;
   text-align: right;
-  margin-bottom: 2%;
+  margin-bottom: 4%;
 }
 
 .mail-icon {

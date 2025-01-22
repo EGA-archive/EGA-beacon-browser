@@ -21,9 +21,8 @@ const CustomTooltip = styled(({ className, ...props }) => (
   },
   "&.custom-margin-right": {
     [`& .MuiTooltip-tooltip`]: {
-      // TODONOW: Need to place the tooltip better
       transform: "translateY(100%)",
-      right: "25%",
+      // right: "15%",
       transformOrigin: "center bottom",
     },
   },

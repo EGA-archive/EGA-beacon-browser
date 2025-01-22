@@ -8,6 +8,7 @@ import { useAuth } from "oidc-react";
 import Footer from "./components/Footer.js";
 import NetworkMembers from "./components/NetworkMembers.js";
 import CustomNavbar from "./components/CustomNavbar.js";
+import config from "./config";
 
 function App() {
   const [results, setResults] = useState([]);
@@ -35,9 +36,7 @@ function App() {
       let metaresponse;
       metaresponse = await axios({
         method: "get",
-        url: `https://af-ega-beacon-demo.ega-archive.org/api`,
-        // url: `https://beacon-network-backend-test.ega-archive.org/beacon-network/v2.0.0/`,
-        // url: `https://af-gdi-bn-api-demo.ega-archive.org/beacon-network/v2.0.0/`,
+        url: `${config.API_URL}`,
         headers: {
           "Content-Type": "application/json",
         },
@@ -78,9 +77,7 @@ function App() {
         // console.log(auth)
         response = await axios({
           method: "post",
-          url: `https://af-ega-beacon-demo.ega-archive.org/api/g_variants`,
-          // url: `https://beacon-network-backend-test.ega-archive.org/beacon-network/v2.0.0/g_variants`,
-          // url: `https://af-gdi-bn-api-demo.ega-archive.org/beacon-network/v2.0.0/g_variants`,
+          url: `${config.API_URL}/g_variants`,
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${auth.userData.access_token}`,
@@ -90,10 +87,7 @@ function App() {
       } else {
         response = await axios({
           method: "get",
-          url: `https://af-ega-beacon-demo.ega-archive.org/api/g_variants?start=${arr[1]}&alternateBases=${arr[3]}&referenceBases=${arr[2]}&referenceName=${arr[0]}&assemblyId=${genome}`,
-          // url: `https://af-ega-beacon-demo.ega-archive.org/api/g_variants?start=${arr[1]}&alternateBases=${arr[3]}&referenceBases=${arr[2]}&referenceName=${arr[0]}&assemblyId=${genome}`,
-          // url: `https://beacon-network-backend-test.ega-archive.org/beacon-network/v2.0.0/g_variants?start=${arr[1]}&alternateBases=${arr[3]}&referenceBases=${arr[2]}&referenceName=${arr[0]}&limit=1&assemblyId=${genome}`,
-          // url: `https://af-gdi-bn-api-demo.ega-archive.org/beacon-network/v2.0.0/g_variants?start=${arr[1]}&alternateBases=${arr[3]}&referenceBases=${arr[2]}&referenceName=${arr[0]}&limit=1&assemblyId=GRCh37`,
+          url: `${config.API_URL}/g_variants?start=${arr[1]}&alternateBases=${arr[3]}&referenceBases=${arr[2]}&referenceName=${arr[0]}&assemblyId=${genome}`,
           headers: {
             "Content-Type": "application/json",
           },

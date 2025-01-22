@@ -79,15 +79,25 @@ function ResultList({
     );
   };
 
-  const dataset = (dataset) => (
-    <tr>
-      <td className="dataset dataset-col" colSpan="6">
-        <div>
-          Dataset: <b> {dataset}</b>
-        </div>
-      </td>
-    </tr>
-  );
+  const dataset = (dataset) => {
+    let displayDatasetName = dataset;
+
+    if (dataset === "EGAD00001007774") {
+      displayDatasetName = "GCAT (EGAD00001007774)";
+    } else if (dataset === "gnomad_exome_v2.1.1") {
+      displayDatasetName = "gnomAD GRCh37 (v2.1.1 exomes)";
+    }
+
+    return (
+      <tr>
+        <td className="dataset dataset-col" colSpan="6">
+          <div>
+            Dataset: <b>{displayDatasetName}</b>
+          </div>
+        </td>
+      </tr>
+    );
+  };
 
   const tableRow = (
     type,
