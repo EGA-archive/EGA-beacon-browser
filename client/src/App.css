@@ -11,10 +11,6 @@
   border: 1px solid #70154c4d;
 }
 
-.euroflag {
-  height: 30px;
-}
-
 .count {
   position: absolute;
   right: 50px;
@@ -108,19 +104,17 @@ input:-webkit-autofill:active {
   margin-top: 50px;
 }
 
-/* .footer {
-  width: 100vw;
-  height: Fixed (49px) px;
-  padding: 12px 143px 12px 143px;
-  padding-left: 5%;
-  min-width: 100%;
-  gap: 174px;
-  opacity: 0px;
-  background: #e2e2e2;
-  position: fixed;
-  z-index: 2;
-  bottom: 0;
-} */
+.lsaai {
+  font-size: 12px;
+  margin-bottom: 4px;
+}
+
+body {
+  height: 100vh;
+  min-height: 100%;
+}
+
+/* Footer CSS */
 
 .footer {
   background: #e2e2e2;
@@ -140,14 +134,8 @@ input:-webkit-autofill:active {
   font-size: 12px;
 }
 
-.lsaai {
-  font-size: 12px;
-  margin-bottom: 4px;
-}
-
-body {
-  height: 100vh;
-  min-height: 100%;
+.container-footer {
+  padding: 0 10px;
 }
 
 /* Navbar CSS */
@@ -170,10 +158,6 @@ body {
   padding: 0 10px;
   background-color: deeppink;
 } */
-
-.container-footer {
-  padding: 0 10px;
-}
 
 .egalogo {
   height: 45.2px;
