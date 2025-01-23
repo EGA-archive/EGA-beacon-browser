@@ -5,7 +5,7 @@ import Container from "react-bootstrap/Container";
 const CustomNavbar = () => {
   return (
     <Navbar className="custom-navbar">
-      <Container className="navbar-container">
+      <Container>
         <a
           className="egalogo"
           href="https://ega-archive.org/about/ega/"
