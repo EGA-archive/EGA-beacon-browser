@@ -3,6 +3,7 @@ import Tooltip from "@mui/material/Tooltip";
 import { Formik } from "formik";
 import { Col, Container, Form, Row } from "react-bootstrap";
 import * as Yup from "yup";
+import Grid from "@mui/material/Grid";
 import { styled } from "@mui/material/styles";
 import TextField from "@mui/material/TextField";
 import Autocomplete from "@mui/material/Autocomplete";
@@ -40,12 +41,12 @@ function Search({ search, setVariant }) {
           onSubmit={onSubmit}
         >
           {({
-            handleChange,
             handleSubmit,
             setFieldValue,
             values,
             errors,
             touched,
+            validateField,
           }) => {
             const handlePaste = (event) => {
               event.preventDefault();
@@ -199,14 +200,44 @@ function Search({ search, setVariant }) {
                 </Form.Group>
 
                 {/* Example Section */}
-                <div className="example-span">
-                  <span>Example: </span>
-                  <a
-                    type="reset"
-                    onClick={() => setFieldValue("variant", "21-19653341-AT-A")}
-                  >
-                    <u className="example">21-19653341-AT-A</u>
-                  </a>
+                <div className="mt-3">
+                  <span className="mb-4">Examples:</span>
+                  <br />
+                  <span className="d-block mb-3 mt-2">
+                    <a
+                      type="reset"
+                      onClick={async () => {
+                        await setFieldValue("variant", "21-19653341-AT-A");
+                        await setFieldValue("genome", "GRCh37");
+                        await Promise.all([
+                          validateField("variant"),
+                          validateField("genome"),
+                        ]);
+                      }}
+                    >
+                      <u className="example">
+                        GRCh37 <b>|</b> 21-19653341-AT-A
+                      </u>
+                    </a>
+                  </span>
+
+                  <span className="d-block">
+                    <a
+                      type="reset"
+                      onClick={async () => {
+                        await setFieldValue("variant", "21-18281024-AT-A");
+                        await setFieldValue("genome", "GRCh38");
+                        await Promise.all([
+                          validateField("variant"),
+                          validateField("genome"),
+                        ]);
+                      }}
+                    >
+                      <u className="example">
+                        GRCh38 <b>|</b> 21-18281024-AT-A
+                      </u>
+                    </a>
+                  </span>
                 </div>
               </Form>
             );
