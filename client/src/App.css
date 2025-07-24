@@ -1,3 +1,10 @@
+/* Move this the responsivness CSS sheet */
+@media (max-width: 575px) and (min-width: 300px) {
+  .institution-title {
+    margin-left: 9%;
+  }
+}
+
 .App {
   text-align: center;
 }
@@ -36,6 +43,7 @@ input:-webkit-autofill:active {
   flex-direction: column;
   flex-grow: 1;
   justify-content: space-between;
+  max-width: 100%;
 }
 
 #root {
@@ -149,15 +157,12 @@ body {
   top: 0;
   z-index: 2;
   overflow-x: hidden;
+  overflow-y: hidden;
 }
 
-/* .navbar-container {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 10px;
-  background-color: deeppink;
-} */
+.custom-navbar * {
+  overflow-x: hidden;
+}
 
 .egalogo {
   height: 45.2px;
@@ -373,7 +378,7 @@ body {
   }
 
   .bnmembers-container {
-    display: block !important;
+    display: block;
   }
 
   .egaembllogo {
@@ -391,40 +396,62 @@ body {
   } */
 }
 
+@media (max-width: 735px) and (min-width: 576px) {
+  .bnmembers-grid {
+    flex-wrap: wrap;
+    gap: 24px;
+    justify-content: center;
+    margin-bottom: 30px;
+  }
+}
+
+@media (max-width: 767px) and (min-width: 736px) {
+  .bnmembers-grid {
+    margin-bottom: 30px;
+  }
+}
+
 /* TODO: Start working from here */
-@media (max-width: 575px) and (min-width: 425px) {
+/* @media (max-width: 575px) and (min-width: 425px) { */
+@media (max-width: 575px) and (min-width: 393px) {
   .search-row {
-    width: 600px;
     display: flex;
     flex-direction: column;
     align-items: flex-start;
     margin-top: 60px;
     height: auto;
+    align-items: start;
+  }
+
+  .variant-autocomplete .MuiInputBase-root,
+  .genome-autocomplete .MuiInputBase-root {
+    background-color: palegoldenrod;
   }
 
   .col-variant,
   .col-refgenome,
   .col-searchbutton {
     width: 100%;
-  }
-
-  .col-searchbutton {
-    margin-left: 0;
-    margin-top: 0;
+    background-color: palegoldenrod;
+    padding: 0 !important;
+    margin: 0 !important;
   }
 
   .searchbutton {
-    width: 580px;
+    width: 100%;
     text-align: center;
   }
 
+  /* Done */
   .button-text-icon {
-    margin-left: 40%;
+    display: flex;
     justify-content: center;
     align-items: center;
   }
+
+  /* To do */
   .beacon-title {
-    margin-right: 10%;
+    margin-right: 40%;
   }
 
   .beacon-title {
@@ -435,19 +462,17 @@ body {
 
   .egalogo {
     height: 35.2px;
-    margin-left: 6%;
   }
 
   .ref-genome-label {
-    white-space: nowrap; /* Prevents text wrapping */
+    white-space: nowrap;
   }
 
-  .example-span {
-    margin-top: 60px !important;
-  }
-
-  .bnmembers-container {
-    display: block !important;
+  .bnmembers-grid {
+    flex-wrap: wrap;
+    gap: 24px;
+    justify-content: center;
+    margin-bottom: 30px;
   }
 
   .egaembllogo {
@@ -516,7 +541,7 @@ body {
   }
 
   .bnmembers-container {
-    display: block !important;
+    display: block;
   }
 
   .egaembllogo {
@@ -1021,4 +1046,68 @@ tbody tr:hover {
   margin: auto auto;
   position: absolute;
   text-align: center;
+}
+
+.miao {
+  background-color: rgb(126, 37, 52);
+}
+
+/* Here */
+/* xs: <600px */
+/* .responsive-background {
+  background-color: pink;
+  max-width: 100%;
+} */
+
+@media (max-width: 575px) and (min-width: 400px) {
+  .responsive-background {
+    background-color: rgb(126, 37, 52);
+    max-width: 80%;
+  }
+}
+
+/* sm: ≥600px */
+@media (min-width: 600px) {
+  .responsive-background {
+    background-color: lightblue;
+  }
+}
+
+@media (min-width: 576px) {
+  .container-sm {
+    max-width: 540px;
+  }
+}
+/* 
+@media (min-width: 575px) {
+  .container-xs {
+    max-width: 500px;
+  }
+} */
+
+/* md: ≥900px */
+@media (min-width: 900px) {
+  .responsive-background {
+    background-color: lightgreen;
+  }
+}
+
+/* lg: ≥1200px */
+@media (min-width: 1200px) {
+  .responsive-background {
+    background-color: lightcoral;
+  }
+}
+
+/* xl: ≥1536px */
+@media (min-width: 1536px) {
+  .responsive-background {
+    background-color: lavender;
+  }
+}
+
+@media (max-width: 767px) {
+  .responsive-background-example {
+    margin-top: 60px !important;
+  }
 }

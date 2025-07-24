@@ -1,5 +1,5 @@
 import { createTheme } from "@mui/material/styles";
-import { width } from "@mui/system";
+import { display, maxWidth, width } from "@mui/system";
 
 const customTheme = createTheme({
   components: {
@@ -44,12 +44,21 @@ const customTheme = createTheme({
               width: "510px",
             },
           },
-          "@media (max-width: 575px) and (min-width: 425px)": {
+          // TODO fix the width
+          "@media (max-width: 575px) and (min-width: 450px)": {
             "&.variant-autocomplete .MuiOutlinedInput-root": {
-              width: "580px",
+              width: "100%",
             },
             "&.genome-autocomplete .MuiOutlinedInput-root": {
-              width: "580px",
+              width: "100%",
+            },
+          },
+          "@media (max-width: 449px) and (min-width: 430px)": {
+            "&.variant-autocomplete .MuiOutlinedInput-root": {
+              width: "400px",
+            },
+            "&.genome-autocomplete .MuiOutlinedInput-root": {
+              width: "400px",
             },
           },
         },

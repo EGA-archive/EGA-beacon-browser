@@ -3,7 +3,7 @@ import React from "react";
 function NetworkMembers() {
   return (
     <div>
-      <p className="lead mt-5 mb-4">
+      <p className="lead mt-5 mb-4 institution-title">
         <b>Institutions involved</b>
       </p>
       <div className="bnmembers-container">

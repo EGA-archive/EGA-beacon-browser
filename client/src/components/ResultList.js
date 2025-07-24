@@ -5,13 +5,7 @@ import TooltipHeader from "./TooltipHeader.js";
 import ToggleButton from "@mui/material/ToggleButton";
 import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
 
-function ResultList({
-  results,
-  metaresults,
-  finalstart,
-  queriedVariant,
-  error,
-}) {
+function ResultList({ results, queriedVariant, error }) {
   const [toggle, setToggle] = useState(["ancestry", "sex"]);
   const [dataExists, setDataExists] = useState(false);
 
@@ -179,6 +173,21 @@ function ResultList({
       )
   );
 
+  const isGnomadJointV41 = genomAdData?.id === "gnomad_joint_v4.1";
+
+  const allFrequencies =
+    genomAdData?.results?.[0]?.frequencyInPopulations?.[0]?.frequencies || [];
+
+  const africanPop = allFrequencies.find(
+    (f) => f.population === "African/African-American"
+  );
+
+  const otherPops = allFrequencies.filter(
+    (f) =>
+      f.population !== "African/African-American" &&
+      !["Females", "Males", "Total"].includes(f.population)
+  );
+
   // console.log(
   //   "Finding arrays length",
   //   results?.[0].results?.[0]?.frequencyInPopulations?.[0]?.frequencies.length
@@ -338,6 +347,34 @@ function ResultList({
           (frequency) =>
             !["Females", "Males", "Total"].includes(frequency?.population)
         );
+
+      // Adjust African/African-American if gnomad_joint_v4.1
+      const africanPop = ancestries.find(
+        (f) => f.population === "African/African-American"
+      );
+
+      const otherPops = ancestries.filter(
+        (f) =>
+          f.population !== "African/African-American" &&
+          !["Females", "Males", "Total"].includes(f.population)
+      );
+
+      if (isGnomadJointV41 && africanPop && total) {
+        const sumOtherHomo = otherPops.reduce(
+          (acc, f) => acc + (f.alleleCountHomozygous || 0),
+          0
+        );
+        const sumOtherHetero = otherPops.reduce(
+          (acc, f) => acc + (f.alleleCountHeterozygous || 0),
+          0
+        );
+
+        africanPop.alleleCountHomozygous =
+          (total.alleleCountHomozygous || 0) - sumOtherHomo;
+
+        africanPop.alleleCountHeterozygous =
+          (total.alleleCountHeterozygous || 0) - sumOtherHetero;
+      }
 
       return (
         <>

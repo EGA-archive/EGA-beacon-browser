@@ -3,8 +3,6 @@ import Tooltip from "@mui/material/Tooltip";
 import { Formik } from "formik";
 import { Col, Container, Form, Row } from "react-bootstrap";
 import * as Yup from "yup";
-import Grid from "@mui/material/Grid";
-import { styled } from "@mui/material/styles";
 import TextField from "@mui/material/TextField";
 import Autocomplete from "@mui/material/Autocomplete";
 import { ThemeProvider } from "@mui/material/styles";
@@ -31,7 +29,7 @@ function Search({ search, setVariant }) {
 
   return (
     <ThemeProvider theme={CustomTheme}>
-      <Container className="preventover">
+      <Container className="responsive-background">
         <Formik
           initialValues={{
             variant: "",
@@ -113,6 +111,7 @@ function Search({ search, setVariant }) {
                       {/* Variant Field */}
                       <Autocomplete
                         className="variant-autocomplete"
+                        fullWidth
                         freeSolo
                         options={[]}
                         value={values.variant}
@@ -123,6 +122,7 @@ function Search({ search, setVariant }) {
                         }}
                         renderInput={(params) => (
                           <TextField
+                            fullWidth
                             {...params}
                             placeholder="Insert your variant"
                             size="small"
@@ -200,7 +200,7 @@ function Search({ search, setVariant }) {
                 </Form.Group>
 
                 {/* Example Section */}
-                <div className="mt-3">
+                <div className="mt-3 responsive-background-example">
                   <span className="mb-4">Examples:</span>
                   <br />
                   <span className="d-block mb-3 mt-2">

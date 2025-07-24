@@ -104,7 +104,8 @@ function App() {
 
   return (
     <div className="bigparent">
-      <div className="parentwrapper">
+      {/* <div className="parentwrapper"> */}
+      <div>
         <CustomNavbar />
         <Container>
           <Row>
