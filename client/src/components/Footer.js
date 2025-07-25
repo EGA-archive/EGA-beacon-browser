@@ -6,9 +6,7 @@ function Footer() {
   return (
     <Navbar className="custom-footer">
       <Container className="container-footer">
-        <footer className="footer">
-          <span className="footer-text">@Copyright 2024. EGA CONSORTIUM</span>
-        </footer>
+        <span className="footer-text">@Copyright 2024. EGA CONSORTIUM</span>
       </Container>
     </Navbar>
   );

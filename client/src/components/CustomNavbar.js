@@ -7,7 +7,6 @@ const CustomNavbar = () => {
     <Navbar className="custom-navbar">
       <Container>
         <a
-          className="egalogo"
           href="https://ega-archive.org/about/ega/"
           target="_blank"
           rel="noopener noreferrer"

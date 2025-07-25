@@ -88,7 +88,7 @@ function Search({ search, setVariant }) {
                 <Form.Group>
                   <Row className="search-row">
                     <Col className="col-variant">
-                      <Form.Label>
+                      <Form.Label className="ref-genome-label">
                         <b className="variant-query">Variant query</b>
                         <Tooltip
                           title={

@@ -45,15 +45,7 @@ const customTheme = createTheme({
             },
           },
           // TODO fix the width
-          "@media (max-width: 575px) and (min-width: 450px)": {
-            "&.variant-autocomplete .MuiOutlinedInput-root": {
-              width: "100%",
-            },
-            "&.genome-autocomplete .MuiOutlinedInput-root": {
-              width: "100%",
-            },
-          },
-          "@media (max-width: 449px) and (min-width: 430px)": {
+          "@media (max-width: 575px) and (min-width: 500px)": {
             "&.variant-autocomplete .MuiOutlinedInput-root": {
               width: "400px",
             },
@@ -61,6 +53,54 @@ const customTheme = createTheme({
               width: "400px",
             },
           },
+          "@media (max-width: 499px) and (min-width: 431px)": {
+            "&.variant-autocomplete .MuiOutlinedInput-root": {
+              width: "370px",
+            },
+            "&.genome-autocomplete .MuiOutlinedInput-root": {
+              width: "370px",
+            },
+          },
+          "@media (max-width: 430px) and (min-width: 400px)": {
+            "&.variant-autocomplete .MuiOutlinedInput-root": {
+              width: "340px",
+            },
+            "&.genome-autocomplete .MuiOutlinedInput-root": {
+              width: "340px",
+            },
+          },
+          "@media (max-width: 399px) and (min-width: 321px)": {
+            "&.variant-autocomplete .MuiOutlinedInput-root": {
+              width: "300px",
+            },
+            "&.genome-autocomplete .MuiOutlinedInput-root": {
+              width: "300px",
+            },
+          },
+          "@media (max-width: 320px) and (min-width: 300px)": {
+            "&.variant-autocomplete .MuiOutlinedInput-root": {
+              width: "270px",
+            },
+            "&.genome-autocomplete .MuiOutlinedInput-root": {
+              width: "270px",
+            },
+          },
+          "@media (max-width: 299px) and (min-width: 100px)": {
+            "&.variant-autocomplete .MuiOutlinedInput-root": {
+              width: "250px",
+            },
+            "&.genome-autocomplete .MuiOutlinedInput-root": {
+              width: "250px",
+            },
+          },
+          // "@media (max-width: 449px) and (min-width: 430px)": {
+          //   "&.variant-autocomplete .MuiOutlinedInput-root": {
+          //     width: "400px",
+          //   },
+          //   "&.genome-autocomplete .MuiOutlinedInput-root": {
+          //     width: "400px",
+          //   },
+          // },
         },
         paper: {
           // Styles for the dropdown popover

@@ -23,7 +23,7 @@ function ResultList({ results, queriedVariant, error }) {
 
   const tooltipTexts = [
     "Number of copies of a specific allele in a population.",
-    "Total number of analysed individuals.",
+    "The total number of called alleles.",
     "Number of individuals homozygous for the allele.",
     "Number of individuals heterozygous for the allele.",
     "Incidence of the allele in a population.",
