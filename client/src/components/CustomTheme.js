@@ -1,5 +1,4 @@
 import { createTheme } from "@mui/material/styles";
-import { display, maxWidth, width } from "@mui/system";
 
 const customTheme = createTheme({
   components: {
@@ -93,14 +92,6 @@ const customTheme = createTheme({
               width: "250px",
             },
           },
-          // "@media (max-width: 449px) and (min-width: 430px)": {
-          //   "&.variant-autocomplete .MuiOutlinedInput-root": {
-          //     width: "400px",
-          //   },
-          //   "&.genome-autocomplete .MuiOutlinedInput-root": {
-          //     width: "400px",
-          //   },
-          // },
         },
         paper: {
           // Styles for the dropdown popover

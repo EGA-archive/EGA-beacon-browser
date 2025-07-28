@@ -1,7 +1,7 @@
 import axios from "axios";
 import React, { useState } from "react";
 import "./App.css";
-import { Col, Container, Row } from "react-bootstrap";
+import { Container, Row } from "react-bootstrap";
 import ResultList from "./components/ResultList.js";
 import Search from "./components/Search";
 import { useAuth } from "oidc-react";
@@ -104,9 +104,9 @@ function App() {
 
   return (
     <div className="bigparent">
-      {/* <div className="parentwrapper"> */}
       <div>
         <CustomNavbar />
+
         <Container>
           <Row>
             <Search search={search} setVariant={setQueriedVariant} />{" "}
@@ -131,11 +131,11 @@ function App() {
               metaresults={metaresults}
               finalstart={finalstart}
               error={error}
-              // queriedVariant={queriedVariant}
             />
           )}
         </Container>
       </div>
+
       <Footer />
     </div>
   );

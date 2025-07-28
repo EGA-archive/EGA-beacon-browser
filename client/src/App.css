@@ -31,6 +31,7 @@ body {
   flex-direction: column;
   flex-grow: 1;
   justify-content: space-between;
+  overflow-x: hidden;
 }
 
 /* Errors Messages and User Messages */
@@ -57,10 +58,8 @@ body {
   height: 77px;
   width: 100%;
   position: sticky;
-  top: 0;
   z-index: 2;
-  overflow-x: hidden;
-  overflow-y: hidden;
+  top: 0;
 }
 
 .custom-navbar * {
@@ -245,28 +244,15 @@ body {
   color: blue;
 }
 
-/* Queried Variant CSS */
+/* Table CSS */
 
-.features-row {
-  display: flex;
-  justify-content: space-between;
+.queried-row {
+  margin-bottom: 35px;
 }
 
-.queried-variant {
-  margin-bottom: 25px;
-}
-
-.queried-variant-input {
-  font-weight: 700;
-}
-
-.sortby {
-  margin-bottom: 25px;
-  margin-left: 60%;
-}
-
+/* Here */
 .table-container {
-  overflow-x: auto;
+  overflow-x: scroll;
   height: auto;
 }
 
@@ -275,8 +261,8 @@ body {
   margin-bottom: 20px;
 }
 
-.dataset-column {
-  width: 16%;
+.data-table tr:hover {
+  background-color: inherit !important;
 }
 
 .population-column {
@@ -302,6 +288,13 @@ body {
   vertical-align: middle;
   word-wrap: break-word;
   white-space: normal;
+  /* font-size: xx-small; */
+}
+
+@media (max-width: 575px) {
+  .table-container {
+    width: 80%;
+  }
 }
 .underlined {
   text-decoration: underline;
@@ -631,7 +624,7 @@ tbody tr:hover {
     margin-left: 10px;
   }
 
-  .ref-genome-label {
+  .form-section-label {
     white-space: nowrap;
   }
 
