@@ -7,6 +7,8 @@ import {
   Typography,
 } from "@mui/material";
 import { Row } from "react-bootstrap";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import PanoramaFishEyeIcon from "@mui/icons-material/PanoramaFishEye";
 
 // Displays the queried variant and sorting toggles
 const ResultsHeader = ({ queriedVariant, toggle, handleToggle }) => {
@@ -85,59 +87,59 @@ const ResultsHeader = ({ queriedVariant, toggle, handleToggle }) => {
               },
             }}
           >
-            <ToggleButton
-              value="ancestry"
-              aria-label="ancestry"
-              size="small"
-              sx={{
-                width: "95px",
-                height: "32px",
-                fontFamily: "sans-serif",
-                fontSize: "14px",
-                fontWeight: 700,
-                lineHeight: "20px",
-                letterSpacing: "0.1px",
-                textTransform: "none",
-                color: "#3176B1",
-                background: "#F4F9FE",
-                "&.Mui-selected": {
-                  backgroundColor: "#3176B1",
-                  color: "white",
-                },
-                "&.Mui-selected:hover": {
-                  backgroundColor: "#3176B1",
-                  color: "white",
-                },
-              }}
-            >
-              Ancestry
-            </ToggleButton>
-            <ToggleButton
-              value="sex"
-              aria-label="sex"
-              size="small"
-              sx={{
-                width: "57px",
-                height: "32px",
-                fontFamily: "sans-serif",
-                fontSize: "14px",
-                fontWeight: 700,
-                textTransform: "none",
-                color: "#3176B1",
-                background: "#F4F9FE",
-                border: "1px solid #3176B1",
-                "&.Mui-selected": {
-                  backgroundColor: "#3176B1",
-                  color: "white",
-                },
-                "&.Mui-selected:hover": {
-                  backgroundColor: "#3176B1",
-                  color: "white",
-                },
-              }}
-            >
-              Sex
-            </ToggleButton>
+            {["ancestry", "sex"].map((option) => {
+              const isSelected = toggle.includes(option);
+              const isOpenClose = toggle.length > 0;
+
+              return (
+                <ToggleButton
+                  key={option}
+                  value={option}
+                  aria-label={option}
+                  size="small"
+                  sx={{
+                    minWidth: option === "ancestry" ? "95px" : "57px",
+                    height: "32px",
+                    fontFamily: "sans-serif",
+                    fontSize: "14px",
+                    fontWeight: 700,
+                    lineHeight: "20px",
+                    letterSpacing: "0.1px",
+                    textTransform: "none",
+                    color: "#3176B1",
+                    background: "#F4F9FE",
+                    border: "1px solid #3176B1 !important",
+                    "&.Mui-selected": {
+                      backgroundColor: "white",
+                      color: "#3176B1",
+                    },
+                    "&.Mui-selected:hover": {
+                      backgroundColor: "#EBEBEB",
+                      color: "#3176B1",
+                    },
+                  }}
+                >
+                  {isSelected ? (
+                    <CheckCircleIcon
+                      sx={{
+                        color: "#3176B1",
+                        fontSize: "16px",
+                        marginRight: "6px",
+                      }}
+                    />
+                  ) : (
+                    <PanoramaFishEyeIcon
+                      sx={{
+                        color: "#ADADAD",
+                        fontSize: "16px",
+                        marginRight: "6px",
+                      }}
+                    />
+                  )}
+                  {option.charAt(0).toUpperCase() + option.slice(1)}
+                </ToggleButton>
+              );
+            })}
           </ToggleButtonGroup>
         </Grid>
       </Grid>
