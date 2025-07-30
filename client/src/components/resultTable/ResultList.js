@@ -4,12 +4,15 @@ import ResultsHeader from "./ResultsHeader.js";
 import { Row } from "react-bootstrap";
 import TableLayout from "./TableLayout.js";
 import SharedTableRow from "./SharedTableRow.js";
-import { getPopulationFrequency } from "./constants.js";
+import { getPopulationFrequency } from "../constants.js";
 
+// This component displays a table of results for a queried variant.
+// and adapts the content based on toggle selections and dataset structure.
 function ResultList({ results, queriedVariant, error }) {
-  const [toggle, setToggle] = useState(["ancestry", "sex"]);
+  const [toggle, setToggle] = useState(["ancestry", "sex"]); // selected sorting filters
   const [dataExists, setDataExists] = useState(false);
 
+  // Check if there is at least one dataset with population frequency data
   useEffect(() => {
     const condition =
       Boolean(results?.length) &&
@@ -18,10 +21,12 @@ function ResultList({ results, queriedVariant, error }) {
     setDataExists(condition);
   }, [results]);
 
-  const handleToggle = (event, newToggle) => {
+  // Update selected toggles when user clicks sort options
+  const handleToggle = (newToggle) => {
     setToggle(newToggle);
   };
 
+  // Render total row at the bottom of the table
   const totalResults = (
     totalAlleleCount,
     totalAlleleNumber,
@@ -68,6 +73,7 @@ function ResultList({ results, queriedVariant, error }) {
     );
   };
 
+  // Renders dataset label row, optionally with link only for GCAT
   const dataset = (dataset) => {
     let displayDatasetName = dataset;
 
@@ -114,7 +120,7 @@ function ResultList({ results, queriedVariant, error }) {
     );
   };
 
-  //    Finding the logic
+  // Get GCAT dataset and identify it by structure
   // const gcatData = results.find((result) => result.id === "EGAD00001007774"); // New logic do or if resultsCount ===1 and array length equal to 1
   const gcatData = results.find(
     (result) =>
@@ -126,6 +132,8 @@ function ResultList({ results, queriedVariant, error }) {
           )
         ))
   );
+
+  // Get gnomAD dataset by structure
   // const gcatData = results.find((result) => result.resultsCount >= 1);
   // const genomAdData = results.find(
   //   (result) => result.id === "gnomad_exome_v2.1.1"
@@ -140,6 +148,7 @@ function ResultList({ results, queriedVariant, error }) {
 
   const isGnomadJointV41 = genomAdData?.id === "gnomad_joint_v4.1";
 
+  // Filter and identify populations for adjustments
   const allFrequencies =
     genomAdData?.results?.[0]?.frequencyInPopulations?.[0]?.frequencies || [];
 
@@ -153,7 +162,7 @@ function ResultList({ results, queriedVariant, error }) {
       !["Females", "Males", "Total"].includes(f.population)
   );
 
-  //   General GCAT Logic
+  //   General GCAT rendering logic
   const gcatTable = () => {
     if (gcatData) {
       const getData = (population) => {
@@ -182,6 +191,7 @@ function ResultList({ results, queriedVariant, error }) {
         <>
           <>
             {dataset(gcatData.id)}
+            {/* Show ancestries or fallback to “European” */}
             {toggle.includes("ancestry") &&
               (ancestries && ancestries.length > 0 ? (
                 ancestries.map((ancestry) => {
@@ -238,6 +248,7 @@ function ResultList({ results, queriedVariant, error }) {
                 />
               ))}
 
+            {/* Show Female (XX) and Male (XY) rows if toggled */}
             {female && toggle.includes("sex") && (
               <SharedTableRow
                 type="XX"
@@ -262,6 +273,7 @@ function ResultList({ results, queriedVariant, error }) {
               />
             )}
 
+            {/* Render total row at the end */}
             {totalResults(
               female && male
                 ? female?.[0]?.alleleCount + male?.[0]?.alleleCount
@@ -300,7 +312,7 @@ function ResultList({ results, queriedVariant, error }) {
     return null;
   };
 
-  // General GenomAd Logic
+  // General GenomAd rendering logic
   const genomAdTable = () => {
     if (genomAdData) {
       const females = getPopulationFrequency(genomAdData?.results, "Females");
@@ -360,6 +372,7 @@ function ResultList({ results, queriedVariant, error }) {
               />
             ))}
 
+          {/* Show Female (XX) and Male (XY) rows if toggled */}
           {females && toggle.includes("sex") && (
             <SharedTableRow
               type="XX"
@@ -383,7 +396,7 @@ function ResultList({ results, queriedVariant, error }) {
               nonBackgroundColor={false}
             />
           )}
-
+          {/* Render total row at the end */}
           {totalResults(
             total?.alleleCount || females?.alleleCount + males?.alleleCount,
             total?.alleleNumber || females?.alleleNumber + males?.alleleNumber,

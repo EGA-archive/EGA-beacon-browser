@@ -2,12 +2,12 @@ import axios from "axios";
 import React, { useState } from "react";
 import "./App.css";
 import { Container, Row } from "react-bootstrap";
-import ResultList from "./components/ResultList.js";
+import ResultList from "../src/components/resultTable/ResultList.js";
 import Search from "./components/Search";
 import { useAuth } from "oidc-react";
-import Footer from "./components/Footer.js";
-import NetworkMembers from "./components/NetworkMembers.js";
-import CustomNavbar from "./components/CustomNavbar.js";
+import Footer from "./components/layout/Footer.js";
+import NetworkMembers from "./components/layout/NetworkMembers.js";
+import CustomNavbar from "./components/layout/CustomNavbar.js";
 import config from "./config";
 
 function App() {
@@ -19,19 +19,34 @@ function App() {
   const [queriedVariant, setQueriedVariant] = useState("");
   const auth = useAuth();
 
+  // This function handles the variant search logic
   const search = async (variant, genome) => {
+    // When the search is fired, we start by setting the loader to start as well
     setLoading(true);
-    let jsonData1 = {};
-    var arr = variant.split("-");
-    if (arr[2].length === 1) {
-      var end = parseInt(arr[1]) + 1;
-    } else {
-      var end = parseInt(arr[1]) + arr[2].length;
-    }
-    var finalend = end.toString();
-    var finalstart = parseInt(arr[1]);
+    let jsonData = {};
+
+    // Split the variant string into parts:
+    // Example input: "1-123456-A-T"
+    // Result: ["1", "123456", "A", "T"]
+    // Meaning: [chromosome, start, referenceBase, alternateBase]
+    const arr = variant.split("-");
+
+    // Calculate the end position of the variant on the genome.
+    // If the reference base is just one character, the variant goes only one position → end = start + 1
+    // If the reference base is longer, the variant spans multiple bases → end = start + length of the reference base
+    const end =
+      arr[2].length === 1
+        ? parseInt(arr[1]) + 1
+        : parseInt(arr[1]) + arr[2].length;
+
+    // Convert end to string and store start as a number
+    const finalend = end.toString();
+    const finalstart = parseInt(arr[1]);
+
+    // Save the start position in state
     setFinalStart(finalstart);
 
+    // First, fetch metadata from the given API endpoint
     try {
       let metaresponse;
       metaresponse = await axios({
@@ -40,39 +55,43 @@ function App() {
         headers: {
           "Content-Type": "application/json",
         },
-        data: jsonData1,
       });
+      // Store metadata results in the data
       setMetaResults(metaresponse.data.response);
-      // console.log("This is my Metaresult", metaresponse.data.response);
+      // If metadata request fails, show error and stops
     } catch (error) {
       console.error(error);
       setError(error);
     }
     try {
-      jsonData1 = {
+      // Main search query
+      jsonData = {
         meta: {
           apiVersion: "2.0",
         },
         query: {
           requestParameters: {
-            alternateBases: arr[3],
-            referenceBases: arr[2],
-            start: arr[1],
-            end: finalend,
-            referenceName: arr[0],
+            alternateBases: arr[3], // "A" bases being observed in place of the reference
+            referenceBases: arr[2], // "AT" bases in the reference genome
+            start: arr[1], // "19653341" variant start position
+            end: finalend, // "19653343" start + length of referenceBases
+            referenceName: arr[0], // "21" the chromosome
           },
           filters: [],
+          // Only return datasets that contain this variant (aka positive results)
           includeResultsetResponses: "HIT",
+          // Control how many results to return and from where to start
           pagination: {
-            skip: 0,
-            limit: 10,
+            skip: 0, // Start from the first dataset
+            limit: 10, // Return up to 10 datasets
           },
           testMode: false,
-          requestedGranularity: "record",
+          requestedGranularity: "record", // Ask for full records
         },
       };
       let response;
 
+      // If user is authenticated, send a POST request with token
       if (auth && auth.userData) {
         // console.log(auth)
         response = await axios({
@@ -80,41 +99,48 @@ function App() {
           url: `${config.API_URL}/g_variants`,
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${auth.userData.access_token}`,
+            Authorization: `Bearer ${auth.userData.access_token}`, // token for secure access
           },
-          data: jsonData1,
+          data: jsonData, // send full query as body
         });
       } else {
-        response = await axios({
-          method: "get",
-          url: `${config.API_URL}/g_variants?start=${arr[1]}&alternateBases=${arr[3]}&referenceBases=${arr[2]}&referenceName=${arr[0]}&assemblyId=${genome}`,
-          headers: {
-            "Content-Type": "application/json",
+        // If not authenticated, send a public GET request with query parameters in the URL
+        response = await axios.get(`${config.API_URL}/g_variants`, {
+          headers: { "Content-Type": "application/json" },
+          params: {
+            start: arr[1], // Start position from the variant
+            alternateBases: arr[3], // "A"
+            referenceBases: arr[2], // "AT"
+            referenceName: arr[0], // "21"
+            assemblyId: genome, // passed from the Search component (GRCh37)
           },
-          data: jsonData1,
         });
       }
+      // Save the query results in state
       setResults(response.data.response.resultSets);
-      // console.log("This is my resultSets", response.data.response.resultSets);
+      // Stops the loader
       setLoading(false);
     } catch (error) {
+      // Catch possible errors
       console.error(error);
     }
   };
 
+  // Page display backbone
   return (
     <div className="bigparent">
       <div>
+        {/* Navbar */}
         <CustomNavbar />
-
         <Container>
           <Row>
+            {/* Search component: calls the `search()` function and sets the variant string */}
             <Search search={search} setVariant={setQueriedVariant} />{" "}
           </Row>
-          {isLoading === true && error === false && (
-            <div className="loader"></div>
-          )}
-          {isLoading === false && error === false && (
+          {/* Show loader while waiting for results */}
+          {isLoading && !error && <div className="loader"></div>}
+          {/* Show results if no error and not loading */}
+          {!isLoading && !error && (
             <ResultList
               results={results}
               metaresults={metaresults}
@@ -123,8 +149,9 @@ function App() {
               queriedVariant={queriedVariant}
             />
           )}
-          {/* Show NetworkMembers only if no search results */}
+          {/* If no variant has been searched, show the Network Members, otherwise show result */}
           {!queriedVariant && <NetworkMembers />}
+          {/* If there's an error, also show the ResultList with error handling */}
           {error !== false && (
             <ResultList
               results={results}
@@ -135,7 +162,7 @@ function App() {
           )}
         </Container>
       </div>
-
+      {/* Footer at the bottom */}
       <Footer />
     </div>
   );

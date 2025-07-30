@@ -10,7 +10,8 @@ import { Row } from "react-bootstrap";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import PanoramaFishEyeIcon from "@mui/icons-material/PanoramaFishEye";
 
-// Displays the queried variant and sorting toggles
+// This component displays the queried variant and toggle buttons for sorting results
+// It allows users to sort by ancestry and/or sex
 const ResultsHeader = ({ queriedVariant, toggle, handleToggle }) => {
   return (
     <Row className="queried-row">
@@ -26,7 +27,7 @@ const ResultsHeader = ({ queriedVariant, toggle, handleToggle }) => {
         justifyContent="space-between"
         wrap="wrap"
       >
-        {/* Left column: Queried Variant */}
+        {/* Left side: Display the variant that was queried */}
         <Grid item xs={12} sm={6} md={4}>
           <Typography variant="body2" sx={{ fontSize: "16px" }}>
             Queried Variant:{" "}
@@ -40,7 +41,7 @@ const ResultsHeader = ({ queriedVariant, toggle, handleToggle }) => {
           </Typography>
         </Grid>
 
-        {/* Combined Sort by + ToggleButtons */}
+        {/* Right side: Sort controls with toggle buttons */}
         <Grid
           item
           xs={12}
@@ -52,6 +53,7 @@ const ResultsHeader = ({ queriedVariant, toggle, handleToggle }) => {
             flexWrap: "wrap",
             justifyContent: { xs: "flex-start", sm: "flex-end" },
 
+            // Custom media query to handle a specific responsive layout
             "@media (max-width: 599px) and (min-width: 576px)": {
               flexDirection: "row",
               flexBasis: "100%",
@@ -69,6 +71,7 @@ const ResultsHeader = ({ queriedVariant, toggle, handleToggle }) => {
             Sort by:
           </Typography>
 
+          {/* Toggle buttons for sorting options (ancestry / sex) */}
           <ToggleButtonGroup
             value={toggle}
             exclusive={false}
@@ -87,10 +90,9 @@ const ResultsHeader = ({ queriedVariant, toggle, handleToggle }) => {
               },
             }}
           >
+            {/* Map over the sort options: ancestry and sex */}
             {["ancestry", "sex"].map((option) => {
               const isSelected = toggle.includes(option);
-              const isOpenClose = toggle.length > 0;
-
               return (
                 <ToggleButton
                   key={option}
@@ -107,7 +109,7 @@ const ResultsHeader = ({ queriedVariant, toggle, handleToggle }) => {
                     letterSpacing: "0.1px",
                     textTransform: "none",
                     color: "#3176B1",
-                    background: "#F4F9FE",
+                    background: "white",
                     border: "1px solid #3176B1 !important",
                     "&.Mui-selected": {
                       backgroundColor: "white",
@@ -119,6 +121,7 @@ const ResultsHeader = ({ queriedVariant, toggle, handleToggle }) => {
                     },
                   }}
                 >
+                  {/* Show filled or empty icon depending on selection */}
                   {isSelected ? (
                     <CheckCircleIcon
                       sx={{
@@ -136,6 +139,7 @@ const ResultsHeader = ({ queriedVariant, toggle, handleToggle }) => {
                       }}
                     />
                   )}
+                  {/* Capitalize the first letter of the label */}
                   {option.charAt(0).toUpperCase() + option.slice(1)}
                 </ToggleButton>
               );

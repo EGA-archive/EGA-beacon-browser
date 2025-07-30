@@ -250,7 +250,6 @@ body {
   margin-bottom: 35px;
 }
 
-/* Here */
 .table-container {
   overflow-x: scroll;
   height: auto;
@@ -261,13 +260,13 @@ body {
   margin-bottom: 20px;
 }
 
-.data-table tr:hover {
-  background-color: inherit !important;
-}
-
 .population-column {
   width: 31%;
   padding-left: 5%;
+}
+
+.data-table tr:hover {
+  background-color: inherit !important;
 }
 
 .allele-count-column,
@@ -371,6 +370,7 @@ th {
   color: white;
   padding: 0.5em 1em;
   text-align: left;
+  height: 66px;
 }
 td {
   color: black;
@@ -673,7 +673,7 @@ tbody tr:hover {
     flex-direction: column;
     margin-top: 60px;
     height: auto;
-    align-items: start;
+    align-items: flex-start;
     width: 84%;
     margin-left: 8%;
   }
@@ -751,7 +751,7 @@ tbody tr:hover {
     flex-direction: column;
     margin-top: 60px;
     height: auto;
-    align-items: start;
+    align-items: flex-start;
     width: 84%;
     margin-left: 5%;
   }

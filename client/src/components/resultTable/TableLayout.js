@@ -1,12 +1,14 @@
-import TooltipHeader from "./TooltipHeader";
-import { TOOLTIP_TEXTS } from "../components/constants.js";
+import TooltipHeader from "../styling/TooltipHeader.js";
+import { TOOLTIP_TEXTS } from "../constants.js";
 
-export default function TableLayout({ header, children, disclaimer }) {
+// This component defines the layout for the population frequency table
+export default function TableLayout({ children, disclaimer }) {
   return (
     <div className="table-container">
       <table className="data-table">
         <thead>
           <tr>
+            {/* Each <th> is wrapped in TooltipHeader to show a description on hover */}
             <TooltipHeader title={TOOLTIP_TEXTS.population}>
               <th className="underlined population-column">Population</th>
             </TooltipHeader>
@@ -27,8 +29,10 @@ export default function TableLayout({ header, children, disclaimer }) {
             </TooltipHeader>
           </tr>
         </thead>
+        {/* Render the table rows that are passed as children to this component */}
         <tbody>{children}</tbody>
       </table>
+      {/* If a disclaimer is provided, show it below the table */}
       {disclaimer && <div className="disclaimer">{disclaimer}</div>}
     </div>
   );

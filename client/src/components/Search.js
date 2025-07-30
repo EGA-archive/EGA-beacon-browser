@@ -6,25 +6,32 @@ import * as Yup from "yup";
 import TextField from "@mui/material/TextField";
 import Autocomplete from "@mui/material/Autocomplete";
 import { ThemeProvider } from "@mui/material/styles";
-import CustomTheme from "../components/CustomTheme";
+import CustomTheme from "./styling/CustomTheme";
 
+// This component renders a search for querying genomic variants.
+// It validates user input, formats pasted data, and triggers the search logic.
+
+// Yup validation rules for the form
 const SignupSchema = Yup.object().shape({
+  // Variant must follow the format: chromosome-start-refBase-altBase
   variant: Yup.string()
     .matches(
       /^(?:[1-9]|1[0-9]|2[0-4]|X|Y)-([+-]?(?=\.\d|\d)(?:\d+)?(?:\.?\d*))(?:[Ee]([+-]?\d+))?-[ACGT]+-[ACGT]+$/,
       "Incorrect variant information, please check the example below"
     )
     .required("Required"),
-  genome: Yup.string().required("Required"),
+  genome: Yup.string().required("Required"), // Genome selection must not be empty
 });
 
 // Dropdown Menu for Reference Genome
 const refGenome = [{ label: "GRCh37" }, { label: "GRCh38" }];
 
+// Main Search component
 function Search({ search, setVariant }) {
-  const onSubmit = async (values, actions) => {
-    setVariant(values.variant);
-    await search(values.variant, values.genome);
+  // Handle form submission
+  const onSubmit = async (values) => {
+    setVariant(values.variant); // Set the current variant in state
+    await search(values.variant, values.genome); // Trigger the search
   };
 
   return (
@@ -50,7 +57,7 @@ function Search({ search, setVariant }) {
               event.preventDefault();
               const pastedData = event.clipboardData.getData("text");
 
-              // Apply text cleanup rules
+              // Clean up pasted variant input
               const cleanedData = pastedData
                 .trim()
                 .replace(/\./g, "") // Remove all periods
@@ -87,9 +94,11 @@ function Search({ search, setVariant }) {
               <Form noValidate onSubmit={handleSubmit}>
                 <Form.Group>
                   <Row className="search-row">
+                    {/* Variant Query Column */}
                     <Col className="col-variant">
                       <Form.Label className="form-section-label">
                         <b className="variant-query">Variant query</b>
+                        {/* Info tooltip on how to format the variant */}
                         <Tooltip
                           title={
                             <ul className="tooltip-bullets">
@@ -108,7 +117,7 @@ function Search({ search, setVariant }) {
                         </Tooltip>
                       </Form.Label>
 
-                      {/* Variant Field */}
+                      {/* Autocomplete input for the variant field */}
                       <Autocomplete
                         className="variant-autocomplete"
                         fullWidth
@@ -146,7 +155,7 @@ function Search({ search, setVariant }) {
                         )}
                       />
                     </Col>
-
+                    {/* Ref Genome Dropdown */}
                     <Col className="col-refgenome">
                       <Form.Label
                         htmlFor="ref-genome"
@@ -199,10 +208,11 @@ function Search({ search, setVariant }) {
                   </Row>
                 </Form.Group>
 
-                {/* Example Section */}
+                {/* Example Section with two examples */}
                 <div className="mt-3 responsive-background-example">
                   <span className="mb-4">Examples:</span>
                   <br />
+                  {/* Example 1: GRCh37 */}
                   <span className="d-block mb-3 mt-2">
                     <a
                       type="reset"
@@ -221,6 +231,7 @@ function Search({ search, setVariant }) {
                     </a>
                   </span>
 
+                  {/* Example 2: GRCh38 */}
                   <span className="d-block">
                     <a
                       type="reset"
