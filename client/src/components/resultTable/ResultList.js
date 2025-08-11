@@ -4,7 +4,7 @@ import ResultsHeader from "./ResultsHeader.js";
 import { Row } from "react-bootstrap";
 import TableLayout from "./TableLayout.js";
 import SharedTableRow from "./SharedTableRow.js";
-import { getPopulationFrequency } from "../constants.js";
+import { getPopulationFrequency, formatAF } from "../constants.js";
 
 // This component displays a table of results for a queried variant.
 // and adapts the content based on toggle selections and dataset structure.
@@ -62,12 +62,21 @@ function ResultList({ results, queriedVariant, error }) {
           </b>
         </td>
         <td className={`${borderClass} centered`} colSpan="1">
-          {/* {totalAlleleFrequency
-            ? parseFloat(totalAlleleFrequency).toFixed(5)
-            : "0"} */}
-          {totalAlleleFrequency
-            ? parseFloat(totalAlleleFrequency).toExponential(4)
-            : "-"}
+          {(() => {
+            const hasTotals =
+              totalAlleleCount != null &&
+              totalAlleleNumber != null &&
+              Number(totalAlleleNumber) !== 0;
+
+            const totalAFRaw =
+              totalAlleleFrequency != null
+                ? Number(totalAlleleFrequency)
+                : hasTotals
+                ? Number(totalAlleleCount) / Number(totalAlleleNumber)
+                : null;
+
+            return formatAF(totalAFRaw, { threshold: 1e-5, exponentDigits: 0 });
+          })()}
         </td>
       </tr>
     );
@@ -151,16 +160,6 @@ function ResultList({ results, queriedVariant, error }) {
   // Filter and identify populations for adjustments
   const allFrequencies =
     genomAdData?.results?.[0]?.frequencyInPopulations?.[0]?.frequencies || [];
-
-  const africanPop = allFrequencies.find(
-    (f) => f.population === "African/African-American"
-  );
-
-  const otherPops = allFrequencies.filter(
-    (f) =>
-      f.population !== "African/African-American" &&
-      !["Females", "Males", "Total"].includes(f.population)
-  );
 
   //   General GCAT rendering logic
   const gcatTable = () => {

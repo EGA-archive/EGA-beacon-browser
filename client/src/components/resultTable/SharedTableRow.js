@@ -1,4 +1,5 @@
 import React from "react";
+import { formatAF } from "../constants";
 
 // This component represents a single <tr> row inside a table.
 // It displays allele information for a given population type.
@@ -14,6 +15,16 @@ const SharedTableRow = ({
   // If nonBackgroundColor is true, don't add the background class.
   // Otherwise, apply a default "sex-background" class.
   const backgroundColor = nonBackgroundColor ? "" : "sex-background";
+
+  const hasCounts =
+    alleleCount != null && alleleNumber != null && Number(alleleNumber) !== 0;
+
+  const alleleFrequencyRaw =
+    alleleFrequency != null
+      ? Number(alleleFrequency)
+      : hasCounts
+      ? Number(alleleCount) / Number(alleleNumber)
+      : null;
 
   return (
     <tr>
@@ -32,15 +43,17 @@ const SharedTableRow = ({
         {alleleCountHeterozygous || alleleCount - alleleCountHomozygous}
       </td>
       {/* Column 6: Allele Frequency
-          - If already given, format as exponential 
-          - If not given but count & number are available, calculate it: count / number
-          - Otherwise, show a dash "-" */}
+- Use a normal decimal number when the value is >= 1e-5 (e.g., 0.00002 → "0.00002", 0.00001 → "0.00001")
+- Use scientific notation only when the value is > 0 and < 1e-5 (e.g., 0.000001 → "1e-6", -0.0000003 → "-3e-7")
+- Zero stays 0 
+- If neither is available, show "-". */}
       <td className={`centered-header ${backgroundColor}`}>
-        {alleleFrequency
-          ? parseFloat(alleleFrequency).toExponential(4)
-          : alleleCount && alleleNumber
-          ? (alleleCount / alleleNumber).toExponential(4)
-          : "-"}
+        {alleleFrequencyRaw == null
+          ? "-"
+          : formatAF(alleleFrequencyRaw, {
+              threshold: 1e-5,
+              exponentDigits: 0,
+            })}
       </td>
     </tr>
   );

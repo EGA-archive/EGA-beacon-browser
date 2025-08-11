@@ -26,3 +26,37 @@ export const getPopulationFrequency = (results, population) => {
   // If the match is not found, return null
   return null;
 };
+
+// Purpose of this function: returning a string for an allele frequency
+// That follows the rules of:
+// Shows a normal decimal when the value is >= 1e-5
+// Use scientific notation only when the value is > 0 and < 1e-5
+// Returns - if value is missing
+
+export function formatAF(
+  value,
+  {
+    threshold = 1e-5, // threshold for switching to scientific notetion
+    decimalDigits = 6, // max decimals for the decimal format
+    exponentDigits = 0, // digits after the decimal in scientific
+  } = {}
+) {
+  // This handles the missing input
+  if (value === null || value === undefined) return "-";
+  // This normalizes to a number, it accepts numbers and rejects NaN or Infinite
+  const n = typeof value === "string" ? Number(value) : value;
+  if (!Number.isFinite(n)) return "-";
+  // This reads the absolute value to decide which format to use
+  const absoluteValue = Math.abs(n);
+
+  if (absoluteValue !== 0 && absoluteValue < threshold) {
+    // Scientific notation below threshold (non-zero only)
+    return n.toExponential(exponentDigits).replace("+", "");
+  }
+
+  // Decimal notation at/above threshold
+  // zero stays as "0", not scientific
+  const formatted = n.toFixed(decimalDigits); // fixed then trim
+  // This trims trailing zeros and a trailing decimal point
+  return formatted.replace(/(\.\d*?[1-9])0+$/, "$1").replace(/\.0+$/, "");
+}
