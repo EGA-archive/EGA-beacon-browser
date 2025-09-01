@@ -22,7 +22,7 @@ function ResultList({ results, queriedVariant, error }) {
   }, [results]);
 
   // Update selected toggles when user clicks sort options
-  const handleToggle = (newToggle) => {
+  const handleToggle = (event, newToggle) => {
     setToggle(newToggle);
   };
 
