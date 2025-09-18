@@ -3,15 +3,12 @@
 version: "3.8"
 
 services:
-
   client:
     build:
       context: ./client
-    command: node /opt/yarn-v1.22.19/bin/yarn.js start
+    command: node /opt/yarn-v1.22.22/bin/yarn.js start
     container_name: egabrowser
     ports:
       - 3005:3000
     volumes:
       - ./client:/usr/src/app
-
-  
