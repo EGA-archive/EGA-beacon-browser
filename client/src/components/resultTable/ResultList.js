@@ -327,32 +327,33 @@ function ResultList({ results, queriedVariant, error }) {
       );
 
       // Adjust African/African-American if gnomad_joint_v4.1
-      const africanPop = ancestries.find(
-        (f) => f.population === "African/African-American"
-      );
+      // Comment and uncomment the code to apply workaround in the population
+      // const africanPop = ancestries.find(
+      //   (f) => f.population === "African/African-American"
+      // );
 
-      const otherPops = ancestries.filter(
-        (f) =>
-          f.population !== "African/African-American" &&
-          !["Females", "Males", "Total"].includes(f.population)
-      );
+      // const otherPops = ancestries.filter(
+      //   (f) =>
+      //     f.population !== "African/African-American" &&
+      //     !["Females", "Males", "Total"].includes(f.population)
+      // );
 
-      if (isGnomadJointV41 && africanPop && total) {
-        const sumOtherHomo = otherPops.reduce(
-          (acc, f) => acc + (f.alleleCountHomozygous || 0),
-          0
-        );
-        const sumOtherHetero = otherPops.reduce(
-          (acc, f) => acc + (f.alleleCountHeterozygous || 0),
-          0
-        );
+      // if (isGnomadJointV41 && africanPop && total) {
+      //   const sumOtherHomo = otherPops.reduce(
+      //     (acc, f) => acc + (f.alleleCountHomozygous || 0),
+      //     0
+      //   );
+      //   const sumOtherHetero = otherPops.reduce(
+      //     (acc, f) => acc + (f.alleleCountHeterozygous || 0),
+      //     0
+      //   );
 
-        africanPop.alleleCountHomozygous =
-          (total.alleleCountHomozygous || 0) - sumOtherHomo;
+      //   africanPop.alleleCountHomozygous =
+      //     (total.alleleCountHomozygous || 0) - sumOtherHomo;
 
-        africanPop.alleleCountHeterozygous =
-          (total.alleleCountHeterozygous || 0) - sumOtherHetero;
-      }
+      //   africanPop.alleleCountHeterozygous =
+      //     (total.alleleCountHeterozygous || 0) - sumOtherHetero;
+      // }
 
       return (
         <>
