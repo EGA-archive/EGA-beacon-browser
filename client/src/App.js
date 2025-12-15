@@ -116,6 +116,11 @@ function App() {
           },
         });
       }
+
+      console.log("Full Axios response:", response);
+      console.log("Response data:", response.data);
+      console.log("ResultSets:", response.data?.response?.resultSets);
+
       // Save the query results in state
       setResults(response.data.response.resultSets);
       // Stops the loader

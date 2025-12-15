@@ -9,6 +9,6 @@ services:
     command: node /opt/yarn-v1.22.22/bin/yarn.js start
     container_name: egabrowser
     ports:
-      - 3005:3000
+      - 3000:3000
     volumes:
       - ./client:/usr/src/app
