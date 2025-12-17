@@ -17,12 +17,14 @@ function App() {
   const [error, setError] = useState(false);
   const [isLoading, setLoading] = useState(false);
   const [queriedVariant, setQueriedVariant] = useState("");
+  const [assemblyIdQueried, setAssemblyIdQueried] = useState("");
   const auth = useAuth();
 
   // This function handles the variant search logic
   const search = async (variant, genome) => {
     // When the search is fired, we start by setting the loader to start as well
     setLoading(true);
+    setAssemblyIdQueried(genome);
     let jsonData = {};
 
     // Split the variant string into parts:
@@ -152,6 +154,7 @@ function App() {
               finalstart={finalstart}
               error={error}
               queriedVariant={queriedVariant}
+              assemblyIdQueried={assemblyIdQueried}
             />
           )}
           {/* If no variant has been searched, show the Network Members, otherwise show result */}

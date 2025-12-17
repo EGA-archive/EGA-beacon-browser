@@ -2,11 +2,12 @@
 export const TOOLTIP_TEXTS = {
   alleleCount: "Number of copies of a specific allele in a population.",
   alleleNumber: "The total number of called alleles.",
-  homozygous: "Number of individuals homozygous for the allele.",
-  heterozygous: "Number of individuals heterozygous for the allele.",
-  frequency: "Incidence of the allele in a population.",
+  homozygous: "Number of individuals homozygous for the alternate allele.",
+  heterozygous: "Number of individuals heterozygous for the alternate allele.",
+  hemizygous: "Number of individuals hemizygous for the alternate allele.",
+  frequency: "Allele frequency of the alternate allele in a population.",
   population:
-    "This term is referring to biological sex and ancestry or ethnicity as reported by individual studies.",
+    "A group of individuals characterized by biological sex and by ancestry or ethnicity, as reported within individual studies.",
 };
 
 // This function gets the frequency info for a specific population from the results
@@ -38,7 +39,7 @@ export function formatAF(
   {
     threshold = 1e-5, // threshold for switching to scientific notetion
     decimalDigits = 6, // max decimals for the decimal format
-    exponentDigits = 0, // digits after the decimal in scientific
+    exponentDigits = 2, // digits after the decimal in scientific
   } = {}
 ) {
   // This handles the missing input

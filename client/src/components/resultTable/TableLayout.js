@@ -13,7 +13,9 @@ export default function TableLayout({ children, disclaimer }) {
               <th className="underlined population-column">Population</th>
             </TooltipHeader>
             <TooltipHeader title={TOOLTIP_TEXTS.alleleCount}>
-              <th className="centered-header underlined">Allele Count</th>
+              <th className="centered-header underlined">
+                Alternate Allele Count
+              </th>
             </TooltipHeader>
             <TooltipHeader title={TOOLTIP_TEXTS.alleleNumber}>
               <th className="centered-header underlined">Allele Number</th>
@@ -23,6 +25,9 @@ export default function TableLayout({ children, disclaimer }) {
             </TooltipHeader>
             <TooltipHeader title={TOOLTIP_TEXTS.heterozygous}>
               <th className="centered-header underlined">Heterozygous Count</th>
+            </TooltipHeader>
+            <TooltipHeader title={TOOLTIP_TEXTS.hemizygous}>
+              <th className="centered-header underlined">Hemizygous Count</th>
             </TooltipHeader>
             <TooltipHeader title={TOOLTIP_TEXTS.frequency}>
               <th className="centered-header underlined">Allele Frequency</th>

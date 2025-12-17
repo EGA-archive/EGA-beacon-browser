@@ -7,32 +7,96 @@ import TextField from "@mui/material/TextField";
 import Autocomplete from "@mui/material/Autocomplete";
 import { ThemeProvider } from "@mui/material/styles";
 import CustomTheme from "./styling/CustomTheme";
-
-// This component renders a search for querying genomic variants.
-// It validates user input, formats pasted data, and triggers the search logic.
+import { liftoverVariant } from "../useLiftover";
 
 // Yup validation rules for the form
 const SignupSchema = Yup.object().shape({
-  // Variant must follow the format: chromosome-start-refBase-altBase
   variant: Yup.string()
     .matches(
       /^(?:[1-9]|1[0-9]|2[0-4]|X|Y)-([+-]?(?=\.\d|\d)(?:\d+)?(?:\.?\d*))(?:[Ee]([+-]?\d+))?-[ACGT]+-[ACGT]+$/,
       "Incorrect variant information, please check the example below"
     )
     .required("Required"),
-  genome: Yup.string().required("Required"), // Genome selection must not be empty
+  genome: Yup.string().required("Required"),
 });
 
 // Dropdown Menu for Reference Genome
 const refGenome = [{ label: "GRCh37" }, { label: "GRCh38" }];
 
-// Main Search component
 function Search({ search, setVariant }) {
-  // Handle form submission
+  // Local React state (drives liftover side effects)
+  const [currentVariant, setCurrentVariant] = React.useState("");
+  const [currentGenome, setCurrentGenome] = React.useState("GRCh37");
+  const [liftoverEnabled, setLiftoverEnabled] = React.useState(false);
+  const [liftedVariant, setLiftedVariant] = React.useState(null);
+  const [liftoverError, setLiftoverError] = React.useState(null);
+
+  // React.useEffect(() => {
+  //   const runLiftover = async () => {
+  //     if (!liftoverEnabled || !currentVariant || !currentGenome) {
+  //       setLiftedVariant(null);
+  //       return;
+  //     }
+
+  //     try {
+  //       setLiftoverError(null);
+  //       const lifted = await liftoverVariant(currentVariant, currentGenome);
+  //       setLiftedVariant(lifted);
+  //     } catch (err) {
+  //       setLiftedVariant(null);
+  //       setLiftoverError("Liftover failed");
+  //     }
+  //   };
+
+  //   runLiftover();
+  // }, [liftoverEnabled, currentVariant, currentGenome]);
+
+  React.useEffect(() => {
+    console.log("[LIFTOVER EFFECT] triggered", {
+      liftoverEnabled,
+      currentVariant,
+      currentGenome,
+    });
+
+    const runLiftover = async () => {
+      if (!liftoverEnabled || !currentVariant || !currentGenome) {
+        console.log("[LIFTOVER EFFECT] skipped");
+        setLiftedVariant(null);
+        return;
+      }
+
+      try {
+        console.log("[LIFTOVER EFFECT] calling liftoverVariant", {
+          currentVariant,
+          currentGenome,
+        });
+
+        setLiftoverError(null);
+        const lifted = await liftoverVariant(currentVariant, currentGenome);
+
+        console.log("[LIFTOVER EFFECT] result:", lifted);
+        setLiftedVariant(lifted);
+      } catch (err) {
+        console.error("[LIFTOVER EFFECT] error", err);
+        setLiftedVariant(null);
+        setLiftoverError("Liftover failed");
+      }
+    };
+
+    runLiftover();
+  }, [liftoverEnabled, currentVariant, currentGenome]);
+
+  // Submit handler
   const onSubmit = async (values) => {
-    setVariant(values.variant); // Set the current variant in state
-    await search(values.variant, values.genome); // Trigger the search
+    const variantToQuery =
+      values.liftover && liftedVariant ? liftedVariant : values.variant;
+
+    setVariant(variantToQuery);
+    await search(variantToQuery, values.genome);
   };
+
+  console.log(currentVariant);
+  console.log(liftedVariant);
 
   return (
     <ThemeProvider theme={CustomTheme}>
@@ -40,7 +104,8 @@ function Search({ search, setVariant }) {
         <Formik
           initialValues={{
             variant: "",
-            genome: "GRCh37", // Preselect GRCh37
+            genome: "GRCh37",
+            liftover: false,
           }}
           validationSchema={SignupSchema}
           onSubmit={onSubmit}
@@ -57,30 +122,27 @@ function Search({ search, setVariant }) {
               event.preventDefault();
               const pastedData = event.clipboardData.getData("text");
 
-              // Clean up pasted variant input
               const cleanedData = pastedData
                 .trim()
-                .replace(/\./g, "") // Remove all periods
-                .replace(/\s+/g, " ") // Replace multiple spaces with a single space
-                .replace(/\t/g, "-") // Replace tabs with a single hyphen
-                .replace(/\s/g, "-") // Replace remaining spaces with a single hyphen
-                .replace(/-+/g, "-"); // Replace multiple consecutive hyphens with a single hyphen
+                .replace(/\./g, "")
+                .replace(/\s+/g, " ")
+                .replace(/\t/g, "-")
+                .replace(/\s/g, "-")
+                .replace(/-+/g, "-");
 
-              // Get input field selection range
               const inputElement = event.target;
               const start = inputElement.selectionStart;
               const end = inputElement.selectionEnd;
 
               if (start !== null && end !== null) {
-                // Preserve surrounding text and insert the cleaned pasted data
                 const newValue =
                   values.variant.substring(0, start) +
                   cleanedData +
                   values.variant.substring(end);
 
                 setFieldValue("variant", newValue);
+                setCurrentVariant(newValue);
 
-                // Move cursor to the end of the pasted text
                 setTimeout(() => {
                   inputElement.setSelectionRange(
                     start + cleanedData.length,
@@ -94,30 +156,23 @@ function Search({ search, setVariant }) {
               <Form noValidate onSubmit={handleSubmit}>
                 <Form.Group>
                   <Row className="search-row">
-                    {/* Variant Query Column */}
+                    {/* Variant */}
                     <Col className="col-variant">
                       <Form.Label className="form-section-label">
                         <b className="variant-query">Variant query</b>
-                        {/* Info tooltip on how to format the variant */}
                         <Tooltip
                           title={
                             <ul className="tooltip-bullets">
-                              <li>
-                                Type your variant or copy from Excel with this
-                                specific structure: chr / position / ref. base /
-                                alt. base.
-                              </li>
-                              <li>Queries need to be in 0-based format.</li>
+                              <li>Format: chromosome-position-ref-alt</li>
+                              <li>Queries are 0-based</li>
                             </ul>
                           }
-                          placement="top-start"
                           arrow
                         >
                           <b className="infovariant">i</b>
                         </Tooltip>
                       </Form.Label>
 
-                      {/* Autocomplete input for the variant field */}
                       <Autocomplete
                         className="variant-autocomplete"
                         fullWidth
@@ -155,44 +210,27 @@ function Search({ search, setVariant }) {
                         )}
                       />
                     </Col>
-                    {/* Ref Genome Dropdown */}
+
+                    {/* Genome */}
                     <Col className="col-refgenome">
-                      <Form.Label
-                        htmlFor="ref-genome"
-                        className="form-section-label"
-                      >
+                      <Form.Label className="form-section-label">
                         <b>Ref Genome</b>
                       </Form.Label>
                       <Autocomplete
-                        className="genome-autocomplete"
-                        disablePortal
                         options={refGenome}
-                        name="genome"
-                        value={refGenome.find(
-                          (option) => option.label === values.genome
-                        )}
-                        onChange={(event, newValue) => {
-                          setFieldValue(
-                            "genome",
-                            newValue ? newValue.label : ""
-                          );
+                        value={refGenome.find((o) => o.label === values.genome)}
+                        onChange={(e, newValue) => {
+                          const genome = newValue ? newValue.label : "";
+                          setFieldValue("genome", genome);
+                          setCurrentGenome(genome);
                         }}
                         renderInput={(params) => (
-                          <TextField
-                            {...params}
-                            size="small"
-                            error={Boolean(errors.genome && touched.genome)}
-                            helperText={
-                              errors.genome && touched.genome
-                                ? errors.genome
-                                : ""
-                            }
-                          />
+                          <TextField {...params} size="small" />
                         )}
                       />
                     </Col>
 
-                    {/* Search button */}
+                    {/* Search */}
                     <Col className="col-searchbutton">
                       <button
                         className="searchbutton"
@@ -207,48 +245,121 @@ function Search({ search, setVariant }) {
                     </Col>
                   </Row>
                 </Form.Group>
+                {/* Liftover checkbox */}
+                <Row className="mt-2">
+                  <Col className="col-variant">
+                    <div
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                      }}
+                    >
+                      {/* Left side: checkbox + info */}
+                      <div
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          gap: "6px",
+                        }}
+                      >
+                        <Form.Check
+                          type="checkbox"
+                          id="liftover-checkbox"
+                          label={
+                            <span>
+                              Convert this variant to the other reference genome
+                            </span>
+                          }
+                          checked={values.liftover}
+                          disabled={!values.variant}
+                          onChange={(e) => {
+                            setFieldValue("liftover", e.target.checked);
+                            setLiftoverEnabled(e.target.checked);
+                          }}
+                          style={{
+                            opacity: values.variant ? 1 : 0.5,
+                            cursor: values.variant ? "pointer" : "not-allowed",
+                          }}
+                        />
 
-                {/* Example Section with two examples */}
-                <div className="mt-3 responsive-background-example">
-                  <span className="mb-4">Examples:</span>
+                        <Tooltip
+                          title={
+                            <ul className="tooltip-bullets">
+                              <li>
+                                When enabled, results may include datasets
+                                aligned to GRCh37 and/or GRCh38.
+                              </li>
+                              <li>
+                                Liftover is performed using bcftools (version
+                                1000090).
+                              </li>
+                            </ul>
+                          }
+                          placement="top-start"
+                          arrow
+                        >
+                          <b
+                            className="infovariant"
+                            style={{ cursor: "default" }}
+                          >
+                            i
+                          </b>
+                        </Tooltip>
+                      </div>
+
+                      {/* Right side: lifted-over info */}
+                      {liftedVariant && values.liftover && (
+                        <span
+                          style={{
+                            marginLeft: "24px",
+                            whiteSpace: "nowrap",
+                          }}
+                        >
+                          Lifted-over to{" "}
+                          <b>
+                            {values.genome === "GRCh37" ? "GRCh38" : "GRCh37"}
+                          </b>{" "}
+                          | <b>{liftedVariant}</b>
+                        </span>
+                      )}
+                    </div>
+                  </Col>
+                </Row>
+
+                {liftoverError && (
+                  <Row className="mt-1">
+                    <Col className="col-variant text-danger">
+                      {liftoverError}
+                    </Col>
+                  </Row>
+                )}
+                {/* Examples */}
+                <div className="mt-3">
+                  <u
+                    className="example"
+                    onClick={async () => {
+                      await setFieldValue("variant", "21-19653341-AT-A");
+                      await setFieldValue("genome", "GRCh37");
+                      validateField("variant");
+                      setCurrentVariant("21-19653341-AT-A");
+                      setCurrentGenome("GRCh37");
+                    }}
+                  >
+                    GRCh37 | 21-19653341-AT-A
+                  </u>
                   <br />
-                  {/* Example 1: GRCh37 */}
-                  <span className="d-block mb-3 mt-2">
-                    <a
-                      type="reset"
-                      onClick={async () => {
-                        await setFieldValue("variant", "21-19653341-AT-A");
-                        await setFieldValue("genome", "GRCh37");
-                        await Promise.all([
-                          validateField("variant"),
-                          validateField("genome"),
-                        ]);
-                      }}
-                    >
-                      <u className="example">
-                        GRCh37 <b>|</b> 21-19653341-AT-A
-                      </u>
-                    </a>
-                  </span>
-
-                  {/* Example 2: GRCh38 */}
-                  <span className="d-block">
-                    <a
-                      type="reset"
-                      onClick={async () => {
-                        await setFieldValue("variant", "21-18281024-AT-A");
-                        await setFieldValue("genome", "GRCh38");
-                        await Promise.all([
-                          validateField("variant"),
-                          validateField("genome"),
-                        ]);
-                      }}
-                    >
-                      <u className="example">
-                        GRCh38 <b>|</b> 21-18281024-AT-A
-                      </u>
-                    </a>
-                  </span>
+                  <u
+                    className="example"
+                    onClick={async () => {
+                      await setFieldValue("variant", "21-18281024-AT-A");
+                      await setFieldValue("genome", "GRCh38");
+                      validateField("variant");
+                      setCurrentVariant("21-18281024-AT-A");
+                      setCurrentGenome("GRCh38");
+                    }}
+                  >
+                    GRCh38 | 21-18281024-AT-A
+                  </u>
                 </div>
               </Form>
             );

@@ -4,11 +4,12 @@ import ResultsHeader from "./ResultsHeader.js";
 import { Row } from "react-bootstrap";
 import TableLayout from "./TableLayout.js";
 import SharedTableRow from "./SharedTableRow.js";
+import GnomadPopulationGroupRows from "./GnomadPopulationGroupRow.js";
 import { getPopulationFrequency, formatAF } from "../constants.js";
 
 // This component displays a table of results for a queried variant.
 // and adapts the content based on toggle selections and dataset structure.
-function ResultList({ results, queriedVariant, error }) {
+function ResultList({ assemblyIdQueried, results, queriedVariant, error }) {
   const [toggle, setToggle] = useState(["ancestry", "sex"]); // selected sorting filters
   const [dataExists, setDataExists] = useState(false);
 
@@ -32,6 +33,7 @@ function ResultList({ results, queriedVariant, error }) {
     totalAlleleNumber,
     totalAlleleCountHomozygous,
     totalAlleleCountHeterozygous,
+    totalAlleleCountHemizygous,
     totalAlleleFrequency,
     isGenomAd
   ) => {
@@ -62,21 +64,29 @@ function ResultList({ results, queriedVariant, error }) {
           </b>
         </td>
         <td className={`${borderClass} centered`} colSpan="1">
-          {(() => {
-            const hasTotals =
-              totalAlleleCount != null &&
-              totalAlleleNumber != null &&
-              Number(totalAlleleNumber) !== 0;
+          <b>{totalAlleleCountHemizygous || 0}</b>
+        </td>
+        <td className={`${borderClass} centered`} colSpan="1">
+          <b>
+            {(() => {
+              const hasTotals =
+                totalAlleleCount != null &&
+                totalAlleleNumber != null &&
+                Number(totalAlleleNumber) !== 0;
 
-            const totalAFRaw =
-              totalAlleleFrequency != null
-                ? Number(totalAlleleFrequency)
-                : hasTotals
-                ? Number(totalAlleleCount) / Number(totalAlleleNumber)
-                : null;
+              const totalAFRaw =
+                totalAlleleFrequency != null
+                  ? Number(totalAlleleFrequency)
+                  : hasTotals
+                  ? Number(totalAlleleCount) / Number(totalAlleleNumber)
+                  : null;
 
-            return formatAF(totalAFRaw, { threshold: 1e-5, exponentDigits: 0 });
-          })()}
+              return formatAF(totalAFRaw, {
+                threshold: 1e-5,
+                exponentDigits: 2,
+              });
+            })()}
+          </b>
         </td>
       </tr>
     );
@@ -84,8 +94,27 @@ function ResultList({ results, queriedVariant, error }) {
 
   // Renders dataset label row, optionally with link only for GCAT
   const dataset = (dataset) => {
+    const getGnomadVariant = (variant) => {
+      if (!variant) return "";
+
+      const parts = variant.split("-");
+      if (parts.length < 4) return variant;
+
+      const chr = parts[0];
+      const pos0Based = Number(parts[1]);
+      const ref = parts[2];
+      const alt = parts[3];
+
+      if (Number.isNaN(pos0Based)) return variant;
+
+      const pos1Based = pos0Based + 1;
+
+      return `${chr}-${pos1Based}-${ref}-${alt}`;
+    };
+
     let displayDatasetName = dataset;
 
+    // GCAT (specific EGAD dataset)
     if (dataset === "EGAD00001007774") {
       displayDatasetName = (
         <>
@@ -101,9 +130,10 @@ function ResultList({ results, queriedVariant, error }) {
           )
         </>
       );
-    } else if (dataset === "gnomad_exome_v2.1.1") {
-      displayDatasetName = "gnomAD GRCh37 (v2.1.1 exomes)";
-    } else if (dataset.startsWith("EGAD")) {
+    }
+
+    // All other EGAD datasets
+    else if (dataset.startsWith("EGAD")) {
       displayDatasetName = (
         <>
           <a
@@ -118,9 +148,46 @@ function ResultList({ results, queriedVariant, error }) {
       );
     }
 
+    // gnomAD datasets
+    else if (dataset.startsWith("gnomad")) {
+      const gnomadVariant = getGnomadVariant(queriedVariant);
+
+      if (assemblyIdQueried === "GRCh37") {
+        displayDatasetName = (
+          <>
+            <a
+              href={`https://gnomad.broadinstitute.org/variant/${gnomadVariant}?dataset=gnomad_r2_1`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="ega-link"
+            >
+              gnomAD v2.1.1
+            </a>{" "}
+            (exomes only)
+          </>
+        );
+      } else if (assemblyIdQueried === "GRCh38") {
+        displayDatasetName = (
+          <>
+            <a
+              href={`https://gnomad.broadinstitute.org/variant/${gnomadVariant}?dataset=gnomad_r4`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="ega-link"
+            >
+              gnomAD v4.1.0
+            </a>{" "}
+            (exomes and genomes)
+          </>
+        );
+      } else {
+        displayDatasetName = "gnomAD";
+      }
+    }
+
     return (
       <tr>
-        <td className="dataset dataset-col" colSpan="6">
+        <td className="dataset dataset-col" colSpan="7">
           <div>
             Dataset: <b>{displayDatasetName}</b>
           </div>
@@ -174,17 +241,33 @@ function ResultList({ results, queriedVariant, error }) {
 
       const female = getData("Female");
       const male = getData("Male");
-      const ancestries = gcatData.results.filter(
-        (result) =>
-          !["Female", "Male"].includes(
-            result?.frequencyInPopulations?.[0]?.frequencies?.[0]?.population
-          )
-      );
+      // const ancestries = gcatData.results.filter(
+      //   (result) =>
+      //     !["Female", "Male"].includes(
+      //       result?.frequencyInPopulations?.[0]?.frequencies?.[0]?.population
+      //     )
+      // );
 
-      const ancestriesSumAlleleCount = 0;
-      const ancestriesSumAlleleNumber = 0;
-      const ancestriesSumAlleleCountHomozygous = 0;
-      const ancestriesSumAlleleCountHeterozygous = 0;
+      const ancestries = gcatData.results
+        .filter(
+          (result) =>
+            !["Female", "Male"].includes(
+              result?.frequencyInPopulations?.[0]?.frequencies?.[0]?.population
+            )
+        )
+        .sort((a, b) => {
+          const popA =
+            a?.frequencyInPopulations?.[0]?.frequencies?.[0]?.population || "";
+          const popB =
+            b?.frequencyInPopulations?.[0]?.frequencies?.[0]?.population || "";
+          return popA.localeCompare(popB);
+        });
+
+      let ancestriesSumAlleleCount = 0;
+      let ancestriesSumAlleleNumber = 0;
+      let ancestriesSumAlleleCountHomozygous = 0;
+      let ancestriesSumAlleleCountHeterozygous = 0;
+      let ancestriesSumAlleleCountHemizygous = 0;
 
       return (
         <>
@@ -197,6 +280,8 @@ function ResultList({ results, queriedVariant, error }) {
                   const ancestryObj =
                     ancestry?.frequencyInPopulations?.[0]?.frequencies?.[0];
                   ancestriesSumAlleleCount += ancestryObj?.alleleCount;
+                  ancestriesSumAlleleCountHemizygous +=
+                    ancestryObj?.alleleCountHemizygous;
 
                   return (
                     <SharedTableRow
@@ -206,6 +291,9 @@ function ResultList({ results, queriedVariant, error }) {
                       alleleCountHomozygous={ancestryObj?.alleleCountHomozygous}
                       alleleCountHeterozygous={
                         ancestryObj?.alleleCountHeterozygous
+                      }
+                      alleleCountHemizygous={
+                        ancestryObj?.alleleCountHemizygous || "0"
                       }
                       alleleFrequency={ancestryObj?.alleleFrequency}
                       nonBackgroundColor={true}
@@ -237,6 +325,13 @@ function ResultList({ results, queriedVariant, error }) {
                     female?.[0]?.alleleCountHeterozygous ||
                     male?.[0]?.alleleCountHeterozygous
                   }
+                  alleleCountHemizygous={
+                    female?.[0]?.alleleCountHemizygous +
+                      male?.[0]?.alleleCountHemizygous ||
+                    female?.[0]?.alleleCountHemizygous ||
+                    male?.[0]?.alleleCountHemizygous ||
+                    "0"
+                  }
                   alleleFrequency={
                     (female?.[0]?.alleleCount + male?.[0]?.alleleCount) /
                       (female?.[0]?.alleleNumber + male?.[0]?.alleleNumber) ||
@@ -255,6 +350,9 @@ function ResultList({ results, queriedVariant, error }) {
                 alleleNumber={female?.[0]?.alleleNumber}
                 alleleCountHomozygous={female?.[0]?.alleleCountHomozygous}
                 alleleCountHeterozygous={female?.[0]?.alleleCountHeterozygous}
+                alleleCountHemizygous={
+                  female?.[0]?.alleleCountHemizygous || "0"
+                }
                 alleleFrequency={female?.[0]?.alleleFrequency}
                 nonBackgroundColor={false}
               />
@@ -267,6 +365,7 @@ function ResultList({ results, queriedVariant, error }) {
                 alleleNumber={male?.[0]?.alleleNumber}
                 alleleCountHomozygous={male?.[0]?.alleleCountHomozygous}
                 alleleCountHeterozygous={male?.[0]?.alleleCountHeterozygous}
+                alleleCountHemizygous={male?.[0]?.alleleCountHemizygous || "0"}
                 alleleFrequency={male?.[0]?.alleleFrequency}
                 nonBackgroundColor={false}
               />
@@ -297,6 +396,12 @@ function ResultList({ results, queriedVariant, error }) {
                     female?.[0]?.alleleCountHeterozygous ||
                     male?.[0]?.alleleCountHeterozygous,
               female && male
+                ? female?.[0]?.alleleCountHemizygous +
+                    male?.[0]?.alleleCountHemizygous
+                : ancestriesSumAlleleCountHemizygous ||
+                    female?.[0]?.alleleCountHemizygous ||
+                    male?.[0]?.alleleCountHemizygous,
+              female && male
                 ? (female?.[0]?.alleleCount + male?.[0]?.alleleCount) /
                     (female?.[0]?.alleleNumber + male?.[0]?.alleleNumber)
                 : ancestriesSumAlleleCount / ancestriesSumAlleleNumber ||
@@ -317,22 +422,21 @@ function ResultList({ results, queriedVariant, error }) {
       const females = getPopulationFrequency(genomAdData?.results, "Females");
       const males = getPopulationFrequency(genomAdData?.results, "Males");
       const total = getPopulationFrequency(genomAdData?.results, "Total");
-
       const allFrequencies =
         genomAdData?.results?.[0]?.frequencyInPopulations?.[0]?.frequencies ||
         [];
 
-      const ancestries = allFrequencies.filter(
+      const populationFrequencies = allFrequencies.filter(
         (f) => !["Females", "Males", "Total"].includes(f?.population)
       );
 
       // Adjust African/African-American if gnomad_joint_v4.1
       // Comment and uncomment the code to apply workaround in the population
-      // const africanPop = ancestries.find(
+      // const africanPop = populationFrequencies.find(
       //   (f) => f.population === "African/African-American"
       // );
 
-      // const otherPops = ancestries.filter(
+      // const otherPops = populationFrequencies.filter(
       //   (f) =>
       //     f.population !== "African/African-American" &&
       //     !["Females", "Males", "Total"].includes(f.population)
@@ -359,18 +463,23 @@ function ResultList({ results, queriedVariant, error }) {
         <>
           {dataset(genomAdData.id)}
 
-          {toggle.includes("ancestry") &&
-            ancestries.map((ancestry) => (
+          {/* {toggle.includes("ancestry") &&
+            populationFrequencies.map((ancestry) => (
               <SharedTableRow
                 type={ancestry?.population}
                 alleleCount={ancestry?.alleleCount}
                 alleleNumber={ancestry?.alleleNumber}
                 alleleCountHomozygous={ancestry?.alleleCountHomozygous}
                 alleleCountHeterozygous={ancestry?.alleleCountHeterozygous}
+                alleleCountHemizygous={ancestry?.alleleCountHemizygous || "0"}
                 alleleFrequency={ancestry?.alleleFrequency}
                 nonBackgroundColor={true}
               />
-            ))}
+            ))} */}
+
+          {toggle.includes("ancestry") && (
+            <GnomadPopulationGroupRows frequencies={populationFrequencies} />
+          )}
 
           {/* Show Female (XX) and Male (XY) rows if toggled */}
           {females && toggle.includes("sex") && (
@@ -380,6 +489,7 @@ function ResultList({ results, queriedVariant, error }) {
               alleleNumber={females?.alleleNumber}
               alleleCountHomozygous={females?.alleleCountHomozygous}
               alleleCountHeterozygous={females?.alleleCountHeterozygous}
+              alleleCountHemizygous={females?.alleleCountHemizygous || "0"}
               alleleFrequency={females?.alleleFrequency}
               nonBackgroundColor={false}
             />
@@ -392,6 +502,7 @@ function ResultList({ results, queriedVariant, error }) {
               alleleNumber={males?.alleleNumber}
               alleleCountHomozygous={males?.alleleCountHomozygous}
               alleleCountHeterozygous={males?.alleleCountHeterozygous}
+              alleleCountHemizygous={males?.alleleCountHemizygous || "0"}
               alleleFrequency={males?.alleleFrequency}
               nonBackgroundColor={false}
             />
@@ -404,6 +515,8 @@ function ResultList({ results, queriedVariant, error }) {
               females?.alleleCountHomozygous + males?.alleleCountHomozygous,
             total?.alleleCountHeterozygous ||
               females?.alleleCountHeterozygous + males?.alleleCountHeterozygous,
+            total?.alleleCountHemizygous ||
+              females?.alleleCountHemizygous + males?.alleleCountHemizygous,
             total?.alleleFrequency ||
               parseFloat(
                 (
@@ -435,17 +548,18 @@ function ResultList({ results, queriedVariant, error }) {
             queriedVariant={queriedVariant}
             toggle={toggle}
             handleToggle={handleToggle}
+            assemblyIdQueried={assemblyIdQueried}
           />
           <TableLayout
-            disclaimer={
-              genomAdData && (
-                <div className="disclaimer">
-                  * In the gnomAD dataset, ancestry totals may not match the
-                  "Total" because hierarchical subpopulations (e.g., Southern
-                  European under non-Finnish European) are included.
-                </div>
-              )
-            }
+          // disclaimer={
+          //   genomAdData && (
+          //     <div className="disclaimer">
+          //       * In the gnomAD dataset, ancestry totals may not match the
+          //       "Total" because hierarchical subpopulations (e.g., Southern
+          //       European under non-Finnish European) are included.
+          //     </div>
+          //   )
+          // }
           >
             {gcatTable()}
             {genomAdTable()}

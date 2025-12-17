@@ -356,6 +356,10 @@ body {
   background-color: #f4f9fe;
 }
 
+.subrow-background {
+  background-color: #f7f7f8;
+}
+
 table {
   border-spacing: 0;
   border-collapse: separate;

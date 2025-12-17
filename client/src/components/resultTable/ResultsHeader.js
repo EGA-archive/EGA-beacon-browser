@@ -12,7 +12,12 @@ import PanoramaFishEyeIcon from "@mui/icons-material/PanoramaFishEye";
 
 // This component displays the queried variant and toggle buttons for sorting results
 // It allows users to sort by ancestry and/or sex
-const ResultsHeader = ({ queriedVariant, toggle, handleToggle }) => {
+const ResultsHeader = ({
+  assemblyIdQueried,
+  queriedVariant,
+  toggle,
+  handleToggle,
+}) => {
   return (
     <Row className="queried-row">
       {/* Title */}
@@ -28,15 +33,27 @@ const ResultsHeader = ({ queriedVariant, toggle, handleToggle }) => {
         wrap="wrap"
       >
         {/* Left side: Display the variant that was queried */}
-        <Grid item xs={12} sm={6} md={4}>
-          <Typography variant="body2" sx={{ fontSize: "16px" }}>
+        <Grid item xs={6} sm={6} md={4}>
+          <Typography
+            variant="body2"
+            sx={{ fontSize: "16px", marginBottom: { xs: 1 } }}
+          >
             Queried Variant:{" "}
             <Box
               component="span"
               fontWeight="bold"
-              sx={{ whiteSpace: "nowrap" }}
+              sx={{
+                whiteSpace: "nowrap",
+                // backgroundColor: {
+                //   xs: "pink", // extra-small screens
+                //   sm: "orange", // small
+                //   md: "#d1ecf1", // medium
+                //   lg: "#d4edda", // large
+                //   xl: "#e2e3e5", // extra-large
+                // },
+              }}
             >
-              {queriedVariant}
+              {assemblyIdQueried} | {queriedVariant}
             </Box>
           </Typography>
         </Grid>
