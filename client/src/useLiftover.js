@@ -20,7 +20,7 @@ export async function liftoverVariant(variant, genome) {
 
   return buildVariant({
     chrom: parsed.chrom,
-    pos: Number(result.output_pos),
+    pos: Number(result.output_start),
     ref: parsed.ref,
     alt: parsed.alt,
   });

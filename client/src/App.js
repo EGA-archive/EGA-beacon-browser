@@ -11,20 +11,27 @@ import CustomNavbar from "./components/layout/CustomNavbar.js";
 import config from "./config";
 
 function App() {
-  const [results, setResults] = useState([]);
+  // const [results, setResults] = useState([]);
+
+  const [results, setResults] = useState({
+    original: [],
+    lifted: [],
+  });
   const [metaresults, setMetaResults] = useState([]);
   const [finalstart, setFinalStart] = useState([]);
   const [error, setError] = useState(false);
   const [isLoading, setLoading] = useState(false);
   const [queriedVariant, setQueriedVariant] = useState("");
   const [assemblyIdQueried, setAssemblyIdQueried] = useState("");
+  const [liftedVariant, setLiftedVariant] = useState(null);
+  const [liftedAssemblyId, setLiftedAssemblyId] = useState(null);
   const auth = useAuth();
 
   // This function handles the variant search logic
-  const search = async (variant, genome) => {
+  // const search = async (variant, genome) => {
+  const search = async (variant, genome, type = "original") => {
     // When the search is fired, we start by setting the loader to start as well
     setLoading(true);
-    setAssemblyIdQueried(genome);
     let jsonData = {};
 
     // Split the variant string into parts:
@@ -119,12 +126,12 @@ function App() {
         });
       }
 
-      console.log("Full Axios response:", response);
-      console.log("Response data:", response.data);
-      console.log("ResultSets:", response.data?.response?.resultSets);
-
       // Save the query results in state
-      setResults(response.data.response.resultSets);
+      // setResults(response.data.response.resultSets);
+      setResults((prev) => ({
+        ...prev,
+        [type]: response.data.response.resultSets,
+      }));
       // Stops the loader
       setLoading(false);
     } catch (error) {
@@ -142,7 +149,14 @@ function App() {
         <Container>
           <Row>
             {/* Search component: calls the `search()` function and sets the variant string */}
-            <Search search={search} setVariant={setQueriedVariant} />{" "}
+            <Search
+              search={search}
+              setVariant={setQueriedVariant}
+              setAssemblyIdQueried={setAssemblyIdQueried}
+              liftedVariant={liftedVariant}
+              setLiftedVariant={setLiftedVariant}
+              setLiftedAssemblyId={setLiftedAssemblyId}
+            />
           </Row>
           {/* Show loader while waiting for results */}
           {isLoading && !error && <div className="loader"></div>}
@@ -155,6 +169,8 @@ function App() {
               error={error}
               queriedVariant={queriedVariant}
               assemblyIdQueried={assemblyIdQueried}
+              liftedAssemblyId={liftedAssemblyId}
+              liftedVariant={liftedVariant}
             />
           )}
           {/* If no variant has been searched, show the Network Members, otherwise show result */}

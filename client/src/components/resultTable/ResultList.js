@@ -6,28 +6,48 @@ import TableLayout from "./TableLayout.js";
 import SharedTableRow from "./SharedTableRow.js";
 import GnomadPopulationGroupRows from "./GnomadPopulationGroupRow.js";
 import { getPopulationFrequency, formatAF } from "../constants.js";
+import liftoverIcon from "../../liftover-icon.svg";
+import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
+import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
 
-// This component displays a table of results for a queried variant.
-// and adapts the content based on toggle selections and dataset structure.
-function ResultList({ assemblyIdQueried, results, queriedVariant, error }) {
-  const [toggle, setToggle] = useState(["ancestry", "sex"]); // selected sorting filters
+// // This component displays a table of results for a queried variant.
+// // and adapts the content based on toggle selections and dataset structure.
+
+function ResultList({
+  assemblyIdQueried,
+  results,
+  queriedVariant,
+  error,
+  liftedAssemblyId,
+  liftedVariant,
+}) {
+  const [toggle, setToggle] = useState(["ancestry", "sex"]);
   const [dataExists, setDataExists] = useState(false);
+  const [collapsedDatasets, setCollapsedDatasets] = useState({});
 
-  // Check if there is at least one dataset with population frequency data
+  const toggleDataset = (key) => {
+    setCollapsedDatasets((prev) => ({
+      ...prev,
+      [key]: !prev[key],
+    }));
+  };
+
+  const mergedResults = [
+    ...(results?.original || []).map((r) => ({ ...r, __source: "original" })),
+    ...(results?.lifted || []).map((r) => ({ ...r, __source: "lifted" })),
+  ];
+
   useEffect(() => {
     const condition =
-      Boolean(results?.length) &&
-      Boolean(results?.[0]?.results?.[0]?.frequencyInPopulations?.length);
-
+      Boolean(mergedResults.length) &&
+      mergedResults.some((r) => r.results?.[0]?.frequencyInPopulations?.length);
     setDataExists(condition);
-  }, [results]);
+  }, [mergedResults]);
 
-  // Update selected toggles when user clicks sort options
   const handleToggle = (event, newToggle) => {
     setToggle(newToggle);
   };
 
-  // Render total row at the bottom of the table
   const totalResults = (
     totalAlleleCount,
     totalAlleleNumber,
@@ -38,17 +58,21 @@ function ResultList({ assemblyIdQueried, results, queriedVariant, error }) {
     isGenomAd
   ) => {
     const borderClass = toggle.length === 0 ? "no-border" : "beaconized";
+
     return (
       <tr>
         <td className={`${borderClass} dataset-col`} colSpan="1">
-          <b>Total {isGenomAd ? "*" : ""}</b>
+          <b>Total {isGenomAd}</b>
         </td>
+
         <td className={`${borderClass} centered`} colSpan="1">
           <b>{totalAlleleCount || 0}</b>
         </td>
+
         <td className={`${borderClass} centered`} colSpan="1">
           <b>{totalAlleleNumber || 0}</b>
         </td>
+
         <td className={`${borderClass} centered`} colSpan="1">
           <b>
             {totalAlleleCountHomozygous ||
@@ -56,6 +80,7 @@ function ResultList({ assemblyIdQueried, results, queriedVariant, error }) {
               0}
           </b>
         </td>
+
         <td className={`${borderClass} centered`} colSpan="1">
           <b>
             {totalAlleleCountHeterozygous ||
@@ -63,9 +88,11 @@ function ResultList({ assemblyIdQueried, results, queriedVariant, error }) {
               0}
           </b>
         </td>
+
         <td className={`${borderClass} centered`} colSpan="1">
           <b>{totalAlleleCountHemizygous || 0}</b>
         </td>
+
         <td className={`${borderClass} centered`} colSpan="1">
           <b>
             {(() => {
@@ -92,8 +119,282 @@ function ResultList({ assemblyIdQueried, results, queriedVariant, error }) {
     );
   };
 
-  // Renders dataset label row, optionally with link only for GCAT
-  const dataset = (dataset) => {
+  const gcatData = mergedResults.filter(
+    (result) =>
+      result.resultsCount > 1 ||
+      (result.resultsCount === 1 &&
+        result.results?.some((res) =>
+          res.frequencyInPopulations?.some(
+            (pop) => pop.frequencies?.length === 1
+          )
+        ))
+  );
+
+  const genomAdData = mergedResults.filter(
+    (result) =>
+      result.resultsCount === 1 &&
+      result.results?.some((res) =>
+        res.frequencyInPopulations?.some((pop) => pop.frequencies?.length > 1)
+      )
+  );
+
+  const gcatTable = (gcat) => {
+    if (!gcat) return null;
+
+    const datasetKey = gcat.id + gcat.__source;
+    const isCollapsed = collapsedDatasets[datasetKey] === true;
+
+    const getData = (population) =>
+      gcat.results.find(
+        (result) =>
+          result?.frequencyInPopulations?.[0]?.frequencies?.[0]?.population ===
+          population
+      )?.frequencyInPopulations?.[0]?.frequencies;
+
+    const female = getData("Female");
+    const male = getData("Male");
+
+    const ancestries = gcat.results
+      .filter(
+        (result) =>
+          !["Female", "Male"].includes(
+            result?.frequencyInPopulations?.[0]?.frequencies?.[0]?.population
+          )
+      )
+      .sort((a, b) =>
+        (
+          a?.frequencyInPopulations?.[0]?.frequencies?.[0]?.population || ""
+        ).localeCompare(
+          b?.frequencyInPopulations?.[0]?.frequencies?.[0]?.population || ""
+        )
+      );
+
+    let ancestriesSumAlleleCount = 0;
+    let ancestriesSumAlleleNumber = 0;
+    let ancestriesSumAlleleCountHomozygous = 0;
+    let ancestriesSumAlleleCountHeterozygous = 0;
+    let ancestriesSumAlleleCountHemizygous = 0;
+
+    return (
+      <>
+        {!isCollapsed && (
+          <>
+            {toggle.includes("ancestry") &&
+              (ancestries && ancestries.length > 0 ? (
+                ancestries.map((ancestry) => {
+                  const a =
+                    ancestry?.frequencyInPopulations?.[0]?.frequencies?.[0];
+
+                  ancestriesSumAlleleCount += a?.alleleCount || 0;
+                  ancestriesSumAlleleNumber += a?.alleleNumber || 0;
+                  ancestriesSumAlleleCountHomozygous +=
+                    a?.alleleCountHomozygous || 0;
+                  ancestriesSumAlleleCountHeterozygous +=
+                    a?.alleleCountHeterozygous || 0;
+                  ancestriesSumAlleleCountHemizygous +=
+                    a?.alleleCountHemizygous || 0;
+
+                  return (
+                    <SharedTableRow
+                      key={a?.population}
+                      type={a?.population}
+                      alleleCount={a?.alleleCount}
+                      alleleNumber={a?.alleleNumber}
+                      alleleCountHomozygous={a?.alleleCountHomozygous}
+                      alleleCountHeterozygous={a?.alleleCountHeterozygous}
+                      alleleCountHemizygous={a?.alleleCountHemizygous || "0"}
+                      alleleFrequency={a?.alleleFrequency}
+                      nonBackgroundColor
+                    />
+                  );
+                })
+              ) : (
+                <SharedTableRow
+                  type="European"
+                  alleleCount={
+                    (female?.[0]?.alleleCount || 0) +
+                      (male?.[0]?.alleleCount || 0) ||
+                    female?.[0]?.alleleCount ||
+                    male?.[0]?.alleleCount
+                  }
+                  alleleNumber={
+                    (female?.[0]?.alleleNumber || 0) +
+                      (male?.[0]?.alleleNumber || 0) ||
+                    female?.[0]?.alleleNumber ||
+                    male?.[0]?.alleleNumber
+                  }
+                  alleleCountHomozygous={
+                    (female?.[0]?.alleleCountHomozygous || 0) +
+                      (male?.[0]?.alleleCountHomozygous || 0) ||
+                    female?.[0]?.alleleCountHomozygous ||
+                    male?.[0]?.alleleCountHomozygous
+                  }
+                  alleleCountHeterozygous={
+                    (female?.[0]?.alleleCountHeterozygous || 0) +
+                      (male?.[0]?.alleleCountHeterozygous || 0) ||
+                    female?.[0]?.alleleCountHeterozygous ||
+                    male?.[0]?.alleleCountHeterozygous
+                  }
+                  alleleCountHemizygous={
+                    (female?.[0]?.alleleCountHemizygous || 0) +
+                      (male?.[0]?.alleleCountHemizygous || 0) ||
+                    female?.[0]?.alleleCountHemizygous ||
+                    male?.[0]?.alleleCountHemizygous ||
+                    "0"
+                  }
+                  alleleFrequency={
+                    ((female?.[0]?.alleleCount || 0) +
+                      (male?.[0]?.alleleCount || 0)) /
+                      ((female?.[0]?.alleleNumber || 0) +
+                        (male?.[0]?.alleleNumber || 0)) ||
+                    female?.[0]?.alleleFrequency ||
+                    male?.[0]?.alleleFrequency
+                  }
+                  nonBackgroundColor
+                />
+              ))}
+
+            {female && toggle.includes("sex") && (
+              <SharedTableRow
+                type="XX"
+                alleleCount={female?.[0]?.alleleCount}
+                alleleNumber={female?.[0]?.alleleNumber}
+                alleleCountHomozygous={female?.[0]?.alleleCountHomozygous}
+                alleleCountHeterozygous={female?.[0]?.alleleCountHeterozygous}
+                alleleCountHemizygous={
+                  female?.[0]?.alleleCountHemizygous || "0"
+                }
+                alleleFrequency={female?.[0]?.alleleFrequency}
+                nonBackgroundColor={false}
+              />
+            )}
+
+            {male && toggle.includes("sex") && (
+              <SharedTableRow
+                type="XY"
+                alleleCount={male?.[0]?.alleleCount}
+                alleleNumber={male?.[0]?.alleleNumber}
+                alleleCountHomozygous={male?.[0]?.alleleCountHomozygous}
+                alleleCountHeterozygous={male?.[0]?.alleleCountHeterozygous}
+                alleleCountHemizygous={male?.[0]?.alleleCountHemizygous || "0"}
+                alleleFrequency={male?.[0]?.alleleFrequency}
+                nonBackgroundColor={false}
+              />
+            )}
+          </>
+        )}
+
+        {totalResults(
+          female && male
+            ? (female?.[0]?.alleleCount || 0) + (male?.[0]?.alleleCount || 0)
+            : ancestriesSumAlleleCount ||
+                female?.[0]?.alleleCount ||
+                male?.[0]?.alleleCount,
+          female && male
+            ? (female?.[0]?.alleleNumber || 0) + (male?.[0]?.alleleNumber || 0)
+            : ancestriesSumAlleleNumber ||
+                female?.[0]?.alleleNumber ||
+                male?.[0]?.alleleNumber,
+          female && male
+            ? (female?.[0]?.alleleCountHomozygous || 0) +
+                (male?.[0]?.alleleCountHomozygous || 0)
+            : ancestriesSumAlleleCountHomozygous ||
+                female?.[0]?.alleleCountHomozygous ||
+                male?.[0]?.alleleCountHomozygous,
+          female && male
+            ? (female?.[0]?.alleleCountHeterozygous || 0) +
+                (male?.[0]?.alleleCountHeterozygous || 0)
+            : ancestriesSumAlleleCountHeterozygous ||
+                female?.[0]?.alleleCountHeterozygous ||
+                male?.[0]?.alleleCountHeterozygous,
+          female && male
+            ? (female?.[0]?.alleleCountHemizygous || "0") +
+                (male?.[0]?.alleleCountHemizygous || "0")
+            : ancestriesSumAlleleCountHemizygous ||
+                female?.[0]?.alleleCountHemizygous ||
+                male?.[0]?.alleleCountHemizygous,
+          female && male
+            ? ((female?.[0]?.alleleCount || 0) +
+                (male?.[0]?.alleleCount || 0)) /
+                ((female?.[0]?.alleleNumber || 0) +
+                  (male?.[0]?.alleleNumber || 0))
+            : ancestriesSumAlleleNumber
+            ? ancestriesSumAlleleCount / ancestriesSumAlleleNumber
+            : female?.[0]?.alleleNumber
+            ? (female?.[0]?.alleleCount || 0) / (female?.[0]?.alleleNumber || 1)
+            : male?.[0]?.alleleNumber
+            ? (male?.[0]?.alleleCount || 0) / (male?.[0]?.alleleNumber || 1)
+            : null,
+          false
+        )}
+      </>
+    );
+  };
+
+  const genomAdTable = (gnomad) => {
+    if (!gnomad) return null;
+
+    const datasetKey = gnomad.id + gnomad.__source;
+    const isCollapsed = collapsedDatasets[datasetKey] === true;
+
+    const females = getPopulationFrequency(gnomad.results, "Females");
+    const males = getPopulationFrequency(gnomad.results, "Males");
+    const total = getPopulationFrequency(gnomad.results, "Total");
+
+    const allFrequencies =
+      gnomad.results?.[0]?.frequencyInPopulations?.[0]?.frequencies || [];
+
+    const populationFrequencies = allFrequencies.filter(
+      (f) => !["Females", "Males", "Total"].includes(f?.population)
+    );
+
+    return (
+      <>
+        {!isCollapsed && (
+          <>
+            {toggle.includes("ancestry") && (
+              <GnomadPopulationGroupRows frequencies={populationFrequencies} />
+            )}
+
+            {females && toggle.includes("sex") && (
+              <SharedTableRow
+                type="XX"
+                {...females}
+                nonBackgroundColor={false}
+              />
+            )}
+
+            {males && toggle.includes("sex") && (
+              <SharedTableRow type="XY" {...males} nonBackgroundColor={false} />
+            )}
+          </>
+        )}
+
+        {totalResults(
+          total?.alleleCount ||
+            (females?.alleleCount || 0) + (males?.alleleCount || 0),
+          total?.alleleNumber ||
+            (females?.alleleNumber || 0) + (males?.alleleNumber || 0),
+          total?.alleleCountHomozygous ||
+            (females?.alleleCountHomozygous || 0) +
+              (males?.alleleCountHomozygous || 0),
+          total?.alleleCountHeterozygous ||
+            (females?.alleleCountHeterozygous || 0) +
+              (males?.alleleCountHeterozygous || 0),
+          total?.alleleCountHemizygous ||
+            (females?.alleleCountHemizygous || 0) +
+              (males?.alleleCountHemizygous || 0),
+          total?.alleleFrequency ||
+            ((females?.alleleCount || 0) + (males?.alleleCount || 0)) /
+              ((females?.alleleNumber || 0) + (males?.alleleNumber || 0)),
+          true
+        )}
+      </>
+    );
+  };
+
+  const dataset = (dataset, isLifted, datasetKey) => {
+    const isCollapsed = collapsedDatasets[datasetKey] === true;
     const getGnomadVariant = (variant) => {
       if (!variant) return "";
 
@@ -108,13 +409,11 @@ function ResultList({ assemblyIdQueried, results, queriedVariant, error }) {
       if (Number.isNaN(pos0Based)) return variant;
 
       const pos1Based = pos0Based + 1;
-
       return `${chr}-${pos1Based}-${ref}-${alt}`;
     };
 
     let displayDatasetName = dataset;
 
-    // GCAT (specific EGAD dataset)
     if (dataset === "EGAD00001007774") {
       displayDatasetName = (
         <>
@@ -130,26 +429,18 @@ function ResultList({ assemblyIdQueried, results, queriedVariant, error }) {
           )
         </>
       );
-    }
-
-    // All other EGAD datasets
-    else if (dataset.startsWith("EGAD")) {
+    } else if (dataset.startsWith("EGAD")) {
       displayDatasetName = (
-        <>
-          <a
-            href={`https://ega-archive.org/datasets/${dataset}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="ega-link"
-          >
-            {dataset}
-          </a>
-        </>
+        <a
+          href={`https://ega-archive.org/datasets/${dataset}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="ega-link"
+        >
+          {dataset}
+        </a>
       );
-    }
-
-    // gnomAD datasets
-    else if (dataset.startsWith("gnomad")) {
+    } else if (dataset.startsWith("gnomad")) {
       const gnomadVariant = getGnomadVariant(queriedVariant);
 
       if (assemblyIdQueried === "GRCh37") {
@@ -180,356 +471,34 @@ function ResultList({ assemblyIdQueried, results, queriedVariant, error }) {
             (exomes and genomes)
           </>
         );
-      } else {
-        displayDatasetName = "gnomAD";
       }
     }
 
     return (
       <tr>
         <td className="dataset dataset-col" colSpan="7">
-          <div>
-            Dataset: <b>{displayDatasetName}</b>
-          </div>
+          <span
+            style={{ cursor: "pointer", marginRight: "6px" }}
+            onClick={() => toggleDataset(datasetKey)}
+          >
+            {isCollapsed ? (
+              <KeyboardArrowRightIcon fontSize="small" />
+            ) : (
+              <KeyboardArrowDownIcon fontSize="small" />
+            )}
+          </span>
+          Dataset: <b>{dataset}</b>
+          {isLifted && (
+            <img
+              src={liftoverIcon}
+              alt="lifted-over"
+              style={{ marginLeft: "8px", verticalAlign: "middle" }}
+              width={35}
+            />
+          )}
         </td>
       </tr>
     );
-  };
-
-  // Get GCAT dataset and identify it by structure
-  // const gcatData = results.find((result) => result.id === "EGAD00001007774"); // New logic do or if resultsCount ===1 and array length equal to 1
-  const gcatData = results.find(
-    (result) =>
-      result.resultsCount > 1 || // gCat datasets typically have multiple populations
-      (result.resultsCount === 1 &&
-        result.results?.some((res) =>
-          res.frequencyInPopulations?.some(
-            (pop) => pop.frequencies?.length === 1 // Check for one frequency
-          )
-        ))
-  );
-
-  // Get gnomAD dataset by structure
-  // const gcatData = results.find((result) => result.resultsCount >= 1);
-  // const genomAdData = results.find(
-  //   (result) => result.id === "gnomad_exome_v2.1.1"
-  // );
-  const genomAdData = results.find(
-    (result) =>
-      result.resultsCount === 1 &&
-      result.results?.some((res) =>
-        res.frequencyInPopulations?.some((pop) => pop.frequencies?.length > 1)
-      )
-  );
-
-  const isGnomadJointV41 = genomAdData?.id === "gnomad_joint_v4.1";
-
-  // Filter and identify populations for adjustments
-  const allFrequencies =
-    genomAdData?.results?.[0]?.frequencyInPopulations?.[0]?.frequencies || [];
-
-  //   General GCAT rendering logic
-  const gcatTable = () => {
-    if (gcatData) {
-      const getData = (population) => {
-        return gcatData.results.find(
-          (result) =>
-            result?.frequencyInPopulations?.[0]?.frequencies?.[0]
-              ?.population === population
-        )?.frequencyInPopulations?.[0]?.frequencies;
-      };
-
-      const female = getData("Female");
-      const male = getData("Male");
-      // const ancestries = gcatData.results.filter(
-      //   (result) =>
-      //     !["Female", "Male"].includes(
-      //       result?.frequencyInPopulations?.[0]?.frequencies?.[0]?.population
-      //     )
-      // );
-
-      const ancestries = gcatData.results
-        .filter(
-          (result) =>
-            !["Female", "Male"].includes(
-              result?.frequencyInPopulations?.[0]?.frequencies?.[0]?.population
-            )
-        )
-        .sort((a, b) => {
-          const popA =
-            a?.frequencyInPopulations?.[0]?.frequencies?.[0]?.population || "";
-          const popB =
-            b?.frequencyInPopulations?.[0]?.frequencies?.[0]?.population || "";
-          return popA.localeCompare(popB);
-        });
-
-      let ancestriesSumAlleleCount = 0;
-      let ancestriesSumAlleleNumber = 0;
-      let ancestriesSumAlleleCountHomozygous = 0;
-      let ancestriesSumAlleleCountHeterozygous = 0;
-      let ancestriesSumAlleleCountHemizygous = 0;
-
-      return (
-        <>
-          <>
-            {dataset(gcatData.id)}
-            {/* Show ancestries or fallback to “European” */}
-            {toggle.includes("ancestry") &&
-              (ancestries && ancestries.length > 0 ? (
-                ancestries.map((ancestry) => {
-                  const ancestryObj =
-                    ancestry?.frequencyInPopulations?.[0]?.frequencies?.[0];
-                  ancestriesSumAlleleCount += ancestryObj?.alleleCount;
-                  ancestriesSumAlleleCountHemizygous +=
-                    ancestryObj?.alleleCountHemizygous;
-
-                  return (
-                    <SharedTableRow
-                      type={ancestryObj?.population}
-                      alleleCount={ancestryObj?.alleleCount}
-                      alleleNumber={ancestryObj?.alleleNumber}
-                      alleleCountHomozygous={ancestryObj?.alleleCountHomozygous}
-                      alleleCountHeterozygous={
-                        ancestryObj?.alleleCountHeterozygous
-                      }
-                      alleleCountHemizygous={
-                        ancestryObj?.alleleCountHemizygous || "0"
-                      }
-                      alleleFrequency={ancestryObj?.alleleFrequency}
-                      nonBackgroundColor={true}
-                    />
-                  );
-                })
-              ) : (
-                <SharedTableRow
-                  type="European"
-                  alleleCount={
-                    female?.[0]?.alleleCount + male?.[0]?.alleleCount ||
-                    female?.[0]?.alleleCount ||
-                    male?.[0]?.alleleCount
-                  }
-                  alleleNumber={
-                    female?.[0]?.alleleNumber + male?.[0]?.alleleNumber ||
-                    female?.[0]?.alleleNumber ||
-                    male?.[0]?.alleleNumber
-                  }
-                  alleleCountHomozygous={
-                    female?.[0]?.alleleCountHomozygous +
-                      male?.[0]?.alleleCountHomozygous ||
-                    female?.[0]?.alleleCountHomozygous ||
-                    male?.[0]?.alleleCountHomozygous
-                  }
-                  alleleCountHeterozygous={
-                    female?.[0]?.alleleCountHeterozygous +
-                      male?.[0]?.alleleCountHeterozygous ||
-                    female?.[0]?.alleleCountHeterozygous ||
-                    male?.[0]?.alleleCountHeterozygous
-                  }
-                  alleleCountHemizygous={
-                    female?.[0]?.alleleCountHemizygous +
-                      male?.[0]?.alleleCountHemizygous ||
-                    female?.[0]?.alleleCountHemizygous ||
-                    male?.[0]?.alleleCountHemizygous ||
-                    "0"
-                  }
-                  alleleFrequency={
-                    (female?.[0]?.alleleCount + male?.[0]?.alleleCount) /
-                      (female?.[0]?.alleleNumber + male?.[0]?.alleleNumber) ||
-                    female?.[0]?.alleleFrequency ||
-                    male?.[0]?.alleleFrequency
-                  }
-                  nonBackgroundColor={true}
-                />
-              ))}
-
-            {/* Show Female (XX) and Male (XY) rows if toggled */}
-            {female && toggle.includes("sex") && (
-              <SharedTableRow
-                type="XX"
-                alleleCount={female?.[0]?.alleleCount}
-                alleleNumber={female?.[0]?.alleleNumber}
-                alleleCountHomozygous={female?.[0]?.alleleCountHomozygous}
-                alleleCountHeterozygous={female?.[0]?.alleleCountHeterozygous}
-                alleleCountHemizygous={
-                  female?.[0]?.alleleCountHemizygous || "0"
-                }
-                alleleFrequency={female?.[0]?.alleleFrequency}
-                nonBackgroundColor={false}
-              />
-            )}
-
-            {male && toggle.includes("sex") && (
-              <SharedTableRow
-                type="XY"
-                alleleCount={male?.[0]?.alleleCount}
-                alleleNumber={male?.[0]?.alleleNumber}
-                alleleCountHomozygous={male?.[0]?.alleleCountHomozygous}
-                alleleCountHeterozygous={male?.[0]?.alleleCountHeterozygous}
-                alleleCountHemizygous={male?.[0]?.alleleCountHemizygous || "0"}
-                alleleFrequency={male?.[0]?.alleleFrequency}
-                nonBackgroundColor={false}
-              />
-            )}
-
-            {/* Render total row at the end */}
-            {totalResults(
-              female && male
-                ? female?.[0]?.alleleCount + male?.[0]?.alleleCount
-                : ancestriesSumAlleleCount ||
-                    female?.[0]?.alleleCount ||
-                    male?.[0]?.alleleCount,
-              female && male
-                ? female?.[0]?.alleleNumber + male?.[0]?.alleleNumber
-                : ancestriesSumAlleleNumber ||
-                    female?.[0]?.alleleNumber ||
-                    male?.[0]?.alleleNumber,
-              female && male
-                ? female?.[0]?.alleleCountHomozygous +
-                    male?.[0]?.alleleCountHomozygous
-                : ancestriesSumAlleleCountHomozygous ||
-                    female?.[0]?.alleleCountHomozygous ||
-                    male?.[0]?.alleleCountHomozygous,
-              female && male
-                ? female?.[0]?.alleleCountHeterozygous +
-                    male?.[0]?.alleleCountHeterozygous
-                : ancestriesSumAlleleCountHeterozygous ||
-                    female?.[0]?.alleleCountHeterozygous ||
-                    male?.[0]?.alleleCountHeterozygous,
-              female && male
-                ? female?.[0]?.alleleCountHemizygous +
-                    male?.[0]?.alleleCountHemizygous
-                : ancestriesSumAlleleCountHemizygous ||
-                    female?.[0]?.alleleCountHemizygous ||
-                    male?.[0]?.alleleCountHemizygous,
-              female && male
-                ? (female?.[0]?.alleleCount + male?.[0]?.alleleCount) /
-                    (female?.[0]?.alleleNumber + male?.[0]?.alleleNumber)
-                : ancestriesSumAlleleCount / ancestriesSumAlleleNumber ||
-                    female?.[0]?.alleleCount / female?.[0]?.alleleNumber ||
-                    male?.[0]?.alleleCount / male?.[0]?.alleleNumber,
-              false
-            )}
-          </>
-        </>
-      );
-    }
-    return null;
-  };
-
-  // General GenomAd rendering logic
-  const genomAdTable = () => {
-    if (genomAdData) {
-      const females = getPopulationFrequency(genomAdData?.results, "Females");
-      const males = getPopulationFrequency(genomAdData?.results, "Males");
-      const total = getPopulationFrequency(genomAdData?.results, "Total");
-      const allFrequencies =
-        genomAdData?.results?.[0]?.frequencyInPopulations?.[0]?.frequencies ||
-        [];
-
-      const populationFrequencies = allFrequencies.filter(
-        (f) => !["Females", "Males", "Total"].includes(f?.population)
-      );
-
-      // Adjust African/African-American if gnomad_joint_v4.1
-      // Comment and uncomment the code to apply workaround in the population
-      // const africanPop = populationFrequencies.find(
-      //   (f) => f.population === "African/African-American"
-      // );
-
-      // const otherPops = populationFrequencies.filter(
-      //   (f) =>
-      //     f.population !== "African/African-American" &&
-      //     !["Females", "Males", "Total"].includes(f.population)
-      // );
-
-      // if (isGnomadJointV41 && africanPop && total) {
-      //   const sumOtherHomo = otherPops.reduce(
-      //     (acc, f) => acc + (f.alleleCountHomozygous || 0),
-      //     0
-      //   );
-      //   const sumOtherHetero = otherPops.reduce(
-      //     (acc, f) => acc + (f.alleleCountHeterozygous || 0),
-      //     0
-      //   );
-
-      //   africanPop.alleleCountHomozygous =
-      //     (total.alleleCountHomozygous || 0) - sumOtherHomo;
-
-      //   africanPop.alleleCountHeterozygous =
-      //     (total.alleleCountHeterozygous || 0) - sumOtherHetero;
-      // }
-
-      return (
-        <>
-          {dataset(genomAdData.id)}
-
-          {/* {toggle.includes("ancestry") &&
-            populationFrequencies.map((ancestry) => (
-              <SharedTableRow
-                type={ancestry?.population}
-                alleleCount={ancestry?.alleleCount}
-                alleleNumber={ancestry?.alleleNumber}
-                alleleCountHomozygous={ancestry?.alleleCountHomozygous}
-                alleleCountHeterozygous={ancestry?.alleleCountHeterozygous}
-                alleleCountHemizygous={ancestry?.alleleCountHemizygous || "0"}
-                alleleFrequency={ancestry?.alleleFrequency}
-                nonBackgroundColor={true}
-              />
-            ))} */}
-
-          {toggle.includes("ancestry") && (
-            <GnomadPopulationGroupRows frequencies={populationFrequencies} />
-          )}
-
-          {/* Show Female (XX) and Male (XY) rows if toggled */}
-          {females && toggle.includes("sex") && (
-            <SharedTableRow
-              type="XX"
-              alleleCount={females?.alleleCount}
-              alleleNumber={females?.alleleNumber}
-              alleleCountHomozygous={females?.alleleCountHomozygous}
-              alleleCountHeterozygous={females?.alleleCountHeterozygous}
-              alleleCountHemizygous={females?.alleleCountHemizygous || "0"}
-              alleleFrequency={females?.alleleFrequency}
-              nonBackgroundColor={false}
-            />
-          )}
-
-          {males && toggle.includes("sex") && (
-            <SharedTableRow
-              type="XY"
-              alleleCount={males?.alleleCount}
-              alleleNumber={males?.alleleNumber}
-              alleleCountHomozygous={males?.alleleCountHomozygous}
-              alleleCountHeterozygous={males?.alleleCountHeterozygous}
-              alleleCountHemizygous={males?.alleleCountHemizygous || "0"}
-              alleleFrequency={males?.alleleFrequency}
-              nonBackgroundColor={false}
-            />
-          )}
-          {/* Render total row at the end */}
-          {totalResults(
-            total?.alleleCount || females?.alleleCount + males?.alleleCount,
-            total?.alleleNumber || females?.alleleNumber + males?.alleleNumber,
-            total?.alleleCountHomozygous ||
-              females?.alleleCountHomozygous + males?.alleleCountHomozygous,
-            total?.alleleCountHeterozygous ||
-              females?.alleleCountHeterozygous + males?.alleleCountHeterozygous,
-            total?.alleleCountHemizygous ||
-              females?.alleleCountHemizygous + males?.alleleCountHemizygous,
-            total?.alleleFrequency ||
-              parseFloat(
-                (
-                  (females?.alleleCount + males?.alleleCount) /
-                  (females?.alleleNumber + males?.alleleNumber)
-                ).toFixed(5)
-              ),
-            true
-          )}
-        </>
-      );
-    }
-    return null;
   };
 
   return (
@@ -549,26 +518,42 @@ function ResultList({ assemblyIdQueried, results, queriedVariant, error }) {
             toggle={toggle}
             handleToggle={handleToggle}
             assemblyIdQueried={assemblyIdQueried}
+            liftedAssemblyId={liftedAssemblyId}
+            liftedVariant={liftedVariant}
           />
-          <TableLayout
-          // disclaimer={
-          //   genomAdData && (
-          //     <div className="disclaimer">
-          //       * In the gnomAD dataset, ancestry totals may not match the
-          //       "Total" because hierarchical subpopulations (e.g., Southern
-          //       European under non-Finnish European) are included.
-          //     </div>
-          //   )
-          // }
-          >
-            {gcatTable()}
-            {genomAdTable()}
+
+          <TableLayout>
+            {gcatData.map((gcat) => (
+              <React.Fragment key={gcat.id + gcat.__source}>
+                {dataset(
+                  gcat.id,
+                  gcat.__source === "lifted",
+                  gcat.id + gcat.__source
+                )}
+
+                {gcatTable(gcat)}
+              </React.Fragment>
+            ))}
+
+            {genomAdData.map((gnomad) => (
+              <React.Fragment key={gnomad.id + gnomad.__source}>
+                {dataset(
+                  gnomad.id,
+                  gnomad.__source === "lifted",
+                  gnomad.id + gnomad.__source
+                )}
+
+                {genomAdTable(gnomad)}
+              </React.Fragment>
+            ))}
           </TableLayout>
         </Box>
       )}
+
       {!dataExists && queriedVariant && (
         <p className="exclamation">No results found.</p>
       )}
+
       {error !== false && (
         <p className="bi bi-exclamation-triangle exclamation">
           There is a problem connecting to the Beacon Network, please try again

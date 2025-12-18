@@ -23,62 +23,37 @@ const SignupSchema = Yup.object().shape({
 // Dropdown Menu for Reference Genome
 const refGenome = [{ label: "GRCh37" }, { label: "GRCh38" }];
 
-function Search({ search, setVariant }) {
+function Search({
+  search,
+  setVariant,
+  setAssemblyIdQueried,
+  liftedVariant,
+  setLiftedVariant,
+  setLiftedAssemblyId,
+}) {
   // Local React state (drives liftover side effects)
   const [currentVariant, setCurrentVariant] = React.useState("");
   const [currentGenome, setCurrentGenome] = React.useState("GRCh37");
   const [liftoverEnabled, setLiftoverEnabled] = React.useState(false);
-  const [liftedVariant, setLiftedVariant] = React.useState(null);
   const [liftoverError, setLiftoverError] = React.useState(null);
 
-  // React.useEffect(() => {
-  //   const runLiftover = async () => {
-  //     if (!liftoverEnabled || !currentVariant || !currentGenome) {
-  //       setLiftedVariant(null);
-  //       return;
-  //     }
-
-  //     try {
-  //       setLiftoverError(null);
-  //       const lifted = await liftoverVariant(currentVariant, currentGenome);
-  //       setLiftedVariant(lifted);
-  //     } catch (err) {
-  //       setLiftedVariant(null);
-  //       setLiftoverError("Liftover failed");
-  //     }
-  //   };
-
-  //   runLiftover();
-  // }, [liftoverEnabled, currentVariant, currentGenome]);
-
   React.useEffect(() => {
-    console.log("[LIFTOVER EFFECT] triggered", {
-      liftoverEnabled,
-      currentVariant,
-      currentGenome,
-    });
-
     const runLiftover = async () => {
       if (!liftoverEnabled || !currentVariant || !currentGenome) {
-        console.log("[LIFTOVER EFFECT] skipped");
         setLiftedVariant(null);
+        setLiftedAssemblyId(null);
         return;
       }
 
       try {
-        console.log("[LIFTOVER EFFECT] calling liftoverVariant", {
-          currentVariant,
-          currentGenome,
-        });
-
         setLiftoverError(null);
         const lifted = await liftoverVariant(currentVariant, currentGenome);
 
-        console.log("[LIFTOVER EFFECT] result:", lifted);
         setLiftedVariant(lifted);
+        setLiftedAssemblyId(currentGenome === "GRCh37" ? "GRCh38" : "GRCh37");
       } catch (err) {
-        console.error("[LIFTOVER EFFECT] error", err);
         setLiftedVariant(null);
+        setLiftedAssemblyId(null);
         setLiftoverError("Liftover failed");
       }
     };
@@ -86,17 +61,18 @@ function Search({ search, setVariant }) {
     runLiftover();
   }, [liftoverEnabled, currentVariant, currentGenome]);
 
-  // Submit handler
   const onSubmit = async (values) => {
-    const variantToQuery =
-      values.liftover && liftedVariant ? liftedVariant : values.variant;
+    setVariant(values.variant);
+    setAssemblyIdQueried(values.genome);
 
-    setVariant(variantToQuery);
-    await search(variantToQuery, values.genome);
+    await search(values.variant, values.genome, "original");
+
+    if (values.liftover && liftedVariant) {
+      const liftedAssembly = values.genome === "GRCh37" ? "GRCh38" : "GRCh37";
+
+      await search(liftedVariant, liftedAssembly, "lifted");
+    }
   };
-
-  console.log(currentVariant);
-  console.log(liftedVariant);
 
   return (
     <ThemeProvider theme={CustomTheme}>
@@ -182,6 +158,7 @@ function Search({ search, setVariant }) {
                         onInputChange={(event, newValue) => {
                           if (event && event.type !== "paste") {
                             setFieldValue("variant", newValue);
+                            setCurrentVariant(newValue);
                           }
                         }}
                         renderInput={(params) => (

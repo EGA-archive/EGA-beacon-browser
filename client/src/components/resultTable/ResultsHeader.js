@@ -9,12 +9,15 @@ import {
 import { Row } from "react-bootstrap";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import PanoramaFishEyeIcon from "@mui/icons-material/PanoramaFishEye";
+import liftoverIcon from "../../liftover-icon.svg";
 
 // This component displays the queried variant and toggle buttons for sorting results
 // It allows users to sort by ancestry and/or sex
 const ResultsHeader = ({
   assemblyIdQueried,
   queriedVariant,
+  liftedAssemblyId,
+  liftedVariant,
   toggle,
   handleToggle,
 }) => {
@@ -33,7 +36,7 @@ const ResultsHeader = ({
         wrap="wrap"
       >
         {/* Left side: Display the variant that was queried */}
-        <Grid item xs={6} sm={6} md={4}>
+        {/* <Grid item xs={6} sm={6} md={4}>
           <Typography
             variant="body2"
             sx={{ fontSize: "16px", marginBottom: { xs: 1 } }}
@@ -56,6 +59,43 @@ const ResultsHeader = ({
               {assemblyIdQueried} | {queriedVariant}
             </Box>
           </Typography>
+        </Grid> */}
+        <Grid item xs={6} sm={6} md={4}>
+          <Typography
+            variant="body2"
+            sx={{ fontSize: "16px", marginBottom: { xs: 1 } }}
+          >
+            Queried Variant:{" "}
+            <Box
+              component="span"
+              fontWeight="bold"
+              sx={{ whiteSpace: "nowrap" }}
+            >
+              {assemblyIdQueried} | {queriedVariant}
+            </Box>
+          </Typography>
+
+          {liftedVariant && liftedAssemblyId && (
+            <Typography
+              variant="body2"
+              sx={{
+                fontSize: "16px",
+                marginTop: "4px",
+                whiteSpace: "nowrap",
+              }}
+            >
+              Queried lifted-over variant:{" "}
+              <Box component="span" fontWeight="bold">
+                {liftedAssemblyId} | {liftedVariant}{" "}
+                <img
+                  src={liftoverIcon}
+                  alt="Lifted-over variant"
+                  width={45}
+                  height={45}
+                />
+              </Box>
+            </Typography>
+          )}
         </Grid>
 
         {/* Right side: Sort controls with toggle buttons */}
