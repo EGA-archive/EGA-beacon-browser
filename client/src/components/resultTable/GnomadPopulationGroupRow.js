@@ -78,7 +78,8 @@ export default function GnomadPopulationGroupRows({ frequencies }) {
       acc[normalizedName].alleleCountHomozygous += f.alleleCountHomozygous || 0;
       acc[normalizedName].alleleCountHeterozygous +=
         f.alleleCountHeterozygous || 0;
-      acc[normalizedName].alleleCountHemizygous += f.alleleCountHemizygous || 0;
+      acc[normalizedName].alleleCountHemizygous +=
+        f.alleleCountHemizygous || "xxx";
     }
 
     return acc;

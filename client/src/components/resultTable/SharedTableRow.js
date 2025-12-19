@@ -52,7 +52,7 @@ const SharedTableRow = ({
 
       {/* Column 6: Heterozygous Count - If not provided, it tries to calculate it as: alleleCount - homozygous */}
       <td className={`centered-header ${backgroundColor}`}>
-        {alleleCountHemizygous || alleleCount - alleleCountHemizygous}
+        {alleleCountHemizygous || alleleCount - alleleCountHemizygous || "0"}
       </td>
       {/* Column 7: Allele Frequency
 - Use a normal decimal number when the value is >= 1e-5 (e.g., 0.00002 → "0.00002", 0.00001 → "0.00001")

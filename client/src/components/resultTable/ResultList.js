@@ -37,6 +37,20 @@ function ResultList({
     ...(results?.lifted || []).map((r) => ({ ...r, __source: "lifted" })),
   ];
 
+  const finalResults = Object.values(
+    mergedResults.reduce((acc, item) => {
+      if (!acc[item.id]) acc[item.id] = [];
+      acc[item.id].push(item);
+      return acc;
+    }, {})
+  )
+    .map((items) =>
+      items.sort((a, b) =>
+        a.__source === b.__source ? 0 : a.__source === "original" ? -1 : 1
+      )
+    )
+    .flat();
+
   useEffect(() => {
     const condition =
       Boolean(mergedResults.length) &&
@@ -90,7 +104,7 @@ function ResultList({
         </td>
 
         <td className={`${borderClass} centered`} colSpan="1">
-          <b>{totalAlleleCountHemizygous || 0}</b>
+          <b>{totalAlleleCountHemizygous || "0"}</b>
         </td>
 
         <td className={`${borderClass} centered`} colSpan="1">
@@ -118,25 +132,6 @@ function ResultList({
       </tr>
     );
   };
-
-  const gcatData = mergedResults.filter(
-    (result) =>
-      result.resultsCount > 1 ||
-      (result.resultsCount === 1 &&
-        result.results?.some((res) =>
-          res.frequencyInPopulations?.some(
-            (pop) => pop.frequencies?.length === 1
-          )
-        ))
-  );
-
-  const genomAdData = mergedResults.filter(
-    (result) =>
-      result.resultsCount === 1 &&
-      result.results?.some((res) =>
-        res.frequencyInPopulations?.some((pop) => pop.frequencies?.length > 1)
-      )
-  );
 
   const gcatTable = (gcat) => {
     if (!gcat) return null;
@@ -414,6 +409,8 @@ function ResultList({
 
     let displayDatasetName = dataset;
 
+    const effectiveAssembly = isLifted ? liftedAssemblyId : assemblyIdQueried;
+
     if (dataset === "EGAD00001007774") {
       displayDatasetName = (
         <>
@@ -443,7 +440,7 @@ function ResultList({
     } else if (dataset.startsWith("gnomad")) {
       const gnomadVariant = getGnomadVariant(queriedVariant);
 
-      if (assemblyIdQueried === "GRCh37") {
+      if (effectiveAssembly === "GRCh37") {
         displayDatasetName = (
           <>
             <a
@@ -457,7 +454,7 @@ function ResultList({
             (exomes only)
           </>
         );
-      } else if (assemblyIdQueried === "GRCh38") {
+      } else if (effectiveAssembly === "GRCh38") {
         displayDatasetName = (
           <>
             <a
@@ -487,7 +484,8 @@ function ResultList({
               <KeyboardArrowDownIcon fontSize="small" />
             )}
           </span>
-          Dataset: <b>{dataset}</b>
+          {/* Dataset: <b>{dataset}</b> */}
+          Dataset: <b>{displayDatasetName}</b>
           {isLifted && (
             <img
               src={liftoverIcon}
@@ -523,29 +521,27 @@ function ResultList({
           />
 
           <TableLayout>
-            {gcatData.map((gcat) => (
-              <React.Fragment key={gcat.id + gcat.__source}>
-                {dataset(
-                  gcat.id,
-                  gcat.__source === "lifted",
-                  gcat.id + gcat.__source
-                )}
+            {finalResults.map((item) => {
+              const isGnomad =
+                item.resultsCount === 1 &&
+                item.results?.some((res) =>
+                  res.frequencyInPopulations?.some(
+                    (pop) => pop.frequencies?.length > 1
+                  )
+                );
 
-                {gcatTable(gcat)}
-              </React.Fragment>
-            ))}
+              return (
+                <React.Fragment key={item.id + item.__source}>
+                  {dataset(
+                    item.id,
+                    item.__source === "lifted",
+                    item.id + item.__source
+                  )}
 
-            {genomAdData.map((gnomad) => (
-              <React.Fragment key={gnomad.id + gnomad.__source}>
-                {dataset(
-                  gnomad.id,
-                  gnomad.__source === "lifted",
-                  gnomad.id + gnomad.__source
-                )}
-
-                {genomAdTable(gnomad)}
-              </React.Fragment>
-            ))}
+                  {isGnomad ? genomAdTable(item) : gcatTable(item)}
+                </React.Fragment>
+              );
+            })}
           </TableLayout>
         </Box>
       )}
