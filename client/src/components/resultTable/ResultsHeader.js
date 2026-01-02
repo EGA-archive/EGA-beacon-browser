@@ -6,7 +6,6 @@ import {
   ToggleButtonGroup,
   Typography,
 } from "@mui/material";
-import { Row } from "react-bootstrap";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import PanoramaFishEyeIcon from "@mui/icons-material/PanoramaFishEye";
 import liftoverIcon from "../../liftover-icon.svg";
@@ -22,7 +21,7 @@ const ResultsHeader = ({
   handleToggle,
 }) => {
   return (
-    <Row className="queried-row">
+    <Box className="queried-row">
       {/* Title */}
       <Typography variant="body1" fontWeight="bold" mb={1}>
         Results
@@ -36,34 +35,13 @@ const ResultsHeader = ({
         wrap="wrap"
       >
         {/* Left side: Display the variant that was queried */}
-        {/* <Grid item xs={6} sm={6} md={4}>
+        <Grid item xs={10} sm={10} md={10}>
           <Typography
             variant="body2"
-            sx={{ fontSize: "16px", marginBottom: { xs: 1 } }}
-          >
-            Queried Variant:{" "}
-            <Box
-              component="span"
-              fontWeight="bold"
-              sx={{
-                whiteSpace: "nowrap",
-                // backgroundColor: {
-                //   xs: "pink", // extra-small screens
-                //   sm: "orange", // small
-                //   md: "#d1ecf1", // medium
-                //   lg: "#d4edda", // large
-                //   xl: "#e2e3e5", // extra-large
-                // },
-              }}
-            >
-              {assemblyIdQueried} | {queriedVariant}
-            </Box>
-          </Typography>
-        </Grid> */}
-        <Grid item xs={6} sm={6} md={4}>
-          <Typography
-            variant="body2"
-            sx={{ fontSize: "16px", marginBottom: { xs: 1 } }}
+            sx={{
+              fontSize: "16px",
+              marginBottom: { xs: 1 },
+            }}
           >
             Queried Variant:{" "}
             <Box
@@ -81,7 +59,6 @@ const ResultsHeader = ({
               sx={{
                 fontSize: "16px",
                 marginTop: "4px",
-                whiteSpace: "nowrap",
               }}
             >
               Queried lifted-over variant:{" "}
@@ -102,7 +79,8 @@ const ResultsHeader = ({
         <Grid
           item
           xs={12}
-          sm="auto"
+          sm={12}
+          md={12}
           sx={{
             display: "flex",
             alignItems: "center",
@@ -204,7 +182,7 @@ const ResultsHeader = ({
           </ToggleButtonGroup>
         </Grid>
       </Grid>
-    </Row>
+    </Box>
   );
 };
 

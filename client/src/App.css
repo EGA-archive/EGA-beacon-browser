@@ -86,18 +86,6 @@ body {
 
 /* Search CSS */
 
-.col-refgenome {
-  width: 92px;
-  flex: 0 0 24%;
-  max-width: 100%;
-}
-
-.col-searchbutton {
-  flex: 0 0 11%;
-  max-width: 100%;
-  margin-top: 2px;
-}
-
 .searchbutton {
   border: 1px solid #3176b1;
   width: Hug (122px) px;
@@ -116,6 +104,7 @@ body {
   position: relative;
   top: 30px;
   margin: 0;
+  white-space: nowrap;
 }
 
 .infovariant {
@@ -138,6 +127,76 @@ body {
   margin-top: 90px;
 }
 
+.liftover-row {
+  display: flex;
+  align-items: center;
+  gap: 30px;
+}
+
+.liftover-container {
+  display: flex;
+  align-items: center;
+  margin-top: 1.5%;
+  background-color: #023452;
+}
+
+.liftover-convert {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  max-width: 100%;
+  flex-wrap: wrap;
+}
+
+.liftover-convert label {
+  white-space: normal;
+}
+
+.info-convert {
+  margin-left: 10px;
+}
+
+.liftover-info {
+  max-width: 100%;
+  flex-wrap: wrap;
+}
+
+@media (max-width: 991px) and (min-width: 768px) {
+  .liftover-row {
+    min-height: 60px;
+    margin-top: 20px;
+    display: block;
+  }
+
+  .liftover-container {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .liftover-info {
+    margin-left: 0;
+    margin-top: 12px;
+  }
+}
+
+@media (max-width: 767px) {
+  .liftover-container {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .liftover-info {
+    margin-left: 0;
+    margin-top: 12px;
+  }
+
+  .liftover-row {
+    display: block;
+    margin-top: 50px;
+    min-height: 60px;
+  }
+}
+
 .variant-query {
   margin-right: 10px;
 }
@@ -147,11 +206,6 @@ body {
   padding: 0;
   list-style-type: disc;
   padding-left: 20px;
-}
-
-.col-variant {
-  flex: 0 0 65%;
-  max-width: 100%;
 }
 
 /* Network CSS */
@@ -194,16 +248,16 @@ body {
   height: 94.45px;
 }
 
+.button-text-icon {
+  display: flex;
+}
+
 .lupared {
   width: 16px;
   height: 16px;
-  padding: 2px 0px 0px 0px;
   background-image: url("../public/lupared.svg");
   background-size: cover;
-  display: inline-block;
   margin-right: 8px;
-  position: relative;
-  top: 3px;
 }
 
 .searchbutton:disabled {
@@ -504,12 +558,7 @@ tbody tr:hover {
     text-align: center;
   }
 }
-@media (max-width: 1399px) and (min-width: 992px) {
-  .searchbutton {
-    width: 122px;
-    height: 40px;
-  }
-}
+
 @media (max-width: 767px) and (min-width: 567px) {
   .search-row {
     display: flex;
@@ -519,37 +568,8 @@ tbody tr:hover {
     height: auto;
   }
 }
-@media (max-width: 1199px) and (min-width: 1181px) {
-  .col-variant {
-    width: 520px;
-    flex: 1;
-  }
 
-  .col-refgenome {
-    margin-left: 0%;
-    margin-right: 6%;
-  }
-
-  .col-searchbutton {
-    padding-right: 0;
-  }
-}
 @media (max-width: 991px) {
-  .col-variant {
-    flex: 1;
-    max-width: 40%;
-  }
-
-  .col-refgenome {
-    flex: 2;
-  }
-
-  .col-searchbutton {
-    flex: 1;
-    max-width: 30% !important;
-    margin-left: 20px;
-  }
-
   .beacon-title {
     margin-top: 10px;
     text-align: center;
@@ -561,43 +581,22 @@ tbody tr:hover {
   }
 }
 @media (max-width: 1180px) and (min-width: 992px) {
-  .col-variant {
-    width: 400px;
-    flex: 1;
-  }
-
-  .col-refgenome {
-    margin-left: 0%;
-    margin-right: 8%;
-  }
-
   .beacon-title {
     margin-top: 10px;
     text-align: center;
     margin-left: 50px;
   }
 }
-@media (max-width: 767px) {
-  .responsive-background-example {
-    margin-top: 60px !important;
+
+@media (max-width: 899px) and (min-width: 768px) {
+  .liftover-row {
+    min-height: 60px;
+    margin-top: 50px;
+    display: block;
   }
 }
+
 @media (max-width: 767px) and (min-width: 576px) {
-  .col-variant,
-  .col-refgenome,
-  .col-searchbutton {
-    width: 100%;
-  }
-
-  .col-searchbutton {
-    margin-left: 0;
-    margin-top: 0;
-  }
-  .searchbutton {
-    width: 515px;
-    text-align: center;
-  }
-
   .button-text-icon {
     justify-content: center;
     align-items: center;
@@ -609,6 +608,7 @@ tbody tr:hover {
     display: block;
   }
 }
+
 @media (max-width: 767px) and (min-width: 736px) {
   .bnmembers-grid {
     margin-bottom: 30px;
@@ -652,20 +652,7 @@ tbody tr:hover {
     white-space: nowrap;
   }
 }
-@media (max-width: 575px) and (min-width: 500px) {
-  .col-variant,
-  .col-refgenome,
-  .col-searchbutton {
-    width: 100%;
-    padding: 0 !important;
-    margin: 0 !important;
-  }
 
-  .searchbutton {
-    width: 400px;
-    text-align: center;
-  }
-}
 @media (max-width: 575px) and (min-width: 300px) {
   .institution-title {
     margin-left: 9%;
@@ -681,9 +668,24 @@ tbody tr:hover {
     width: 84%;
     margin-left: 8%;
   }
-  .responsive-background-example {
-    margin-left: 8%;
+
+  .liftover-row {
+    display: block;
+    flex-direction: column;
+    margin-top: 50px;
+    height: auto;
+    align-items: flex-start;
     width: 84%;
+    margin-left: 8%;
+  }
+
+  .example-row {
+    flex-direction: column;
+    margin-top: 60px;
+    height: auto;
+    align-items: flex-start;
+    width: 84%;
+    margin-left: 8%;
   }
 
   .button-text-icon {
@@ -698,19 +700,8 @@ tbody tr:hover {
     margin-bottom: 30px;
   }
 }
-@media (max-width: 499px) and (min-width: 100px) {
-  .col-variant,
-  .col-refgenome,
-  .col-searchbutton {
-    padding: 0 !important;
-    margin: 0 !important;
-  }
-}
+
 @media (max-width: 499px) and (min-width: 431px) {
-  .searchbutton {
-    width: 370px;
-    text-align: center;
-  }
   .beacon-title {
     font-size: 16px !important;
   }
@@ -721,34 +712,19 @@ tbody tr:hover {
   }
 }
 @media (max-width: 430px) and (min-width: 100px) {
-  .searchbutton {
-    width: 340px;
-    text-align: center;
-  }
-
   .beacon-title {
     margin-top: 10px;
     font-size: 16px;
     margin-left: 10px;
   }
 }
-@media (max-width: 430px) and (min-width: 400px) {
-  .searchbutton {
-    width: 340px;
-    text-align: center;
-  }
-}
+
 @media (max-width: 407px) and (min-width: 100px) {
   .egalogo {
     display: none;
   }
 }
-@media (max-width: 399px) and (min-width: 321px) {
-  .searchbutton {
-    width: 300px;
-    text-align: center;
-  }
-}
+
 @media (max-width: 320px) and (min-width: 300px) {
   .search-row {
     display: flex;
@@ -760,16 +736,6 @@ tbody tr:hover {
     margin-left: 5%;
   }
 
-  .searchbutton {
-    width: 270px;
-    text-align: center;
-  }
-
-  .responsive-background-example {
-    margin-left: 5%;
-    width: 84%;
-  }
-
   .beacon-title {
     margin-top: 10px;
     font-size: 16px;
@@ -779,11 +745,5 @@ tbody tr:hover {
 
   .institution-title {
     margin-left: 5%;
-  }
-}
-@media (max-width: 299px) and (min-width: 100px) {
-  .searchbutton {
-    width: 250px;
-    text-align: center;
   }
 }
