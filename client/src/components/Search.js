@@ -9,7 +9,6 @@ import { ThemeProvider } from "@mui/material/styles";
 import CustomTheme from "./styling/CustomTheme";
 import Grid from "@mui/material/Grid2";
 import Box from "@mui/material/Box";
-
 import { liftoverVariant } from "../useLiftover";
 
 // Yup validation rules for the form
@@ -39,6 +38,32 @@ function Search({
   const [currentGenome, setCurrentGenome] = React.useState("GRCh37");
   const [liftoverEnabled, setLiftoverEnabled] = React.useState(false);
   const [liftoverError, setLiftoverError] = React.useState(null);
+  const setFieldValueRef = React.useRef(null);
+
+  // Automatically clear liftover error after 5 seconds
+  // and fully reset liftover UI + state
+  React.useEffect(() => {
+    if (!liftoverError) return;
+
+    const timer = setTimeout(() => {
+      // 1. Clear the error message
+      setLiftoverError(null);
+
+      // 2. Disable liftover logic
+      setLiftoverEnabled(false);
+
+      // 3. Clear lifted results
+      setLiftedVariant(null);
+      setLiftedAssemblyId(null);
+
+      // 4. Reset Formik checkbox (this resets the UI visuals)
+      if (setFieldValueRef.current) {
+        setFieldValueRef.current("liftover", false);
+      }
+    }, 5000);
+
+    return () => clearTimeout(timer);
+  }, [liftoverError]);
 
   React.useEffect(() => {
     const runLiftover = async () => {
@@ -57,7 +82,9 @@ function Search({
       } catch (err) {
         setLiftedVariant(null);
         setLiftedAssemblyId(null);
-        setLiftoverError("Liftover failed");
+        setLiftoverError(
+          "Liftover could not be completed for this variant. The coordinates may not exist in the target assembly."
+        );
       }
     };
 
@@ -97,6 +124,7 @@ function Search({
             touched,
             validateField,
           }) => {
+            setFieldValueRef.current = setFieldValue;
             const handlePaste = (event) => {
               event.preventDefault();
               const pastedData = event.clipboardData.getData("text");
@@ -242,7 +270,6 @@ function Search({
                 <Box sx={{ mt: 2 }}>
                   <Grid container>
                     <Grid size={12}>
-                      {/* <div className="liftover-container"> */}
                       <div className="liftover-row">
                         <div className="liftover-convert">
                           <Form.Check
@@ -259,6 +286,8 @@ function Search({
                               cursor: values.variant
                                 ? "pointer"
                                 : "not-allowed",
+                              opacity: values.liftover ? 1 : 0.5,
+                              cursor: values.liftover ? "pointer" : "default",
                             }}
                             label={
                               <span className="liftover-label">

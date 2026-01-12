@@ -9,6 +9,7 @@ import {
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import PanoramaFishEyeIcon from "@mui/icons-material/PanoramaFishEye";
 import liftoverIcon from "../../liftover-icon.svg";
+import DownloadRoundedIcon from "@mui/icons-material/DownloadRounded";
 
 // This component displays the queried variant and toggle buttons for sorting results
 // It allows users to sort by ancestry and/or sex
@@ -180,6 +181,10 @@ const ResultsHeader = ({
               );
             })}
           </ToggleButtonGroup>
+          {/* <Box sx={{ backgroundColor: "palegreen" }}> */}
+          <Box>
+            <DownloadRoundedIcon fontSize="medium" />
+          </Box>
         </Grid>
       </Grid>
     </Box>

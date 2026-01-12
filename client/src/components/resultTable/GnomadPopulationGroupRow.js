@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
 import SharedTableRow from "./SharedTableRow";
+import { normalizeGenotypeCounts } from "./normalizeGenotypeCounts";
 
 /**
  * Renders grouped, collapsible population rows for gnomAD.
@@ -66,20 +67,22 @@ export default function GnomadPopulationGroupRows({ frequencies }) {
 
   const frequencyByPopulation = frequencies.reduce((acc, f) => {
     const normalizedName = normalizePopulation(f.population);
+    const { homozygous, heterozygous, hemizygous } = normalizeGenotypeCounts(f);
 
     if (!acc[normalizedName]) {
       acc[normalizedName] = {
         ...f,
         population: normalizedName,
+        alleleCountHomozygous: homozygous,
+        alleleCountHeterozygous: heterozygous,
+        alleleCountHemizygous: hemizygous,
       };
     } else {
       acc[normalizedName].alleleCount += f.alleleCount || 0;
       acc[normalizedName].alleleNumber += f.alleleNumber || 0;
-      acc[normalizedName].alleleCountHomozygous += f.alleleCountHomozygous || 0;
-      acc[normalizedName].alleleCountHeterozygous +=
-        f.alleleCountHeterozygous || 0;
-      acc[normalizedName].alleleCountHemizygous +=
-        f.alleleCountHemizygous || "xxx";
+      acc[normalizedName].alleleCountHomozygous += homozygous;
+      acc[normalizedName].alleleCountHeterozygous += heterozygous;
+      acc[normalizedName].alleleCountHemizygous += hemizygous;
     }
 
     return acc;

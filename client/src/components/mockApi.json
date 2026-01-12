@@ -1,0 +1,304 @@
+{
+  "meta": {
+    "beaconId": "org.ega-archive.ega-af-beacon",
+    "apiVersion": "v2.0.0",
+    "returnedGranularity": "record",
+    "receivedRequestSummary": {
+      "apiVersion": "v2.0.0",
+      "requestedSchemas": [],
+      "filters": [],
+      "requestParameters": {
+        "start": [19653341],
+        "alternateBases": "A",
+        "referenceBases": "AT",
+        "referenceName": "21",
+        "assemblyId": "GRCh37"
+      },
+      "includeResultsetResponses": "HIT",
+      "pagination": {
+        "skip": 0,
+        "limit": 10
+      },
+      "requestedGranularity": "record",
+      "testMode": false
+    },
+    "returnedSchemas": [
+      {
+        "entityType": "genomicVariation",
+        "schema": "beacon-g_variant-v2.0.0"
+      }
+    ]
+  },
+  "responseSummary": {
+    "exists": true,
+    "numTotalResults": 2
+  },
+  "response": {
+    "resultSets": [
+      {
+        "id": "gnomad_exome_v2.1.1",
+        "setType": "dataset",
+        "exists": true,
+        "resultsCount": 1,
+        "results": [
+          {
+            "identifiers": {
+              "genomicHGVSId": "NC_000021.10:g.19653341AT>A"
+            },
+            "variantInternalId": "dfdb3e1e-bd57-11ef-b0f8-0242ac130003:AT:A",
+            "variation": {
+              "location": {
+                "type": "SequenceLocation",
+                "sequence_id": "HGVSid:21:g.19653341AT>A",
+                "interval": {
+                  "type": "SequenceInterval",
+                  "start": {
+                    "type": "Number",
+                    "value": 19653341
+                  },
+                  "end": {
+                    "type": "Number",
+                    "value": 19653343
+                  }
+                }
+              },
+              "alternateBases": "A",
+              "referenceBases": "AT",
+              "variantType": "INDEL"
+            },
+            "frequencyInPopulations": [
+              {
+                "source": "The Genome Aggregation Database (gnomAD)",
+                "sourceReference": "gnomad.broadinstitute.org/",
+                "frequencies": [
+                  {
+                    "alleleFrequency": 0.3609920144081116,
+                    "alleleCount": 44506,
+                    "genotypeHomozygous": 2254,
+                    "genotypeHeterozygous": 42252,
+                    "alleleNumber": 123288,
+                    "population": "Total"
+                  },
+                  {
+                    "alleleFrequency": 0.32621800899505615,
+                    "alleleCount": 1941,
+                    "genotypeHomozygous": 105,
+                    "genotypeHeterozygous": 1836,
+                    "alleleNumber": 5950,
+                    "population": "Southern European"
+                  },
+                  {
+                    "alleleFrequency": 0.5836380124092102,
+                    "alleleCount": 7348,
+                    "genotypeHomozygous": 1521,
+                    "genotypeHeterozygous": 5827,
+                    "alleleNumber": 12590,
+                    "population": "African-American/African"
+                  },
+                  {
+                    "alleleFrequency": 0.36032700538635254,
+                    "alleleCount": 5562,
+                    "genotypeHomozygous": 65,
+                    "genotypeHeterozygous": 5497,
+                    "alleleNumber": 15436,
+                    "population": "Admixed American"
+                  },
+                  {
+                    "alleleFrequency": 0.2777180075645447,
+                    "alleleCount": 2079,
+                    "genotypeHomozygous": 13,
+                    "genotypeHeterozygous": 2066,
+                    "alleleNumber": 7486,
+                    "population": "East Asian"
+                  },
+                  {
+                    "alleleFrequency": 0.3847239911556244,
+                    "alleleCount": 7646,
+                    "genotypeHomozygous": 138,
+                    "genotypeHeterozygous": 7508,
+                    "alleleNumber": 19874,
+                    "population": "North-Western European"
+                  },
+                  {
+                    "alleleFrequency": 0.35714301466941833,
+                    "alleleCount": 45,
+                    "genotypeHomozygous": 0,
+                    "genotypeHeterozygous": 45,
+                    "alleleNumber": 126,
+                    "population": "Estonian"
+                  },
+                  {
+                    "alleleFrequency": 0.32665398716926575,
+                    "alleleCount": 18599,
+                    "genotypeHomozygous": 486,
+                    "genotypeHeterozygous": 18113,
+                    "alleleNumber": 56938,
+                    "population": "European (non-Finnish)"
+                  },
+                  {
+                    "alleleFrequency": 0.2761240005493164,
+                    "alleleCount": 2838,
+                    "genotypeHomozygous": 14,
+                    "genotypeHeterozygous": 2824,
+                    "alleleNumber": 10278,
+                    "population": "European (Finnish)"
+                  },
+                  {
+                    "alleleFrequency": 0.4038830101490021,
+                    "alleleCount": 1706,
+                    "genotypeHomozygous": 28,
+                    "genotypeHeterozygous": 1678,
+                    "alleleNumber": 4224,
+                    "population": "Ashkenazi Jewish"
+                  },
+                  {
+                    "alleleFrequency": 0.3740079998970032,
+                    "alleleCount": 1131,
+                    "genotypeHomozygous": 27,
+                    "genotypeHeterozygous": 1104,
+                    "alleleNumber": 3024,
+                    "population": "Other"
+                  },
+                  {
+                    "alleleFrequency": 0.3568190038204193,
+                    "alleleCount": 23419,
+                    "genotypeHomozygous": 990,
+                    "genotypeHeterozygous": 22428,
+                    "alleleCountHemizygous": 4,
+                    "alleleNumber": 65630,
+                    "population": "Males"
+                  },
+                  {
+                    "alleleFrequency": 0.23999400436878204,
+                    "alleleCount": 3358,
+                    "genotypeHomozygous": 114,
+                    "genotypeHeterozygous": 3244,
+                    "alleleNumber": 13992,
+                    "population": "Swedish"
+                  },
+                  {
+                    "alleleFrequency": 0.24344399571418762,
+                    "alleleCount": 427,
+                    "genotypeHomozygous": 23,
+                    "genotypeHeterozygous": 404,
+                    "alleleNumber": 1754,
+                    "population": "Bulgarian (Eastern European)"
+                  },
+                  {
+                    "alleleFrequency": 0.3399820029735565,
+                    "alleleCount": 5182,
+                    "genotypeHomozygous": 106,
+                    "genotypeHeterozygous": 5076,
+                    "alleleNumber": 15242,
+                    "population": "Other Non-Finnish European"
+                  },
+                  {
+                    "alleleFrequency": 0.0625,
+                    "alleleCount": 5,
+                    "genotypeHomozygous": 0,
+                    "genotypeHeterozygous": 5,
+                    "alleleNumber": 80,
+                    "population": "Japanese"
+                  },
+                  {
+                    "alleleFrequency": 0.2042039930820465,
+                    "alleleCount": 272,
+                    "genotypeHomozygous": 2,
+                    "genotypeHeterozygous": 270,
+                    "alleleNumber": 1332,
+                    "population": "Korean"
+                  },
+                  {
+                    "alleleFrequency": 0.2966740131378174,
+                    "alleleCount": 1802,
+                    "genotypeHomozygous": 11,
+                    "genotypeHeterozygous": 1791,
+                    "alleleNumber": 6074,
+                    "population": "Other East Asian"
+                  },
+                  {
+                    "alleleFrequency": 0.3938550055027008,
+                    "alleleCount": 5243,
+                    "genotypeHomozygous": 100,
+                    "genotypeHeterozygous": 5143,
+                    "alleleNumber": 13312,
+                    "population": "South Asian"
+                  },
+                  {
+                    "alleleFrequency": 0.3657430112361908,
+                    "alleleCount": 21089,
+                    "genotypeHomozygous": 1264,
+                    "alleleCountHeterozygous": 19824,
+                    "genotypeHemizygous": 1,
+                    "alleleNumber": 57658,
+                    "population": "Females"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "EGAD00001007774",
+        "setType": "dataset",
+        "exists": true,
+        "resultsCount": 1,
+        "results": [
+          {
+            "frequencyInPopulations": [
+              {
+                "frequencies": [
+                  {
+                    "alleleFrequency": 0.12720400094985962,
+                    "population": "Female",
+                    "alleleCount": 101.0,
+                    "alleleNumber": 794.0,
+                    "genotypeHomozygous": 14.0,
+                    "alleleCountHeterozygous": 87.0
+                  }
+                ],
+                "source": "The Genome Aggregation Database (gnomAD)",
+                "sourceReference": "gnomad.broadinstitute.org/"
+              }
+            ],
+            "identifiers": {
+              "genomicHGVSId": "NC_000021.10:g.19653341AT>A"
+            },
+            "variantInternalId": "f116805c-b8b7-11ef-a4b5-0242ac130002:AT:A",
+            "variation": {
+              "location": {
+                "type": "SequenceLocation",
+                "sequence_id": "HGVSid:21:g.19653341AT>A",
+                "interval": {
+                  "type": "SequenceInterval",
+                  "start": {
+                    "type": "Number",
+                    "value": 19653341
+                  },
+                  "end": {
+                    "type": "Number",
+                    "value": 19653343
+                  }
+                }
+              },
+              "alternateBases": "A",
+              "referenceBases": "AT",
+              "variantType": "INDEL"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "beaconHandovers": [
+    {
+      "note": "Description of the handover",
+      "url": "Link for the handover",
+      "handoverType": {
+        "id": "NCIT:C189151",
+        "label": "Study Data Repository"
+      }
+    }
+  ]
+}
