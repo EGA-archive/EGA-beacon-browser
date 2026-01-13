@@ -20,6 +20,7 @@ const ResultsHeader = ({
   liftedVariant,
   toggle,
   handleToggle,
+  onDownloadTable,
 }) => {
   return (
     <Box className="queried-row">
@@ -182,8 +183,19 @@ const ResultsHeader = ({
             })}
           </ToggleButtonGroup>
           {/* <Box sx={{ backgroundColor: "palegreen" }}> */}
-          <Box>
-            <DownloadRoundedIcon fontSize="medium" />
+          {/* Make the hand change when hovering over the box + always underline the Download Table */}
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              gap: 1,
+              cursor: "pointer",
+              textDecoration: "underline",
+            }}
+            onClick={onDownloadTable}
+          >
+            <span>Download table</span>
+            <DownloadRoundedIcon fontSize="medium" sx={{ color: "#023452" }} />
           </Box>
         </Grid>
       </Grid>

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Box } from "@mui/system";
 import ResultsHeader from "./ResultsHeader.js";
 import { Row } from "react-bootstrap";
@@ -10,6 +10,7 @@ import liftoverIcon from "../../liftover-icon.svg";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
 import { normalizeGenotypeCounts } from "./normalizeGenotypeCounts";
+import { downloadCSV } from "./downloadCSV.js";
 
 // This component renders the full results table for a queried variant.
 //  It:
@@ -46,6 +47,13 @@ function ResultList({
       ...prev,
       [key]: !prev[key],
     }));
+  };
+
+  const tableRef = React.useRef(null);
+
+  const handleDownloadTable = () => {
+    if (!tableRef.current) return;
+    downloadCSV(tableRef.current, "beacon-results.csv");
   };
 
   // Merge original and lifted results into a single list
@@ -646,9 +654,10 @@ function ResultList({
             assemblyIdQueried={assemblyIdQueried}
             liftedAssemblyId={liftedAssemblyId}
             liftedVariant={liftedVariant}
+            onDownloadTable={handleDownloadTable}
           />
 
-          <TableLayout>
+          <TableLayout tableRef={tableRef}>
             {finalResults.map((item) => {
               const isGnomad =
                 item.resultsCount === 1 &&
