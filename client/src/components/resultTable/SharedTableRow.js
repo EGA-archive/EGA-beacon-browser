@@ -25,9 +25,11 @@ const SharedTableRow = ({
     ? "group-background"
     : "sex-background";
 
+  // Check if AC/AN are valid to compute frequency if needed
   const hasCounts =
     alleleCount != null && alleleNumber != null && Number(alleleNumber) !== 0;
 
+  // Prefer provided alleleFrequency, otherwise compute it from AC / AN
   const alleleFrequencyRaw =
     alleleFrequency != null
       ? Number(alleleFrequency)
@@ -35,6 +37,7 @@ const SharedTableRow = ({
       ? Number(alleleCount) / Number(alleleNumber)
       : null;
 
+  // Resolve genotype counts, supporting both allele* and genotype* props
   const homozygous = alleleCountHomozygous ?? genotypeHomozygous;
   const heterozygous = alleleCountHeterozygous ?? genotypeHeterozygous;
   const hemizygous = alleleCountHemizygous ?? genotypeHemizygous;

@@ -522,6 +522,7 @@ function ResultList({
 
   // Renders the dataset header row (expand/collapse + dataset name)
   const dataset = (dataset, isLifted, datasetKey) => {
+    // Check whether this dataset is currently collapsed
     const isCollapsed = collapsedDatasets[datasetKey] === true;
 
     // gnomAD uses 0-based coordinates, convert to 1-based for links
@@ -542,11 +543,14 @@ function ResultList({
       return `${chr}-${pos1Based}-${ref}-${alt}`;
     };
 
+    // Default dataset label
     let displayDatasetName = dataset;
 
+    // Use lifted or original assembly depending on dataset source
     const effectiveAssembly = isLifted ? liftedAssemblyId : assemblyIdQueried;
 
     // Build the dataset display label (with links)
+    // Special case: GCAT dataset
     if (dataset === "EGAD00001007774") {
       displayDatasetName = (
         <>
@@ -562,6 +566,7 @@ function ResultList({
           )
         </>
       );
+      // Generic EGA dataset link
     } else if (dataset.startsWith("EGAD")) {
       displayDatasetName = (
         <a
@@ -574,6 +579,7 @@ function ResultList({
         </a>
       );
     } else if (dataset.startsWith("gnomad")) {
+      // gnomAD dataset link depends on genome assembly
       const gnomadVariant = getGnomadVariant(queriedVariant);
 
       if (effectiveAssembly === "GRCh37") {
@@ -610,6 +616,7 @@ function ResultList({
     return (
       <tr>
         <td className="dataset dataset-col" colSpan="7">
+          {/* Expand / collapse icon */}
           <span
             style={{ cursor: "pointer", marginRight: "6px" }}
             onClick={() => toggleDataset(datasetKey)}
@@ -620,8 +627,9 @@ function ResultList({
               <KeyboardArrowDownIcon fontSize="small" />
             )}
           </span>
-          {/* Dataset: <b>{dataset}</b> */}
+          {/* Dataset label */}
           Dataset: <b>{displayDatasetName}</b>
+          {/* Liftover indicator */}
           {isLifted && (
             <img
               src={liftoverIcon}

@@ -1,5 +1,6 @@
 import { createTheme } from "@mui/material/styles";
 
+// This file defines a custom Material UI theme that overrides default styles for a few MUI components to match the design system
 const customTheme = createTheme({
   components: {
     MuiAutocomplete: {

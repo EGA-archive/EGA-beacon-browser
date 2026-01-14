@@ -9,7 +9,7 @@ import { ThemeProvider } from "@mui/material/styles";
 import CustomTheme from "./styling/CustomTheme";
 import Grid from "@mui/material/Grid2";
 import Box from "@mui/material/Box";
-import { liftoverVariant } from "../useLiftover";
+import { liftoverVariant } from "../../src/components/liftovers/useLiftover";
 
 // Yup validation rules for the form
 const SignupSchema = Yup.object().shape({

@@ -1,5 +1,4 @@
-// Downloads table as a CSV file.
-
+// Downloads table as a CSV file
 // This function reads the table exactly as it is rendered in the UI
 
 export const downloadCSV = (tableContainer, filename = "table.csv") => {

@@ -12,6 +12,7 @@ import { normalizeGenotypeCounts } from "./normalizeGenotypeCounts";
  * - Unknown populations are rendered flat and alphabetically
  */
 
+// Maps population name variants to a single normalized label
 const POPULATION_NORMALIZATION = {
   // Remaining / Other
   Other: "Remaining Individuals",
@@ -43,8 +44,10 @@ const POPULATION_NORMALIZATION = {
   "European (non-Finnish)": "European (non-Finnish)",
 };
 
+// Returns the normalized population name if available
 const normalizePopulation = (name) => POPULATION_NORMALIZATION[name] || name;
 
+// Defines the gnomAD population hierarchy. In case new populations/ subpopulations come up they can be added here.
 const GNOMAD_GROUPS = {
   "Admixed American": [],
   "African-American/African": [],
@@ -67,8 +70,10 @@ const GNOMAD_GROUPS = {
 };
 
 export default function GnomadPopulationGroupRows({ frequencies }) {
+  // Tracks which population groups are expanded/collapsed
   const [openGroups, setOpenGroups] = useState({});
 
+  // Toggles a single population group open/closed
   const toggleGroup = (groupName) => {
     setOpenGroups((prev) => ({
       ...prev,
@@ -76,6 +81,7 @@ export default function GnomadPopulationGroupRows({ frequencies }) {
     }));
   };
 
+  // Normalize population names and merge counts per population
   const frequencyByPopulation = frequencies.reduce((acc, f) => {
     const normalizedName = normalizePopulation(f.population);
     const { homozygous, heterozygous, hemizygous } = normalizeGenotypeCounts(f);
@@ -99,6 +105,7 @@ export default function GnomadPopulationGroupRows({ frequencies }) {
     return acc;
   }, {});
 
+  // Set of all known populations defined in GNOMAD_GROUPS
   const knownPopulations = new Set(
     Object.keys(GNOMAD_GROUPS).flatMap((group) => [
       group,
@@ -106,18 +113,21 @@ export default function GnomadPopulationGroupRows({ frequencies }) {
     ])
   );
 
+  // Populations not part of the known hierarchy, rendered flat
   const unknownPopulations = Object.values(frequencyByPopulation)
     .filter((f) => !knownPopulations.has(f.population))
     .sort((a, b) => a.population.localeCompare(b.population));
 
   return (
     <>
+      {/* Render grouped gnomAD populations */}
       {Object.entries(GNOMAD_GROUPS)
         .sort(([a], [b]) => a.localeCompare(b))
         .map(([groupName, subPopulations]) => {
           const mainRow = frequencyByPopulation[groupName];
           if (!mainRow) return null;
 
+          // Resolve and sort subpopulation rows
           const subRows = subPopulations
             .slice()
             .sort((a, b) => a.localeCompare(b))
@@ -129,6 +139,7 @@ export default function GnomadPopulationGroupRows({ frequencies }) {
 
           return (
             <React.Fragment key={groupName}>
+              {/* Main population row */}
               <SharedTableRow
                 type={
                   isExpandable ? (
@@ -169,6 +180,7 @@ export default function GnomadPopulationGroupRows({ frequencies }) {
                 nonBackgroundColor={true}
               />
 
+              {/* Subpopulation rows */}
               {isOpen &&
                 subRows.map((sub) => (
                   <SharedTableRow
@@ -188,6 +200,7 @@ export default function GnomadPopulationGroupRows({ frequencies }) {
           );
         })}
 
+      {/* Render populations not covered by GNOMAD_GROUPS */}
       {unknownPopulations.map((pop) => (
         <SharedTableRow
           key={pop.population}
