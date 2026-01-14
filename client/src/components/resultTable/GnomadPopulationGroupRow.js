@@ -14,8 +14,10 @@ import { normalizeGenotypeCounts } from "./normalizeGenotypeCounts";
 
 const POPULATION_NORMALIZATION = {
   // Remaining / Other
-  Other: "Remaining individuals",
-  "Remaining individuals": "Remaining individuals",
+  Other: "Remaining Individuals",
+  "Remaining individuals": "Remaining Individuals",
+  "Reaming individuals": "Remaining Individuals",
+  Remaining: "Remaining Individuals",
 
   // Bulgarian
   Bulgarian: "Bulgarian",
@@ -24,7 +26,9 @@ const POPULATION_NORMALIZATION = {
   // African
   "African-American/African": "African-American/African",
   "African/African-American": "African-American/African",
+  "African/African american": "African-American/African",
   African: "African-American/African",
+  "African/African American": "African-American/African",
 
   // Other non-Finnish European
   "Other Non-Finnish European": "Other Non-Finnish European",
@@ -33,6 +37,10 @@ const POPULATION_NORMALIZATION = {
   // North-western variants
   "North-Western European": "North-Western European",
   "North-western European": "North-Western European",
+
+  // European Non-Finnish variants
+  "Non-Finnish European": "European (non-Finnish)",
+  "European (non-Finnish)": "European (non-Finnish)",
 };
 
 const normalizePopulation = (name) => POPULATION_NORMALIZATION[name] || name;
@@ -40,6 +48,7 @@ const normalizePopulation = (name) => POPULATION_NORMALIZATION[name] || name;
 const GNOMAD_GROUPS = {
   "Admixed American": [],
   "African-American/African": [],
+  Amish: [],
   "Ashkenazi Jewish": [],
   "East Asian": ["Japanese", "Korean", "Other East Asian"],
   "European (Finnish)": [],
@@ -52,7 +61,9 @@ const GNOMAD_GROUPS = {
     "Swedish",
   ],
   "South Asian": [],
-  "Remaining individuals": [],
+  "Remaining Individuals": [],
+  Finnish: [],
+  "Middle Eastern": [],
 };
 
 export default function GnomadPopulationGroupRows({ frequencies }) {

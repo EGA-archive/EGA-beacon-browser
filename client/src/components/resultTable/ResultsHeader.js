@@ -182,8 +182,7 @@ const ResultsHeader = ({
               );
             })}
           </ToggleButtonGroup>
-          {/* <Box sx={{ backgroundColor: "palegreen" }}> */}
-          {/* Make the hand change when hovering over the box + always underline the Download Table */}
+          {/* Download table block */}
           <Box
             sx={{
               display: "flex",
@@ -191,6 +190,7 @@ const ResultsHeader = ({
               gap: 1,
               cursor: "pointer",
               textDecoration: "underline",
+              ml: "24px",
             }}
             onClick={onDownloadTable}
           >
