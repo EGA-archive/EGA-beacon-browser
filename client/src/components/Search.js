@@ -173,7 +173,7 @@ function Search({
                             title={
                               <ul className="tooltip-bullets">
                                 <li>Format: chromosome-position-ref-alt</li>
-                                <li>Queries are 0-based</li>
+                                <li>Queries are 1-based</li>
                               </ul>
                             }
                             arrow

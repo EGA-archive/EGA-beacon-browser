@@ -77,10 +77,7 @@ const ResultsHeader = ({
             </Typography>
           )}
         </Grid>
-
-        {/* Right side: Sort controls with toggle buttons */}
-
-        {/* Left side: Sort controls Open All/Close All for sex distribution*/}
+        {/* Sort controls, Open All/Close All for sex distribution*/}
         <Grid
           item
           xs={10}
@@ -92,12 +89,9 @@ const ResultsHeader = ({
             gap: "16px",
             flexWrap: "wrap",
             justifyContent: "flex-start",
-            width: { xs: "80%" },
-            backgroundColor: {
-              xs: "navajowhite",
-              sm: "pink",
-              md: "blue",
-              lg: "grey",
+            "@media (min-width:575px) and (max-width:599px)": {
+              flexBasis: "100%",
+              maxWidth: "100%",
             },
           }}
         >
@@ -160,10 +154,11 @@ const ResultsHeader = ({
                 mt: 1,
               },
               "@media (max-width: 550px)": {
-                flexDirection: "column",
-                alignItems: "flex-start",
+                ml: 0,
+                mt: 0,
                 gap: "8px",
                 width: "100%",
+                flexWrap: "wrap",
               },
             }}
           >
@@ -173,6 +168,10 @@ const ResultsHeader = ({
                 fontSize: "16px",
                 whiteSpace: "nowrap",
                 ml: "auto",
+                ml: "auto",
+                "@media (max-width: 550px)": {
+                  ml: 0,
+                },
               }}
             >
               Sort by:
@@ -261,6 +260,11 @@ const ResultsHeader = ({
                 cursor: "pointer",
                 textDecoration: "underline",
                 ml: "24px",
+                "@media (max-width: 550px)": {
+                  width: "100%",
+                  ml: 0,
+                  mt: 0.5,
+                },
               }}
               onClick={onDownloadTable}
             >

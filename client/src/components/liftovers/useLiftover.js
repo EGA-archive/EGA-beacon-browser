@@ -11,10 +11,13 @@ import { liftoverInterval } from "./liftoverService";
 
 export async function liftoverVariant(variant, genome) {
   // Parse the variant into structured components (chrom, pos, ref, alt)
+  console.log(variant);
   const parsed = parseVariant(variant);
+  console.log(parsed);
+  console.log(parsed.pos);
 
   // Compute start/end interval based on position and reference length
-  const { start, end } = getInterval(parsed.pos, parsed.ref);
+  const { start, end } = getInterval(parsed.pos + 1, parsed.ref);
 
   // Call liftover API to convert coordinates between assemblies
   const result = await liftoverInterval({
@@ -32,7 +35,7 @@ export async function liftoverVariant(variant, genome) {
   // Build and return the lifted variant string using the new position
   return buildVariant({
     chrom: parsed.chrom,
-    pos: Number(result.output_start),
+    pos: Number(result.output_start - 1),
     ref: parsed.ref,
     alt: parsed.alt,
   });
