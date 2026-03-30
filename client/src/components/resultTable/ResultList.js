@@ -361,8 +361,9 @@ function ResultList({
             liftedAssemblyId={liftedAssemblyId}
             liftedVariant={liftedVariant}
             onDownloadTable={handleDownloadTable}
+            data={chartData}
           />
-          <AlleleFrequencyChart data={chartData} />
+
           <TableLayout tableRef={tableRef}>
             {finalResults.map((item) => (
               <React.Fragment key={item.id + item.__source}>

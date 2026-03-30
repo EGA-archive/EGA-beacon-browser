@@ -11,6 +11,7 @@ import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import PanoramaFishEyeIcon from "@mui/icons-material/PanoramaFishEye";
 import liftoverIcon from "../../liftover-icon.svg";
 import DownloadRoundedIcon from "@mui/icons-material/DownloadRounded";
+import AlleleFrequencyChart from "../../charts/AlleleFrequencyChart";
 
 // This component displays the queried variant and toggle buttons for sorting results
 // It allows users to sort by ancestry and/or sex
@@ -22,6 +23,7 @@ const ResultsHeader = ({
   toggle,
   handleToggle,
   onDownloadTable,
+  data,
 }) => {
   return (
     <Box className="queried-row">
@@ -77,6 +79,12 @@ const ResultsHeader = ({
             </Typography>
           )}
         </Grid>
+        {/* Chart should be here, after the results queried variant and liftedover queried variant */}
+        {data?.length > 0 && (
+          <Grid item xs={12}>
+            <AlleleFrequencyChart data={data} />
+          </Grid>
+        )}
         {/* Sort controls, Open All/Close All for sex distribution*/}
         <Grid
           item
