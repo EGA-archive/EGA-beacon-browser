@@ -4,6 +4,8 @@ import { formatAF } from "../constants";
 // This component represents a single <tr> row inside a table.
 // It displays allele information for a given population type.
 const SharedTableRow = ({
+  id,
+  category,
   type,
   alleleCount,
   alleleNumber,
@@ -43,7 +45,7 @@ const SharedTableRow = ({
   const hemizygous = alleleCountHemizygous ?? genotypeHemizygous;
 
   return (
-    <tr>
+    <tr data-id={id} data-category={category}>
       {/* Column 1: Population */}
       <td className={`type-wrap ${backgroundColor}`}>{type}</td>
 

@@ -22,9 +22,9 @@ export function buildVariant({ chrom, pos, ref, alt }) {
 // Computes the genomic interval covered by a variant
 // Currently assumes single-base variants (end = start + 1)
 // Used for liftover and interval-based queries
-export function getInterval(pos) {
+export function getInterval(pos, ref) {
   return {
     start: pos,
-    end: pos + 1,
+    end: pos + ref.length - 1,
   };
 }

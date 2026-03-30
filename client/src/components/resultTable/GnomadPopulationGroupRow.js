@@ -4,51 +4,49 @@ import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
 import SharedTableRow from "./SharedTableRow";
 import { normalizeGenotypeCounts } from "./normalizeGenotypeCounts";
 
-/**
- * Renders grouped, collapsible population rows for gnomAD.
- * - Known populations are grouped and expandable
- * - Subpopulations are shown when expanded
- * - Aliases are normalized and merged
- * - Unknown populations are rendered flat and alphabetically
- */
-
-// Maps population name variants to a single normalized label
 const POPULATION_NORMALIZATION = {
-  // Remaining / Other
   Other: "Remaining Individuals",
   "Remaining individuals": "Remaining Individuals",
   "Reaming individuals": "Remaining Individuals",
   Remaining: "Remaining Individuals",
 
-  // Bulgarian
   Bulgarian: "Bulgarian",
   "Bulgarian (Eastern European)": "Bulgarian",
 
-  // African
   "African-American/African": "African-American/African",
   "African/African-American": "African-American/African",
   "African/African american": "African-American/African",
   African: "African-American/African",
   "African/African American": "African-American/African",
 
-  // Other non-Finnish European
   "Other Non-Finnish European": "Other Non-Finnish European",
   "Other non-Finnish European": "Other Non-Finnish European",
 
-  // North-western variants
   "North-Western European": "North-Western European",
   "North-western European": "North-Western European",
 
-  // European Non-Finnish variants
   "Non-Finnish European": "European (non-Finnish)",
   "European (non-Finnish)": "European (non-Finnish)",
 };
 
-// Returns the normalized population name if available
-const normalizePopulation = (name) => POPULATION_NORMALIZATION[name] || name;
+const normalizePopulation = (name) => {
+  if (!name) return name;
 
-// Defines the gnomAD population hierarchy. In case new populations/ subpopulations come up they can be added here.
+  const trimmed = name.trim();
+  const match = trimmed.match(/(.+)\s+(XX|XY)$/);
+
+  if (match) {
+    const base = match[1];
+    const sex = match[2];
+    const normalizedBase = POPULATION_NORMALIZATION[base] || base;
+    return `${normalizedBase} ${sex}`;
+  }
+
+  return POPULATION_NORMALIZATION[trimmed] || trimmed;
+};
+
 const GNOMAD_GROUPS = {
+  European: [],
   "Admixed American": [],
   "African-American/African": [],
   Amish: [],
@@ -70,10 +68,8 @@ const GNOMAD_GROUPS = {
 };
 
 export default function GnomadPopulationGroupRows({ frequencies }) {
-  // Tracks which population groups are expanded/collapsed
   const [openGroups, setOpenGroups] = useState({});
 
-  // Toggles a single population group open/closed
   const toggleGroup = (groupName) => {
     setOpenGroups((prev) => ({
       ...prev,
@@ -81,66 +77,78 @@ export default function GnomadPopulationGroupRows({ frequencies }) {
     }));
   };
 
-  // Normalize population names and merge counts per population
   const frequencyByPopulation = frequencies.reduce((acc, f) => {
-    const normalizedName = normalizePopulation(f.population);
+    const name = normalizePopulation(f.population);
     const { homozygous, heterozygous, hemizygous } = normalizeGenotypeCounts(f);
 
-    if (!acc[normalizedName]) {
-      acc[normalizedName] = {
+    if (!acc[name]) {
+      acc[name] = {
         ...f,
-        population: normalizedName,
+        population: name,
         alleleCountHomozygous: homozygous,
         alleleCountHeterozygous: heterozygous,
         alleleCountHemizygous: hemizygous,
       };
     } else {
-      acc[normalizedName].alleleCount += f.alleleCount || 0;
-      acc[normalizedName].alleleNumber += f.alleleNumber || 0;
-      acc[normalizedName].alleleCountHomozygous += homozygous;
-      acc[normalizedName].alleleCountHeterozygous += heterozygous;
-      acc[normalizedName].alleleCountHemizygous += hemizygous;
+      acc[name].alleleCount += f.alleleCount || 0;
+      acc[name].alleleNumber += f.alleleNumber || 0;
+      acc[name].alleleCountHomozygous += homozygous;
+      acc[name].alleleCountHeterozygous += heterozygous;
+      acc[name].alleleCountHemizygous += hemizygous;
     }
 
     return acc;
   }, {});
 
-  // Set of all known populations defined in GNOMAD_GROUPS
   const knownPopulations = new Set(
-    Object.keys(GNOMAD_GROUPS).flatMap((group) => [
-      group,
-      ...GNOMAD_GROUPS[group],
-    ])
+    Object.keys(GNOMAD_GROUPS).flatMap((g) => [g, ...GNOMAD_GROUPS[g]])
   );
 
-  // Populations not part of the known hierarchy, rendered flat
-  const unknownPopulations = Object.values(frequencyByPopulation)
-    .filter((f) => !knownPopulations.has(f.population))
-    .sort((a, b) => a.population.localeCompare(b.population));
+  const isSexOnly = (p) => p === "XX" || p === "XY";
+
+  const isSexChild = (p) =>
+    Object.keys(GNOMAD_GROUPS).some((g) => p.startsWith(g + " "));
+
+  const unknownPopulations = Object.values(frequencyByPopulation).filter(
+    (f) =>
+      !isSexOnly(f.population) &&
+      !knownPopulations.has(f.population) &&
+      !isSexChild(f.population)
+  );
+
+  const sexOnlyRows = ["XX", "XY"]
+    .map((sex) => frequencyByPopulation[sex])
+    .filter(Boolean);
 
   return (
     <>
-      {/* Render grouped gnomAD populations */}
       {Object.entries(GNOMAD_GROUPS)
         .sort(([a], [b]) => a.localeCompare(b))
         .map(([groupName, subPopulations]) => {
-          const mainRow = frequencyByPopulation[groupName];
-          if (!mainRow) return null;
+          const main = frequencyByPopulation[groupName];
+          if (!main) return null;
 
-          // Resolve and sort subpopulation rows
-          const subRows = subPopulations
-            .slice()
-            .sort((a, b) => a.localeCompare(b))
-            .map((name) => frequencyByPopulation[name])
+          const sexRows = ["XX", "XY"]
+            .map((sex) => frequencyByPopulation[`${groupName} ${sex}`])
             .filter(Boolean);
 
-          const isExpandable = subRows.length > 0;
+          const subRows = [
+            ...sexRows,
+            ...subPopulations
+              .slice()
+              .sort((a, b) => a.localeCompare(b))
+              .map((n) => frequencyByPopulation[n])
+              .filter(Boolean),
+          ];
+
           const isOpen = openGroups[groupName];
+          const isExpandable = subRows.length > 0;
 
           return (
             <React.Fragment key={groupName}>
-              {/* Main population row */}
               <SharedTableRow
+                id={groupName}
+                category="ancestry_main"
                 type={
                   isExpandable ? (
                     <span
@@ -153,8 +161,8 @@ export default function GnomadPopulationGroupRows({ frequencies }) {
                     >
                       <span
                         style={{
-                          width: "40px",
-                          marginLeft: "-40px",
+                          width: 40,
+                          marginLeft: -40,
                           display: "inline-flex",
                           justifyContent: "center",
                         }}
@@ -171,47 +179,44 @@ export default function GnomadPopulationGroupRows({ frequencies }) {
                     groupName
                   )
                 }
-                alleleCount={mainRow.alleleCount}
-                alleleNumber={mainRow.alleleNumber}
-                alleleCountHomozygous={mainRow.alleleCountHomozygous}
-                alleleCountHeterozygous={mainRow.alleleCountHeterozygous}
-                alleleCountHemizygous={mainRow.alleleCountHemizygous || "0"}
-                alleleFrequency={mainRow.alleleFrequency}
-                nonBackgroundColor={true}
+                {...main}
+                nonBackgroundColor
               />
 
-              {/* Subpopulation rows */}
               {isOpen &&
                 subRows.map((sub) => (
                   <SharedTableRow
                     key={sub.population}
                     type={sub.population}
-                    alleleCount={sub.alleleCount}
-                    alleleNumber={sub.alleleNumber}
-                    alleleCountHomozygous={sub.alleleCountHomozygous}
-                    alleleCountHeterozygous={sub.alleleCountHeterozygous}
-                    alleleCountHemizygous={sub.alleleCountHemizygous || "0"}
-                    alleleFrequency={sub.alleleFrequency}
-                    nonBackgroundColor={false}
-                    isSubRow={true}
+                    {...sub}
+                    isSubRow
                   />
                 ))}
             </React.Fragment>
           );
         })}
 
-      {/* Render populations not covered by GNOMAD_GROUPS */}
+      {/* Global sex */}
+      {sexOnlyRows.map((row) => (
+        <SharedTableRow
+          key={row.population}
+          id={row.population}
+          category="global_sex"
+          type={row.population}
+          {...row}
+          nonBackgroundColor
+        />
+      ))}
+
+      {/* Unknown */}
       {unknownPopulations.map((pop) => (
         <SharedTableRow
           key={pop.population}
+          id={pop.population}
+          category="ancestry_unknown"
           type={pop.population}
-          alleleCount={pop.alleleCount}
-          alleleNumber={pop.alleleNumber}
-          alleleCountHomozygous={pop.alleleCountHomozygous}
-          alleleCountHeterozygous={pop.alleleCountHeterozygous}
-          alleleCountHemizygous={pop.alleleCountHemizygous || "0"}
-          alleleFrequency={pop.alleleFrequency}
-          nonBackgroundColor={true}
+          {...pop}
+          nonBackgroundColor
         />
       ))}
     </>

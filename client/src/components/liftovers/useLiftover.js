@@ -17,7 +17,7 @@ export async function liftoverVariant(variant, genome) {
   console.log(parsed.pos);
 
   // Compute start/end interval based on position and reference length
-  const { start, end } = getInterval(parsed.pos + 1, parsed.ref);
+  const { start, end } = getInterval(parsed.pos, parsed.ref);
 
   // Call liftover API to convert coordinates between assemblies
   const result = await liftoverInterval({
@@ -35,7 +35,7 @@ export async function liftoverVariant(variant, genome) {
   // Build and return the lifted variant string using the new position
   return buildVariant({
     chrom: parsed.chrom,
-    pos: Number(result.output_start - 1),
+    pos: Number(result.output_start),
     ref: parsed.ref,
     alt: parsed.alt,
   });
