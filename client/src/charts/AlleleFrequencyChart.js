@@ -4,11 +4,12 @@ import {
   XAxis,
   YAxis,
   Tooltip,
-  Legend,
   ResponsiveContainer,
   CartesianGrid,
   Label,
 } from "recharts";
+
+import { createBarWithDots } from "../components/constants";
 
 const CustomLegend = () => {
   const Item = ({ label, color }) => (
@@ -114,7 +115,7 @@ const CustomTooltip = ({ active, payload, label }) => {
 };
 
 export default function AlleleFrequencyChart({ data }) {
-  //   console.log("CHART DATA:", data);
+  console.log("CHART DATA:", data);
 
   return (
     <div
@@ -178,18 +179,6 @@ export default function AlleleFrequencyChart({ data }) {
               content={<CustomTooltip />}
               cursor={{ fill: "rgba(0,0,0,0.05)" }}
             />
-            {/* <Legend
-              content={<CustomLegend />}
-              layout="vertical"
-              align="right"
-              verticalAlign="middle"
-            /> */}
-
-            {/* <Legend align="bottom" verticalAlign="bottom" iconType="square" /> */}
-
-            {/* <Bar dataKey="female" fill="#0A1B95" name="Female" barSize={50} />
-            <Bar dataKey="male" fill="#277F8E" name="Male" barSize={50} />
-            <Bar dataKey="total" fill="#C96324" name="Total" barSize={50} /> */}
 
             <Bar
               dataKey="female"
@@ -198,7 +187,7 @@ export default function AlleleFrequencyChart({ data }) {
               stroke="#0A1B95"
               strokeWidth={3}
               barSize={30}
-              radius={[4, 4, 0, 0]}
+              shape={createBarWithDots({ dataKey: "female", color: "#0A1B95" })}
             />
 
             <Bar
@@ -208,7 +197,7 @@ export default function AlleleFrequencyChart({ data }) {
               stroke="#277F8E"
               strokeWidth={3}
               barSize={30}
-              radius={[4, 4, 0, 0]}
+              shape={createBarWithDots({ dataKey: "male", color: "#277F8E" })}
             />
 
             <Bar
@@ -218,10 +207,11 @@ export default function AlleleFrequencyChart({ data }) {
               stroke="#C96324"
               strokeWidth={3}
               barSize={30}
-              radius={[4, 4, 0, 0]}
+              shape={createBarWithDots({ dataKey: "total", color: "#C96324" })}
             />
           </BarChart>
         </ResponsiveContainer>
+
         <div
           style={{
             position: "absolute",
