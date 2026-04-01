@@ -3,15 +3,17 @@ import { Box } from "@mui/system";
 import ResultsHeader from "./ResultsHeader.js";
 import { Row } from "react-bootstrap";
 import TableLayout from "./TableLayout.js";
-import SharedTableRow from "./SharedTableRow.js";
 import liftoverIcon from "../../liftover-icon.svg";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
 import { normalizeGenotypeCounts } from "./normalizeGenotypeCounts";
 import { downloadCSV } from "./downloadCSV.js";
 import GnomadPopulationGroupRows from "./GnomadPopulationGroupRow.js";
-import { getPopulationFrequency, formatAF } from "../constants.js";
-import AlleleFrequencyChart from "../../charts/AlleleFrequencyChart.js";
+import {
+  getPopulationFrequency,
+  formatAF,
+  GNOMAD_GROUPS,
+} from "../constants.js";
 
 const buildDatasetDisplayName = ({
   datasetId,
@@ -134,6 +136,70 @@ function ResultList({
     downloadCSV(tableRef.current, "beacon-results.csv");
   };
 
+  // const chartData = Object.values(results || {})
+  //   .flat()
+  //   .map((dataset) => {
+  //     const frequencies =
+  //       dataset?.results?.[0]?.frequencyInPopulations?.[0]?.frequencies || [];
+
+  //     const get = (labels) =>
+  //       frequencies.find((f) => labels.includes(f.population));
+
+  //     const female = get(["Female", "Females", "XX"]);
+  //     const male = get(["Male", "Males", "XY"]);
+  //     const total = get(["Total"]);
+
+  //     const mainPopulations = frequencies
+  //       .map((f) => f.population)
+  //       .filter(
+  //         (name) =>
+  //           !name.includes("XX") &&
+  //           !name.includes("XY") &&
+  //           ![
+  //             "Female",
+  //             "Females",
+  //             "Male",
+  //             "Males",
+  //             "XX",
+  //             "XY",
+  //             "Total",
+  //           ].includes(name)
+  //       );
+
+  //     const uniqueMainPopulations = [...new Set(mainPopulations)];
+
+  //     const ancestryDots = uniqueMainPopulations.map((populationName) => {
+  //       const populationTotal = frequencies.find(
+  //         (f) => f.population === populationName
+  //       );
+
+  //       const populationFemale = frequencies.find(
+  //         (f) => f.population === `${populationName} XX`
+  //       );
+
+  //       const populationMale = frequencies.find(
+  //         (f) => f.population === `${populationName} XY`
+  //       );
+
+  //       return {
+  //         population: populationName,
+  //         total: populationTotal?.alleleFrequency || 0,
+  //         female: populationFemale?.alleleFrequency || 0,
+  //         male: populationMale?.alleleFrequency || 0,
+  //       };
+  //     });
+
+  //     return {
+  //       dataset: dataset.id,
+  //       female: female?.alleleFrequency ?? null,
+  //       male: male?.alleleFrequency ?? null,
+  //       total: total?.alleleFrequency ?? null,
+  //       ancestryDots,
+  //     };
+  //   });
+
+  // console.log("CHART DATA TRANSFORMED:", chartData);
+
   const chartData = Object.values(results || {})
     .flat()
     .map((dataset) => {
@@ -147,13 +213,48 @@ function ResultList({
       const male = get(["Male", "Males", "XY"]);
       const total = get(["Total"]);
 
+      const ancestryDots = Object.keys(GNOMAD_GROUPS)
+        .filter((groupName) =>
+          frequencies.some((f) => f.population === groupName)
+        )
+        .map((groupName) => {
+          const totalPop = frequencies.find((f) => f.population === groupName);
+
+          const femalePop = frequencies.find(
+            (f) => f.population === `${groupName} XX`
+          );
+
+          const malePop = frequencies.find(
+            (f) => f.population === `${groupName} XY`
+          );
+
+          console.log("DOT DEBUG:", {
+            dataset: dataset.id,
+            groupName,
+            total: totalPop?.alleleFrequency,
+            female: femalePop?.alleleFrequency,
+            male: malePop?.alleleFrequency,
+          });
+
+          return {
+            population: groupName,
+            total: totalPop?.alleleFrequency ?? null,
+            female: femalePop?.alleleFrequency ?? null,
+            male: malePop?.alleleFrequency ?? null,
+          };
+        });
+
+      // ✅ THIS WAS MISSING
       return {
         dataset: dataset.id,
-        female: female?.alleleFrequency || 0,
-        male: male?.alleleFrequency || 0,
-        total: total?.alleleFrequency || 0,
+        female: female?.alleleFrequency ?? null,
+        male: male?.alleleFrequency ?? null,
+        total: total?.alleleFrequency ?? null,
+        ancestryDots,
       };
     });
+
+  console.log("CHART DATA TRANSFORMED:", chartData);
 
   const mergedResults = [
     ...(results?.original || []).map((r) => ({ ...r, __source: "original" })),
@@ -197,39 +298,42 @@ function ResultList({
     const baseClass = toggle.length === 0 ? "no-border" : "beaconized";
     const totalClass = `${baseClass} global-row-background`;
 
-    const counts = normalizeGenotypeCounts({
-      alleleCountHomozygous: hom,
-      alleleCountHeterozygous: het,
-      alleleCountHemizygous: hemi,
-    });
+    const display = (v) => v ?? "-";
 
-    // Total Row
     return (
       <tr data-id="total" data-category="total">
         <td className={`${totalClass} dataset-col`}>
           <b>Total</b>
         </td>
+
         <td className={`${totalClass} centered`}>
-          <b>{ac ?? 0}</b>
+          <b>{display(ac)}</b>
         </td>
+
         <td className={`${totalClass} centered`}>
-          <b>{an ?? 0}</b>
+          <b>{display(an)}</b>
         </td>
+
         <td className={`${totalClass} centered`}>
-          <b>{counts.homozygous}</b>
+          <b>{display(hom)}</b>
         </td>
+
         <td className={`${totalClass} centered`}>
-          <b>{counts.heterozygous}</b>
+          <b>{display(het)}</b>
         </td>
+
         <td className={`${totalClass} centered`}>
-          <b>{counts.hemizygous}</b>
+          <b>{display(hemi)}</b>
         </td>
+
         <td className={`${totalClass} centered`}>
           <b>
-            {formatAF(af ?? (an ? ac / an : null), {
-              threshold: 1e-5,
-              exponentDigits: 2,
-            })}
+            {af != null
+              ? formatAF(af, {
+                  threshold: 1e-5,
+                  exponentDigits: 2,
+                })
+              : "-"}
           </b>
         </td>
       </tr>
@@ -239,22 +343,12 @@ function ResultList({
   const renderDatasetTable = (dataset) => {
     const datasetKey = dataset.id + dataset.__source;
     const isCollapsed = collapsedDatasets[datasetKey];
-    const females = getPopulationFrequency(dataset.results, "Females");
-    const males = getPopulationFrequency(dataset.results, "Males");
     const total = getPopulationFrequency(dataset.results, "Total");
 
     const populationFrequencies =
       dataset?.results?.[0]?.frequencyInPopulations?.[0]?.frequencies?.filter(
         (f) => f?.population !== "Total"
       ) || [];
-
-    const femaleCounts = females
-      ? normalizeGenotypeCounts(females)
-      : { homozygous: 0, heterozygous: 0, hemizygous: 0 };
-
-    const maleCounts = males
-      ? normalizeGenotypeCounts(males)
-      : { homozygous: 0, heterozygous: 0, hemizygous: 0 };
 
     const totalCounts = normalizeGenotypeCounts(total || {});
 
@@ -265,41 +359,13 @@ function ResultList({
             {toggle.includes("ancestry") && (
               <GnomadPopulationGroupRows frequencies={populationFrequencies} />
             )}
-            {females && toggle.includes("sex") && (
-              <SharedTableRow
-                id="global-xx"
-                category="global_sex"
-                type="XX"
-                alleleCount={females.alleleCount}
-                alleleNumber={females.alleleNumber}
-                alleleCountHomozygous={femaleCounts.homozygous}
-                alleleCountHeterozygous={femaleCounts.heterozygous}
-                alleleCountHemizygous={femaleCounts.hemizygous}
-                alleleFrequency={females.alleleFrequency}
-              />
-            )}
-
-            {males && toggle.includes("sex") && (
-              <SharedTableRow
-                id="global-xy"
-                category="global_sex"
-                type="XY"
-                alleleCount={males.alleleCount}
-                alleleNumber={males.alleleNumber}
-                alleleCountHomozygous={maleCounts.homozygous}
-                alleleCountHeterozygous={maleCounts.heterozygous}
-                alleleCountHemizygous={maleCounts.hemizygous}
-                alleleFrequency={males.alleleFrequency}
-              />
-            )}
           </>
         )}
 
+        {/* This renders the Total in bold */}
         {totalResults(
-          total?.alleleCount ||
-            (females?.alleleCount || 0) + (males?.alleleCount || 0),
-          total?.alleleNumber ||
-            (females?.alleleNumber || 0) + (males?.alleleNumber || 0),
+          total?.alleleCount ?? null,
+          total?.alleleNumber ?? null,
           totalCounts.homozygous,
           totalCounts.heterozygous,
           totalCounts.hemizygous,

@@ -33,7 +33,6 @@ export const getPopulationFrequency = (results, population) => {
 // Shows a normal decimal when the value is >= 1e-5
 // Use scientific notation only when the value is > 0 and < 1e-5
 // Returns - if value is missing
-
 export function formatAF(
   value,
   {
@@ -61,3 +60,52 @@ export function formatAF(
   // This trims trailing zeros and a trailing decimal point
   return formatted.replace(/(\.\d*?[1-9])0+$/, "$1").replace(/\.0+$/, "");
 }
+
+// Ancestry population and  ancestry subpopulation groups used globally
+export const GNOMAD_GROUPS = {
+  European: [],
+  "Admixed American": [],
+  "African-American/African": [],
+  Amish: [],
+  "Ashkenazi Jewish": [],
+  "East Asian": ["Japanese", "Korean", "Other East Asian"],
+  "European (Finnish)": [],
+  "European (non-Finnish)": [
+    "Bulgarian",
+    "Estonian",
+    "North-Western European",
+    "Other Non-Finnish European",
+    "Southern European",
+    "Swedish",
+  ],
+  "South Asian": [],
+  "Remaining Individuals": [],
+  Finnish: [],
+  "Middle Eastern": [],
+};
+
+// Ancestry population names normalization and unification
+export const POPULATION_NORMALIZATION = {
+  Other: "Remaining Individuals",
+  "Remaining individuals": "Remaining Individuals",
+  "Reaming individuals": "Remaining Individuals",
+  Remaining: "Remaining Individuals",
+
+  Bulgarian: "Bulgarian",
+  "Bulgarian (Eastern European)": "Bulgarian",
+
+  "African-American/African": "African-American/African",
+  "African/African-American": "African-American/African",
+  "African/African american": "African-American/African",
+  African: "African-American/African",
+  "African/African American": "African-American/African",
+
+  "Other Non-Finnish European": "Other Non-Finnish European",
+  "Other non-Finnish European": "Other Non-Finnish European",
+
+  "North-Western European": "North-Western European",
+  "North-western European": "North-Western European",
+
+  "Non-Finnish European": "European (non-Finnish)",
+  "European (non-Finnish)": "European (non-Finnish)",
+};

@@ -1,8 +1,8 @@
 import React from "react";
 import { formatAF } from "../constants";
 
-// This component represents a single <tr> row inside a table.
-// It displays allele information for a given population type.
+// This component renders a single table row (<tr>) representing allele data for a given population (ancestry or sex).
+// It is purely a PRESENTATIONAL component (no data fetching / no grouping logic).
 const SharedTableRow = ({
   id,
   category,
@@ -19,13 +19,42 @@ const SharedTableRow = ({
   nonBackgroundColor,
   isSubRow = false,
 }) => {
-  // If nonBackgroundColor is true, don't add the background class.
-  // Otherwise, apply a default "sex-background" class.
+  // Row styling logic:
+  // 1. subRow → nested population (lighter background)
+  // 2. group → main ancestry row
+  // 3. default → sex/global rows
   const backgroundColor = isSubRow
     ? "subrow-background"
     : nonBackgroundColor
     ? "group-background"
     : "sex-background";
+
+  // Display helper:
+  // Converts null/undefined → "-"
+  // Keeps valid 0 values untouched
+  const display = (v) => (v === null || v === undefined ? "-" : v);
+
+  // Supports both naming conventions:
+  // - alleleCount*
+  // - genotype*
+  const homozygous = alleleCountHomozygous ?? genotypeHomozygous ?? null;
+  const heterozygous = alleleCountHeterozygous ?? genotypeHeterozygous ?? null;
+  const hemizygous = alleleCountHemizygous ?? genotypeHemizygous ?? null;
+
+  // Fallback logic:
+  // If one genotype count is missing but the other + AC are available, compute the missing value safely.
+  // Avoids NaN by checking for nulls.
+  const computedHomozygous =
+    homozygous ??
+    (alleleCount != null && heterozygous != null
+      ? alleleCount - heterozygous
+      : null);
+
+  const computedHeterozygous =
+    heterozygous ??
+    (alleleCount != null && homozygous != null
+      ? alleleCount - homozygous
+      : null);
 
   // Check if AC/AN are valid to compute frequency if needed
   const hasCounts =
@@ -39,35 +68,34 @@ const SharedTableRow = ({
       ? Number(alleleCount) / Number(alleleNumber)
       : null;
 
-  // Resolve genotype counts, supporting both allele* and genotype* props
-  const homozygous = alleleCountHomozygous ?? genotypeHomozygous;
-  const heterozygous = alleleCountHeterozygous ?? genotypeHeterozygous;
-  const hemizygous = alleleCountHemizygous ?? genotypeHemizygous;
-
   return (
     <tr data-id={id} data-category={category}>
       {/* Column 1: Population */}
       <td className={`type-wrap ${backgroundColor}`}>{type}</td>
 
       {/* Column 2: Allele Count */}
-      <td className={`centered-header ${backgroundColor}`}>{alleleCount}</td>
+      <td className={`centered-header ${backgroundColor}`}>
+        {display(alleleCount)}
+      </td>
 
       {/* Column 3: Allele Number */}
-      <td className={`centered-header ${backgroundColor}`}>{alleleNumber}</td>
-
-      {/* Column 4: Homozygous Count - If not provided, it tries to calculate it as: alleleCount - heterozygous */}
       <td className={`centered-header ${backgroundColor}`}>
-        {homozygous || alleleCount - heterozygous}
+        {display(alleleNumber)}
       </td>
 
-      {/* Column 5: Heterozygous Count - If not provided, it tries to calculate it as: alleleCount - homozygous */}
+      {/* Column 4: Homozygous Count - If not provided: - */}
       <td className={`centered-header ${backgroundColor}`}>
-        {heterozygous || alleleCount - homozygous}
+        {display(computedHomozygous)}
       </td>
 
-      {/* Column 6: Hemizygous Count - If not provided, it hardcodes 0. NOTE: need to review this */}
+      {/* Column 5: Heterozygous Count - If not provided: - */}
       <td className={`centered-header ${backgroundColor}`}>
-        {hemizygous || "0"}
+        {display(computedHeterozygous)}
+      </td>
+
+      {/* Column 6: Hemizygous Count - If not provided: - */}
+      <td className={`centered-header ${backgroundColor}`}>
+        {display(hemizygous)}
       </td>
 
       {/* Column 7: Allele Frequency

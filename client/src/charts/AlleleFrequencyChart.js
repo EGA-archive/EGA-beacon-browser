@@ -114,7 +114,7 @@ const CustomTooltip = ({ active, payload, label }) => {
 };
 
 export default function AlleleFrequencyChart({ data }) {
-  console.log("CHART DATA:", data);
+  //   console.log("CHART DATA:", data);
 
   return (
     <div
@@ -128,13 +128,14 @@ export default function AlleleFrequencyChart({ data }) {
           width: "100%",
           height: 350,
           marginBottom: "40px",
+          position: "relative",
         }}
       >
         <ResponsiveContainer>
           <BarChart
             data={data}
             barGap={8}
-            margin={{ top: 20, right: 80, left: 20, bottom: 40 }}
+            margin={{ top: 20, right: 20, left: 20, bottom: 40 }}
           >
             <CartesianGrid strokeDasharray="1 1" vertical={false} />
             <XAxis
@@ -177,12 +178,12 @@ export default function AlleleFrequencyChart({ data }) {
               content={<CustomTooltip />}
               cursor={{ fill: "rgba(0,0,0,0.05)" }}
             />
-            <Legend
+            {/* <Legend
               content={<CustomLegend />}
               layout="vertical"
               align="right"
               verticalAlign="middle"
-            />
+            /> */}
 
             {/* <Legend align="bottom" verticalAlign="bottom" iconType="square" /> */}
 
@@ -221,6 +222,17 @@ export default function AlleleFrequencyChart({ data }) {
             />
           </BarChart>
         </ResponsiveContainer>
+        <div
+          style={{
+            position: "absolute",
+            top: 20,
+            right: 20,
+            padding: "12px 16px",
+            borderRadius: 10,
+          }}
+        >
+          <CustomLegend />
+        </div>
       </div>
     </div>
   );

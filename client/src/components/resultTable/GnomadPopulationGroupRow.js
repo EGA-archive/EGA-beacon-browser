@@ -3,31 +3,7 @@ import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
 import SharedTableRow from "./SharedTableRow";
 import { normalizeGenotypeCounts } from "./normalizeGenotypeCounts";
-
-const POPULATION_NORMALIZATION = {
-  Other: "Remaining Individuals",
-  "Remaining individuals": "Remaining Individuals",
-  "Reaming individuals": "Remaining Individuals",
-  Remaining: "Remaining Individuals",
-
-  Bulgarian: "Bulgarian",
-  "Bulgarian (Eastern European)": "Bulgarian",
-
-  "African-American/African": "African-American/African",
-  "African/African-American": "African-American/African",
-  "African/African american": "African-American/African",
-  African: "African-American/African",
-  "African/African American": "African-American/African",
-
-  "Other Non-Finnish European": "Other Non-Finnish European",
-  "Other non-Finnish European": "Other Non-Finnish European",
-
-  "North-Western European": "North-Western European",
-  "North-western European": "North-Western European",
-
-  "Non-Finnish European": "European (non-Finnish)",
-  "European (non-Finnish)": "European (non-Finnish)",
-};
+import { GNOMAD_GROUPS, POPULATION_NORMALIZATION } from "../constants.js";
 
 const normalizePopulation = (name) => {
   if (!name) return name;
@@ -43,28 +19,6 @@ const normalizePopulation = (name) => {
   }
 
   return POPULATION_NORMALIZATION[trimmed] || trimmed;
-};
-
-const GNOMAD_GROUPS = {
-  European: [],
-  "Admixed American": [],
-  "African-American/African": [],
-  Amish: [],
-  "Ashkenazi Jewish": [],
-  "East Asian": ["Japanese", "Korean", "Other East Asian"],
-  "European (Finnish)": [],
-  "European (non-Finnish)": [
-    "Bulgarian",
-    "Estonian",
-    "North-Western European",
-    "Other Non-Finnish European",
-    "Southern European",
-    "Swedish",
-  ],
-  "South Asian": [],
-  "Remaining Individuals": [],
-  Finnish: [],
-  "Middle Eastern": [],
 };
 
 export default function GnomadPopulationGroupRows({ frequencies }) {
@@ -120,6 +74,12 @@ export default function GnomadPopulationGroupRows({ frequencies }) {
     .map((sex) => frequencyByPopulation[sex])
     .filter(Boolean);
 
+  const mainGroupsWithData = Object.keys(GNOMAD_GROUPS).filter(
+    (groupName) => !!frequencyByPopulation[groupName]
+  );
+
+  const hasSingleMainPopulation = mainGroupsWithData.length === 1;
+
   return (
     <>
       {Object.entries(GNOMAD_GROUPS)
@@ -132,13 +92,17 @@ export default function GnomadPopulationGroupRows({ frequencies }) {
             .map((sex) => frequencyByPopulation[`${groupName} ${sex}`])
             .filter(Boolean);
 
+          const realSubPopulationRows = subPopulations
+            .slice()
+            .sort((a, b) => a.localeCompare(b))
+            .map((n) => frequencyByPopulation[n])
+            .filter(Boolean);
+
+          const shouldHideAncestrySexRows = hasSingleMainPopulation;
+
           const subRows = [
-            ...sexRows,
-            ...subPopulations
-              .slice()
-              .sort((a, b) => a.localeCompare(b))
-              .map((n) => frequencyByPopulation[n])
-              .filter(Boolean),
+            ...(shouldHideAncestrySexRows ? [] : sexRows),
+            ...realSubPopulationRows,
           ];
 
           const isOpen = openGroups[groupName];
@@ -182,7 +146,6 @@ export default function GnomadPopulationGroupRows({ frequencies }) {
                 {...main}
                 nonBackgroundColor
               />
-
               {isOpen &&
                 subRows.map((sub) => (
                   <SharedTableRow
