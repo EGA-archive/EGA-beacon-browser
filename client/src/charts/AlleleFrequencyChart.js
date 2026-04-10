@@ -9,10 +9,43 @@ import {
   Label,
 } from "recharts";
 
-import { createBarWithDots } from "../components/constants";
+import {
+  createBarWithDots,
+  CHART_COLORS,
+  LEGEND_ITEMS,
+  formatAF,
+} from "../components/constants";
 
-const CustomLegend = () => {
-  const Item = ({ label, color }) => (
+const CustomLegend = () => (
+  <div style={{ marginLeft: 20 }}>
+    {LEGEND_ITEMS.map(({ label, key }) => {
+      const color = CHART_COLORS[key];
+
+      return (
+        <div
+          key={key}
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: 10,
+            marginBottom: 12,
+          }}
+        >
+          <div
+            style={{
+              width: 18,
+              height: 18,
+              border: `3px solid ${color}`,
+              backgroundColor: `${color}33`,
+              borderTopLeftRadius: 4,
+              borderTopRightRadius: 4,
+            }}
+          />
+          <span style={{ fontSize: 14, color: "#000" }}>{label}</span>
+        </div>
+      );
+    })}
+
     <div
       style={{
         display: "flex",
@@ -23,33 +56,31 @@ const CustomLegend = () => {
     >
       <div
         style={{
-          width: 18,
-          height: 18,
-          border: `3px solid ${color}`,
-          backgroundColor: `${color}33`,
-          borderTopLeftRadius: 4,
-          borderTopRightRadius: 4,
+          width: 8,
+          height: 8,
+          borderRadius: "50%",
+          backgroundColor: "#000",
+          marginLeft: 5,
         }}
       />
-      <span style={{ fontSize: 14, color: "#000" }}>{label}</span>
+      <span style={{ fontSize: 14, color: "#000" }}>Datasets</span>
     </div>
-  );
-
-  return (
-    <div style={{ marginLeft: 20 }}>
-      <Item label="Female" color="#0A1B95" />
-      <Item label="Male" color="#277F8E" />
-      <Item label="Total" color="#C96324" />
-    </div>
-  );
-};
+  </div>
+);
 
 const CustomTooltip = ({ active, payload, label }) => {
   if (!active || !payload || !payload.length) return null;
 
-  const female = payload.find((p) => p.dataKey === "female");
-  const male = payload.find((p) => p.dataKey === "male");
-  const total = payload.find((p) => p.dataKey === "total");
+  const values = Object.fromEntries(payload.map((p) => [p.dataKey, p]));
+
+  const female = values.female;
+  const male = values.male;
+  const total = values.total;
+
+  const ancestryDots =
+    payload && payload[0] && payload[0].payload
+      ? payload[0].payload.ancestryDots || []
+      : [];
 
   const Row = ({ label, value, color }) => (
     <div
@@ -98,7 +129,7 @@ const CustomTooltip = ({ active, payload, label }) => {
       <div style={{ marginBottom: 6 }}>
         Dataset: <b>{label}</b>
         <br />
-        Ancestries: <b>blank</b>
+        Ancestries: <b>{ancestryDots.length || "-"}</b>
       </div>
       <div
         style={{
@@ -107,15 +138,52 @@ const CustomTooltip = ({ active, payload, label }) => {
         }}
       />
       <div style={{ marginBottom: 4 }}>Allele Frequencies:</div>
-      {total && <Row label="Total" value={total.value} color="#C96324" />}
-      {female && <Row label="Female" value={female.value} color="#0A1B95" />}
-      {male && <Row label="Male" value={male.value} color="#277F8E" />}
+      {total && (
+        <Row
+          label="Total"
+          value={formatAF(total.value)}
+          color={CHART_COLORS.total}
+        />
+      )}
+      {female && (
+        <Row
+          label="Female"
+          value={formatAF(female.value)}
+          color={CHART_COLORS.female}
+        />
+      )}
+      {male && (
+        <Row
+          label="Male"
+          value={formatAF(male.value)}
+          color={CHART_COLORS.male}
+        />
+      )}
     </div>
   );
 };
 
 export default function AlleleFrequencyChart({ data }) {
-  console.log("CHART DATA:", data);
+  //   console.log("CHART DATA:", data);
+
+  const allValues = data.flatMap((d) => [
+    d.female,
+    d.male,
+    d.total,
+    ...(d.ancestryDots || []).flatMap((dot) => [
+      dot.female,
+      dot.male,
+      dot.total,
+    ]),
+  ]);
+
+  const minValue = Math.min(...allValues.filter((v) => v != null && v > 0));
+
+  const maxValue = Math.max(...allValues.filter((v) => v != null));
+
+  const ticks = [0, minValue, (minValue + maxValue) / 2, maxValue].filter(
+    (v, i, arr) => v != null && !isNaN(v) && arr.indexOf(v) === i
+  );
 
   return (
     <div
@@ -153,13 +221,29 @@ export default function AlleleFrequencyChart({ data }) {
               />
             </XAxis>
             <YAxis
-              domain={[0, 1]}
-              // Need to check this
-              ticks={[0, 0.15, 0.3, 0.45, 0.6, 0.75, 1]}
+              //       Need to check this
+              //   domain={[0, 1]}
+              //   ticks={[0, 0.15, 0.3, 0.45, 0.6, 0.75, 1]}
+              //   tickFormatter={(value) => {
+              //     if (value === 0) return "0";
+              //     if (value < 0.01) return value.toExponential(1);
+              //     return value.toFixed(2);
+              //   }}
+              domain={[() => minValue * 0.9, () => maxValue * 1.1]}
+              //   domain={[0, () => maxValue * 1.1]}
+              //   tickFormatter={(value) => {
+              //     if (value < 0.001) return value.toExponential(1);
+              //     return value.toFixed(3);
+              //   }}
+              //   ticks={ticks}
               tickFormatter={(value) => {
                 if (value === 0) return "0";
-                if (value < 0.01) return value.toExponential(1);
-                return value.toFixed(2);
+
+                const formatted = formatAF(value);
+
+                if (formatted === "0.0e+0" || formatted === "0e+0") return "0";
+
+                return formatted;
               }}
               tick={{ fontSize: 12, fill: "#000" }}
               axisLine={{ stroke: "#000" }}
@@ -178,37 +262,24 @@ export default function AlleleFrequencyChart({ data }) {
             <Tooltip
               content={<CustomTooltip />}
               cursor={{ fill: "rgba(0,0,0,0.05)" }}
+              wrapperStyle={{ zIndex: "999" }}
             />
 
-            <Bar
-              dataKey="female"
-              name="Female"
-              fill="#0A1B9533"
-              stroke="#0A1B95"
-              strokeWidth={3}
-              barSize={30}
-              shape={createBarWithDots({ dataKey: "female", color: "#0A1B95" })}
-            />
-
-            <Bar
-              dataKey="male"
-              name="Male"
-              fill="#277F8E33"
-              stroke="#277F8E"
-              strokeWidth={3}
-              barSize={30}
-              shape={createBarWithDots({ dataKey: "male", color: "#277F8E" })}
-            />
-
-            <Bar
-              dataKey="total"
-              name="Total"
-              fill="#C9632433"
-              stroke="#C96324"
-              strokeWidth={3}
-              barSize={30}
-              shape={createBarWithDots({ dataKey: "total", color: "#C96324" })}
-            />
+            {["female", "male", "total"].map((key) => (
+              <Bar
+                key={key}
+                dataKey={key}
+                name={key.charAt(0).toUpperCase() + key.slice(1)}
+                fill={`${CHART_COLORS[key]}33`}
+                stroke={CHART_COLORS[key]}
+                strokeWidth={3}
+                barSize={30}
+                shape={createBarWithDots({
+                  dataKey: key,
+                  color: CHART_COLORS[key],
+                })}
+              />
+            ))}
           </BarChart>
         </ResponsiveContainer>
 

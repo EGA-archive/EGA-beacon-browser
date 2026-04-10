@@ -24,7 +24,30 @@ const ResultsHeader = ({
   handleToggle,
   onDownloadTable,
   data,
+  onOpenAll,
+  onCloseAll,
+  allOpen,
+  allClosed,
 }) => {
+  console.log("allOpen:", allOpen);
+  console.log("allClosed:", allClosed);
+
+  const getButtonStyle = () => ({
+    borderRadius: "27px",
+    height: "32px",
+    fontSize: "14px",
+    fontWeight: 700,
+    textTransform: "none",
+    background: "white",
+    border: "1px solid #023452",
+    color: "#023452",
+
+    "&.Mui-disabled": {
+      color: "#A0A0A0",
+      border: "1px solid #A0A0A0",
+      background: "white",
+    },
+  });
   return (
     <Box className="queried-row">
       {/* Title */}
@@ -113,40 +136,21 @@ const ResultsHeader = ({
             Sex distribution (per ancestry):
           </Typography>
 
+          {/* Here */}
           <Button
             variant="outlined"
-            sx={{
-              borderRadius: "27px",
-              height: "32px",
-              fontFamily: "sans-serif",
-              fontSize: "14px",
-              fontWeight: 700,
-              lineHeight: "20px",
-              letterSpacing: "0.1px",
-              textTransform: "none",
-              color: "#023452",
-              background: "white",
-              border: "1px solid #023452 !important",
-            }}
+            onClick={onOpenAll}
+            disabled={allOpen}
+            sx={getButtonStyle(allOpen)}
           >
             Open all
           </Button>
 
           <Button
             variant="outlined"
-            sx={{
-              borderRadius: "27px",
-              height: "32px",
-              fontFamily: "sans-serif",
-              fontSize: "14px",
-              fontWeight: 700,
-              lineHeight: "20px",
-              letterSpacing: "0.1px",
-              textTransform: "none",
-              color: "#023452",
-              background: "white",
-              border: "1px solid #023452 !important",
-            }}
+            onClick={onCloseAll}
+            disabled={allClosed}
+            sx={getButtonStyle(allClosed)}
           >
             Close all
           </Button>
@@ -175,7 +179,6 @@ const ResultsHeader = ({
               sx={{
                 fontSize: "16px",
                 whiteSpace: "nowrap",
-                ml: "auto",
                 ml: "auto",
                 "@media (max-width: 550px)": {
                   ml: 0,

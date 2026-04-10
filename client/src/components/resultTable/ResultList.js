@@ -13,6 +13,7 @@ import {
   getPopulationFrequency,
   formatAF,
   GNOMAD_GROUPS,
+  POPULATION_NORMALIZATION,
 } from "../constants.js";
 
 const buildDatasetDisplayName = ({
@@ -121,6 +122,11 @@ function ResultList({
   const [toggle, setToggle] = useState(["ancestry", "sex"]);
   const [dataExists, setDataExists] = useState(false);
   const [collapsedDatasets, setCollapsedDatasets] = useState({});
+  const [globalAction, setGlobalAction] = useState(null);
+
+  // This solves part of the issue
+  const allOpen = globalAction === "openAll";
+  const allClosed = globalAction === "closeAll" || globalAction === null;
 
   const toggleDataset = (key) => {
     setCollapsedDatasets((prev) => ({
@@ -136,75 +142,32 @@ function ResultList({
     downloadCSV(tableRef.current, "beacon-results.csv");
   };
 
-  // const chartData = Object.values(results || {})
-  //   .flat()
-  //   .map((dataset) => {
-  //     const frequencies =
-  //       dataset?.results?.[0]?.frequencyInPopulations?.[0]?.frequencies || [];
-
-  //     const get = (labels) =>
-  //       frequencies.find((f) => labels.includes(f.population));
-
-  //     const female = get(["Female", "Females", "XX"]);
-  //     const male = get(["Male", "Males", "XY"]);
-  //     const total = get(["Total"]);
-
-  //     const mainPopulations = frequencies
-  //       .map((f) => f.population)
-  //       .filter(
-  //         (name) =>
-  //           !name.includes("XX") &&
-  //           !name.includes("XY") &&
-  //           ![
-  //             "Female",
-  //             "Females",
-  //             "Male",
-  //             "Males",
-  //             "XX",
-  //             "XY",
-  //             "Total",
-  //           ].includes(name)
-  //       );
-
-  //     const uniqueMainPopulations = [...new Set(mainPopulations)];
-
-  //     const ancestryDots = uniqueMainPopulations.map((populationName) => {
-  //       const populationTotal = frequencies.find(
-  //         (f) => f.population === populationName
-  //       );
-
-  //       const populationFemale = frequencies.find(
-  //         (f) => f.population === `${populationName} XX`
-  //       );
-
-  //       const populationMale = frequencies.find(
-  //         (f) => f.population === `${populationName} XY`
-  //       );
-
-  //       return {
-  //         population: populationName,
-  //         total: populationTotal?.alleleFrequency || 0,
-  //         female: populationFemale?.alleleFrequency || 0,
-  //         male: populationMale?.alleleFrequency || 0,
-  //       };
-  //     });
-
-  //     return {
-  //       dataset: dataset.id,
-  //       female: female?.alleleFrequency ?? null,
-  //       male: male?.alleleFrequency ?? null,
-  //       total: total?.alleleFrequency ?? null,
-  //       ancestryDots,
-  //     };
-  //   });
-
-  // console.log("CHART DATA TRANSFORMED:", chartData);
-
   const chartData = Object.values(results || {})
     .flat()
     .map((dataset) => {
-      const frequencies =
+      const rawFrequencies =
         dataset?.results?.[0]?.frequencyInPopulations?.[0]?.frequencies || [];
+
+      const normalizePopulation = (name) => {
+        if (!name) return name;
+
+        const trimmed = name.trim();
+        const match = trimmed.match(/(.+)\s+(XX|XY)$/);
+
+        if (match) {
+          const base = match[1];
+          const sex = match[2];
+          const normalizedBase = POPULATION_NORMALIZATION[base] || base;
+          return `${normalizedBase} ${sex}`;
+        }
+
+        return POPULATION_NORMALIZATION[trimmed] || trimmed;
+      };
+
+      const frequencies = rawFrequencies.map((f) => ({
+        ...f,
+        population: normalizePopulation(f.population),
+      }));
 
       const get = (labels) =>
         frequencies.find((f) => labels.includes(f.population));
@@ -228,13 +191,13 @@ function ResultList({
             (f) => f.population === `${groupName} XY`
           );
 
-          console.log("DOT DEBUG:", {
-            dataset: dataset.id,
-            groupName,
-            total: totalPop?.alleleFrequency,
-            female: femalePop?.alleleFrequency,
-            male: malePop?.alleleFrequency,
-          });
+          // console.log("DOT DEBUG:", {
+          //   dataset: dataset.id,
+          //   groupName,
+          //   total: totalPop?.alleleFrequency,
+          //   female: femalePop?.alleleFrequency,
+          //   male: malePop?.alleleFrequency,
+          // });
 
           return {
             population: groupName,
@@ -244,7 +207,7 @@ function ResultList({
           };
         });
 
-      // ✅ THIS WAS MISSING
+      // THIS WAS MISSING
       return {
         dataset: dataset.id,
         female: female?.alleleFrequency ?? null,
@@ -254,7 +217,7 @@ function ResultList({
       };
     });
 
-  console.log("CHART DATA TRANSFORMED:", chartData);
+  // console.log("CHART DATA TRANSFORMED:", chartData);
 
   const mergedResults = [
     ...(results?.original || []).map((r) => ({ ...r, __source: "original" })),
@@ -357,7 +320,11 @@ function ResultList({
         {!isCollapsed && (
           <>
             {toggle.includes("ancestry") && (
-              <GnomadPopulationGroupRows frequencies={populationFrequencies} />
+              <GnomadPopulationGroupRows
+                frequencies={populationFrequencies}
+                globalAction={globalAction}
+                clearGlobalAction={() => setGlobalAction(null)}
+              />
             )}
           </>
         )}
@@ -428,6 +395,10 @@ function ResultList({
             liftedVariant={liftedVariant}
             onDownloadTable={handleDownloadTable}
             data={chartData}
+            onOpenAll={() => setGlobalAction("openAll")}
+            onCloseAll={() => setGlobalAction("closeAll")}
+            allOpen={allOpen}
+            allClosed={allClosed}
           />
 
           <TableLayout tableRef={tableRef}>

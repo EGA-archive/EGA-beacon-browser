@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
 import SharedTableRow from "./SharedTableRow";
@@ -21,8 +21,30 @@ const normalizePopulation = (name) => {
   return POPULATION_NORMALIZATION[trimmed] || trimmed;
 };
 
-export default function GnomadPopulationGroupRows({ frequencies }) {
+export default function GnomadPopulationGroupRows({
+  frequencies,
+  globalAction,
+  clearGlobalAction,
+}) {
   const [openGroups, setOpenGroups] = useState({});
+
+  useEffect(() => {
+    if (!globalAction) return;
+
+    if (globalAction === "openAll") {
+      const allOpen = Object.keys(GNOMAD_GROUPS).reduce((acc, key) => {
+        acc[key] = true;
+        return acc;
+      }, {});
+      setOpenGroups(allOpen);
+    }
+
+    if (globalAction === "closeAll") {
+      setOpenGroups({});
+    }
+
+    clearGlobalAction();
+  }, [globalAction]);
 
   const toggleGroup = (groupName) => {
     setOpenGroups((prev) => ({

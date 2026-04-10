@@ -119,8 +119,6 @@ export const createBarWithDots =
     const dots = payload.ancestryDots || [];
     const spacing = 6;
     const radius = 4;
-
-    // 🎨 Top-rounded bar path
     const path = `
     M ${x},${y + height}
     L ${x},${y + radius}
@@ -158,3 +156,15 @@ export const createBarWithDots =
       </g>
     );
   };
+
+export const CHART_COLORS = {
+  female: "#0A1B95",
+  male: "#277F8E",
+  total: "#C96324",
+};
+
+export const LEGEND_ITEMS = [
+  { label: "Female", key: "female" },
+  { label: "Male", key: "male" },
+  { label: "Total", key: "total" },
+];
