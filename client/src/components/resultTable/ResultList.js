@@ -123,10 +123,10 @@ function ResultList({
   const [dataExists, setDataExists] = useState(false);
   const [collapsedDatasets, setCollapsedDatasets] = useState({});
   const [globalAction, setGlobalAction] = useState(null);
-
-  // This solves part of the issue
-  const allOpen = globalAction === "openAll";
-  const allClosed = globalAction === "closeAll" || globalAction === null;
+  const [groupState, setGroupState] = useState({
+    allOpen: false,
+    allClosed: true,
+  });
 
   const toggleDataset = (key) => {
     setCollapsedDatasets((prev) => ({
@@ -191,14 +191,6 @@ function ResultList({
             (f) => f.population === `${groupName} XY`
           );
 
-          // console.log("DOT DEBUG:", {
-          //   dataset: dataset.id,
-          //   groupName,
-          //   total: totalPop?.alleleFrequency,
-          //   female: femalePop?.alleleFrequency,
-          //   male: malePop?.alleleFrequency,
-          // });
-
           return {
             population: groupName,
             total: totalPop?.alleleFrequency ?? null,
@@ -207,7 +199,6 @@ function ResultList({
           };
         });
 
-      // THIS WAS MISSING
       return {
         dataset: dataset.id,
         female: female?.alleleFrequency ?? null,
@@ -255,7 +246,13 @@ function ResultList({
     setDataExists(condition);
   }, [mergedResults]);
 
-  const handleToggle = (event, newToggle) => setToggle(newToggle);
+  // const handleToggle = (event, newToggle) => setToggle(newToggle);
+  const handleToggle = (event, newToggle) => {
+    console.log("🧠 ResultList received newToggle:", newToggle);
+    setToggle(newToggle);
+  };
+
+  console.log("🧠 ResultList toggle state:", toggle);
 
   const totalResults = (ac, an, hom, het, hemi, af) => {
     const baseClass = toggle.length === 0 ? "no-border" : "beaconized";
@@ -315,17 +312,20 @@ function ResultList({
 
     const totalCounts = normalizeGenotypeCounts(total || {});
 
+    console.log("📋 Rendering with toggle:", toggle);
+
     return (
       <>
         {!isCollapsed && (
           <>
-            {toggle.includes("ancestry") && (
-              <GnomadPopulationGroupRows
-                frequencies={populationFrequencies}
-                globalAction={globalAction}
-                clearGlobalAction={() => setGlobalAction(null)}
-              />
-            )}
+            <GnomadPopulationGroupRows
+              frequencies={populationFrequencies}
+              globalAction={globalAction}
+              setGlobalAction={setGlobalAction}
+              clearGlobalAction={() => setGlobalAction(null)}
+              onStateChange={setGroupState}
+              toggle={toggle}
+            />
           </>
         )}
 
@@ -397,8 +397,8 @@ function ResultList({
             data={chartData}
             onOpenAll={() => setGlobalAction("openAll")}
             onCloseAll={() => setGlobalAction("closeAll")}
-            allOpen={allOpen}
-            allClosed={allClosed}
+            allOpen={groupState.allOpen}
+            allClosed={groupState.allClosed}
           />
 
           <TableLayout tableRef={tableRef}>

@@ -29,9 +29,6 @@ const ResultsHeader = ({
   allOpen,
   allClosed,
 }) => {
-  console.log("allOpen:", allOpen);
-  console.log("allClosed:", allClosed);
-
   const getButtonStyle = () => ({
     borderRadius: "27px",
     height: "32px",
@@ -48,6 +45,8 @@ const ResultsHeader = ({
       background: "white",
     },
   });
+
+  console.log("📊 ResultsHeader toggle:", toggle);
   return (
     <Box className="queried-row">
       {/* Title */}
@@ -192,7 +191,11 @@ const ResultsHeader = ({
             <ToggleButtonGroup
               value={toggle}
               exclusive={false}
-              onChange={handleToggle}
+              // onChange={handleToggle}
+              onChange={(e, newToggle) => {
+                console.log("🎛 Toggle clicked:", newToggle);
+                handleToggle(e, newToggle);
+              }}
               aria-label="Sort options"
               sx={{
                 display: "flex",

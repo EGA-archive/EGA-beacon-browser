@@ -25,11 +25,22 @@ export default function GnomadPopulationGroupRows({
   frequencies,
   globalAction,
   clearGlobalAction,
+  onStateChange,
+  toggle,
 }) {
   const [openGroups, setOpenGroups] = useState({});
 
   useEffect(() => {
-    if (!globalAction) return;
+    const values = Object.values(openGroups);
+    const allOpen = values.length > 0 && values.every(Boolean);
+    const allClosed = values.length === 0 || values.every((v) => !v);
+    onStateChange?.({ allOpen, allClosed });
+  }, [openGroups]);
+
+  useEffect(() => {
+    if (!globalAction) {
+      return;
+    }
 
     if (globalAction === "openAll") {
       const allOpen = Object.keys(GNOMAD_GROUPS).reduce((acc, key) => {
@@ -42,7 +53,6 @@ export default function GnomadPopulationGroupRows({
     if (globalAction === "closeAll") {
       setOpenGroups({});
     }
-
     clearGlobalAction();
   }, [globalAction]);
 
@@ -104,94 +114,96 @@ export default function GnomadPopulationGroupRows({
 
   return (
     <>
-      {Object.entries(GNOMAD_GROUPS)
-        .sort(([a], [b]) => a.localeCompare(b))
-        .map(([groupName, subPopulations]) => {
-          const main = frequencyByPopulation[groupName];
-          if (!main) return null;
+      {toggle.includes("ancestry") &&
+        Object.entries(GNOMAD_GROUPS)
+          .sort(([a], [b]) => a.localeCompare(b))
+          .map(([groupName, subPopulations]) => {
+            const main = frequencyByPopulation[groupName];
+            if (!main) return null;
 
-          const sexRows = ["XX", "XY"]
-            .map((sex) => frequencyByPopulation[`${groupName} ${sex}`])
-            .filter(Boolean);
+            const sexRows = ["XX", "XY"]
+              .map((sex) => frequencyByPopulation[`${groupName} ${sex}`])
+              .filter(Boolean);
 
-          const realSubPopulationRows = subPopulations
-            .slice()
-            .sort((a, b) => a.localeCompare(b))
-            .map((n) => frequencyByPopulation[n])
-            .filter(Boolean);
+            const realSubPopulationRows = subPopulations
+              .slice()
+              .sort((a, b) => a.localeCompare(b))
+              .map((n) => frequencyByPopulation[n])
+              .filter(Boolean);
 
-          const shouldHideAncestrySexRows = hasSingleMainPopulation;
+            const shouldHideAncestrySexRows = hasSingleMainPopulation;
 
-          const subRows = [
-            ...(shouldHideAncestrySexRows ? [] : sexRows),
-            ...realSubPopulationRows,
-          ];
+            const subRows = [
+              ...(shouldHideAncestrySexRows ? [] : sexRows),
+              ...realSubPopulationRows,
+            ];
 
-          const isOpen = openGroups[groupName];
-          const isExpandable = subRows.length > 0;
+            const isOpen = openGroups[groupName];
+            const isExpandable = subRows.length > 0;
 
-          return (
-            <React.Fragment key={groupName}>
-              <SharedTableRow
-                id={groupName}
-                category="ancestry_main"
-                type={
-                  isExpandable ? (
-                    <span
-                      onClick={() => toggleGroup(groupName)}
-                      style={{
-                        cursor: "pointer",
-                        display: "inline-flex",
-                        alignItems: "center",
-                      }}
-                    >
+            return (
+              <React.Fragment key={groupName}>
+                <SharedTableRow
+                  id={groupName}
+                  category="ancestry_main"
+                  type={
+                    isExpandable ? (
                       <span
+                        onClick={() => toggleGroup(groupName)}
                         style={{
-                          width: 40,
-                          marginLeft: -40,
+                          cursor: "pointer",
                           display: "inline-flex",
-                          justifyContent: "center",
+                          alignItems: "center",
                         }}
                       >
-                        {isOpen ? (
-                          <KeyboardArrowDownIcon fontSize="small" />
-                        ) : (
-                          <KeyboardArrowRightIcon fontSize="small" />
-                        )}
+                        <span
+                          style={{
+                            width: 40,
+                            marginLeft: -40,
+                            display: "inline-flex",
+                            justifyContent: "center",
+                          }}
+                        >
+                          {isOpen ? (
+                            <KeyboardArrowDownIcon fontSize="small" />
+                          ) : (
+                            <KeyboardArrowRightIcon fontSize="small" />
+                          )}
+                        </span>
+                        {groupName}
                       </span>
-                      {groupName}
-                    </span>
-                  ) : (
-                    groupName
-                  )
-                }
-                {...main}
-                nonBackgroundColor
-              />
-              {isOpen &&
-                subRows.map((sub) => (
-                  <SharedTableRow
-                    key={sub.population}
-                    type={sub.population}
-                    {...sub}
-                    isSubRow
-                  />
-                ))}
-            </React.Fragment>
-          );
-        })}
+                    ) : (
+                      groupName
+                    )
+                  }
+                  {...main}
+                  nonBackgroundColor
+                />
+                {isOpen &&
+                  subRows.map((sub) => (
+                    <SharedTableRow
+                      key={sub.population}
+                      type={sub.population}
+                      {...sub}
+                      isSubRow
+                    />
+                  ))}
+              </React.Fragment>
+            );
+          })}
 
       {/* Global sex */}
-      {sexOnlyRows.map((row) => (
-        <SharedTableRow
-          key={row.population}
-          id={row.population}
-          category="global_sex"
-          type={row.population}
-          {...row}
-          nonBackgroundColor
-        />
-      ))}
+      {toggle.includes("sex") &&
+        sexOnlyRows.map((row) => (
+          <SharedTableRow
+            key={row.population}
+            id={row.population}
+            category="global_sex"
+            type={row.population}
+            {...row}
+            nonBackgroundColor
+          />
+        ))}
 
       {/* Unknown */}
       {unknownPopulations.map((pop) => (
