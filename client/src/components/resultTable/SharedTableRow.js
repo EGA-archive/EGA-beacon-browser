@@ -18,6 +18,7 @@ const SharedTableRow = ({
   alleleFrequency,
   nonBackgroundColor,
   isSubRow = false,
+  isSexRow,
 }) => {
   // Row styling logic:
   // 1. subRow → nested population (lighter background)
@@ -40,38 +41,21 @@ const SharedTableRow = ({
   const homozygous = alleleCountHomozygous ?? genotypeHomozygous ?? null;
   const heterozygous = alleleCountHeterozygous ?? genotypeHeterozygous ?? null;
   const hemizygous = alleleCountHemizygous ?? genotypeHemizygous ?? null;
-
-  // Fallback logic:
-  // If one genotype count is missing but the other + AC are available, compute the missing value safely.
-  // Avoids NaN by checking for nulls.
-  const computedHomozygous =
-    homozygous ??
-    (alleleCount != null && heterozygous != null
-      ? alleleCount - heterozygous
-      : null);
-
-  const computedHeterozygous =
-    heterozygous ??
-    (alleleCount != null && homozygous != null
-      ? alleleCount - homozygous
-      : null);
-
-  // Check if AC/AN are valid to compute frequency if needed
-  const hasCounts =
-    alleleCount != null && alleleNumber != null && Number(alleleNumber) !== 0;
-
-  // Prefer provided alleleFrequency, otherwise compute it from AC / AN
   const alleleFrequencyRaw =
-    alleleFrequency != null
+    alleleFrequency !== null && alleleFrequency !== undefined
       ? Number(alleleFrequency)
-      : hasCounts
-      ? Number(alleleCount) / Number(alleleNumber)
       : null;
 
   return (
     <tr data-id={id} data-category={category}>
       {/* Column 1: Population */}
-      <td className={`type-wrap ${backgroundColor}`}>{type}</td>
+      <td
+        className={`type-wrap ${backgroundColor} ${
+          isSubRow && isSexRow ? "sex-subrow" : ""
+        }`}
+      >
+        {type}
+      </td>
 
       {/* Column 2: Allele Count */}
       <td className={`centered-header ${backgroundColor}`}>
@@ -83,28 +67,29 @@ const SharedTableRow = ({
         {display(alleleNumber)}
       </td>
 
-      {/* Column 4: Homozygous Count - If not provided: - */}
+      {/* Column 4: Homozygous Count */}
       <td className={`centered-header ${backgroundColor}`}>
-        {display(computedHomozygous)}
+        {display(homozygous)}
       </td>
 
-      {/* Column 5: Heterozygous Count - If not provided: - */}
+      {/* Column 5: Heterozygous Count */}
       <td className={`centered-header ${backgroundColor}`}>
-        {display(computedHeterozygous)}
+        {display(heterozygous)}
       </td>
 
-      {/* Column 6: Hemizygous Count - If not provided: - */}
+      {/* Column 6: Hemizygous Count */}
       <td className={`centered-header ${backgroundColor}`}>
         {display(hemizygous)}
       </td>
 
       {/* Column 7: Allele Frequency
-// - Use a normal decimal number when the value is >= 1e-5 (e.g., 0.00002 → "0.00002", 0.00001 → "0.00001")
-// - Use scientific notation only when the value is > 0 and < 1e-5 (e.g., 0.000001 → "1e-6", -0.0000003 → "-3e-7")
-// - Zero stays 0
-// - If neither is available, show "-". */}
+        - Use normal decimal for values >= 1e-5
+        - Use scientific notation for values > 0 and < 1e-5
+        - Zero stays 0
+        - If missing, show "-"
+      */}
       <td className={`centered-header ${backgroundColor}`}>
-        {alleleFrequencyRaw == null
+        {alleleFrequencyRaw === null
           ? "-"
           : formatAF(alleleFrequencyRaw, {
               threshold: 1e-5,

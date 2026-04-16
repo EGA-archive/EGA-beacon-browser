@@ -1,53 +1,253 @@
-// Downloads table as a CSV file
-// This function reads the table exactly as it is rendered in the UI
+import { GNOMAD_GROUPS, POPULATION_NORMALIZATION } from "../constants";
+import { normalizeGenotypeCounts } from "./normalizeGenotypeCounts";
 
-export const downloadCSV = (tableContainer, filename = "table.csv") => {
-  // Safety check: if the container ref is missing, do nothing
-  if (!tableContainer) return;
+const normalizePopulation = (name) => {
+  if (!name) return name;
 
-  // Find the <table> element inside the container
-  const table = tableContainer.querySelector("table");
-  if (!table) return;
+  const trimmed = name.trim();
+  const match = trimmed.match(/(.+)\s+(XX|XY)$/);
 
-  // Collect all table rows (<tr>), including header and body rows
-  const rows = Array.from(table.querySelectorAll("tr"));
+  if (match) {
+    const base = match[1];
+    const sex = match[2];
+    const normalizedBase = POPULATION_NORMALIZATION[base] || base;
+    return `${normalizedBase} ${sex}`;
+  }
 
-  // Build the CSV content row by row
-  const csv = rows
-    .map((row) => {
-      const cells = row.querySelectorAll("th, td");
+  return POPULATION_NORMALIZATION[trimmed] || trimmed;
+};
 
-      // Detect liftover dataset row via icon
-      const isLiftedDataset =
-        row.querySelector('img[alt="lifted-over"]') !== null;
+const escapeCSV = (value) => `"${String(value ?? "").replace(/"/g, '""')}"`;
 
-      return Array.from(cells)
-        .map((cell, index) => {
-          let text = cell.innerText.replace(/"/g, '""').trim();
+const safeValue = (v) => v ?? "-";
 
-          // Add liftover tag only to the dataset label cell
-          if (isLiftedDataset && index === 0) {
-            text = `${text} - Lifted-over`;
-          }
+const indentPopulation = (label, level = 0) => {
+  return `${"         ".repeat(level)}${label}`;
+};
 
-          return `"${text}"`;
-        })
-        .join(",");
-    })
-    .join("\n");
+export const buildPopulationRowsForCsv = ({
+  frequencies = [],
+  toggle = [],
+}) => {
+  const frequencyByPopulation = frequencies.reduce((acc, f) => {
+    const name = normalizePopulation(f.population);
+    const { homozygous, heterozygous, hemizygous } = normalizeGenotypeCounts(f);
 
-  // Create a Blob containing the CSV data
-  const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+    if (!acc[name]) {
+      acc[name] = {
+        ...f,
+        population: name,
+        alleleCountHomozygous: homozygous,
+        alleleCountHeterozygous: heterozygous,
+        alleleCountHemizygous: hemizygous,
+      };
+    } else {
+      acc[name].alleleCount =
+        (acc[name].alleleCount || 0) + (f.alleleCount || 0);
+      acc[name].alleleNumber =
+        (acc[name].alleleNumber || 0) + (f.alleleNumber || 0);
+      acc[name].alleleCountHomozygous += homozygous;
+      acc[name].alleleCountHeterozygous += heterozygous;
+      acc[name].alleleCountHemizygous += hemizygous;
+    }
 
-  // Create a temporary URL for the Blob
+    return acc;
+  }, {});
+
+  const rows = [];
+
+  const showAncestry = toggle.includes("ancestry");
+  const showSex = toggle.includes("sex");
+
+  const knownPopulations = new Set(
+    Object.keys(GNOMAD_GROUPS).flatMap((g) => [g, ...GNOMAD_GROUPS[g]])
+  );
+
+  const isSexOnly = (p) => p === "XX" || p === "XY";
+
+  const isSexChild = (p) =>
+    Object.keys(GNOMAD_GROUPS).some((g) => p.startsWith(`${g} `));
+
+  const unknownPopulations = Object.values(frequencyByPopulation).filter(
+    (f) =>
+      !isSexOnly(f.population) &&
+      !knownPopulations.has(f.population) &&
+      !isSexChild(f.population)
+  );
+
+  const sexOnlyRows = ["XX", "XY"]
+    .map((sex) => frequencyByPopulation[sex])
+    .filter(Boolean);
+
+  const mainGroupsWithData = Object.keys(GNOMAD_GROUPS).filter(
+    (groupName) => !!frequencyByPopulation[groupName]
+  );
+
+  const hasSingleMainPopulation = mainGroupsWithData.length === 1;
+
+  // toggle = []  -> only Total should appear, so no population rows here
+  if (!showAncestry && !showSex) {
+    return rows;
+  }
+
+  // Case: ancestry or ancestry+sex
+  if (showAncestry) {
+    Object.entries(GNOMAD_GROUPS)
+      .sort(([a], [b]) => a.localeCompare(b))
+      .forEach(([groupName, subPopulations]) => {
+        const main = frequencyByPopulation[groupName];
+        if (!main) return;
+
+        rows.push({
+          ...main,
+          rowType: "ancestry_main",
+          indentLevel: 0,
+        });
+
+        const sexRows = ["XX", "XY"]
+          .map((sex) => frequencyByPopulation[`${groupName} ${sex}`])
+          .filter(Boolean);
+
+        const realSubPopulationRows = subPopulations
+          .slice()
+          .sort((a, b) => a.localeCompare(b))
+          .map((name) => frequencyByPopulation[name])
+          .filter(Boolean);
+
+        const shouldHideAncestrySexRows = hasSingleMainPopulation;
+
+        const subRows = [
+          ...(showSex && !shouldHideAncestrySexRows ? sexRows : []),
+          ...realSubPopulationRows,
+        ];
+
+        subRows.forEach((sub) => {
+          const isAncestrySexRow = /\s(XX|XY)$/.test(sub.population);
+
+          rows.push({
+            ...sub,
+            rowType: isAncestrySexRow ? "ancestry_sex" : "ancestry_sub",
+            indentLevel: 1,
+          });
+        });
+      });
+  }
+
+  // Case: sex-only or ancestry+sex -> global XX / XY
+  if (showSex) {
+    sexOnlyRows.forEach((row) => {
+      rows.push({
+        ...row,
+        rowType: "global_sex",
+        indentLevel: 0,
+      });
+    });
+  }
+
+  // Unknown rows only when ancestry is active
+  if (showAncestry) {
+    unknownPopulations.forEach((pop) => {
+      rows.push({
+        ...pop,
+        rowType: "unknown",
+        indentLevel: 0,
+      });
+    });
+  }
+
+  return rows;
+};
+
+export const downloadCSV = (
+  tableContainer,
+  filename = "beacon-results.csv",
+  toggle = [],
+  datasets = []
+) => {
+  if (!datasets || datasets.length === 0) return;
+
+  const csvRows = [];
+
+  csvRows.push([
+    "Dataset",
+    "Population",
+    "Allele Count",
+    "Allele Number",
+    "Homozygous",
+    "Heterozygous",
+    "Hemizygous",
+    "Allele Frequency",
+  ]);
+
+  datasets.forEach((dataset) => {
+    const datasetLabel =
+      dataset.__source === "lifted"
+        ? `${dataset.id} - Lifted-over`
+        : dataset.id;
+
+    const rawFrequencies =
+      dataset?.results?.[0]?.frequencyInPopulations?.[0]?.frequencies || [];
+
+    if (!rawFrequencies.length) return;
+
+    const normalized = rawFrequencies.map((f) => ({
+      ...f,
+      population: normalizePopulation(f.population),
+    }));
+
+    const total = normalized.find((f) => f.population === "Total");
+    const nonTotal = normalized.filter((f) => f.population !== "Total");
+
+    const rows = buildPopulationRowsForCsv({
+      frequencies: nonTotal,
+      toggle,
+    });
+
+    csvRows.push([datasetLabel, "", "", "", "", "", "", ""]);
+
+    rows.forEach((row) => {
+      csvRows.push([
+        "",
+        indentPopulation(row.population, row.indentLevel),
+        safeValue(row.alleleCount),
+        safeValue(row.alleleNumber),
+        safeValue(row.alleleCountHomozygous),
+        safeValue(row.alleleCountHeterozygous),
+        safeValue(row.alleleCountHemizygous),
+        safeValue(row.alleleFrequency),
+      ]);
+    });
+
+    if (total) {
+      const totalCounts = normalizeGenotypeCounts(total);
+
+      csvRows.push([
+        "",
+        "Total",
+        safeValue(total.alleleCount),
+        safeValue(total.alleleNumber),
+        safeValue(totalCounts.homozygous),
+        safeValue(totalCounts.heterozygous),
+        safeValue(totalCounts.hemizygous),
+        safeValue(total.alleleFrequency),
+      ]);
+    }
+
+    csvRows.push(["", "", "", "", "", "", "", ""]);
+  });
+
+  const csv = csvRows.map((row) => row.map(escapeCSV).join(",")).join("\n");
+
+  const blob = new Blob([csv], {
+    type: "text/csv;charset=utf-8;",
+  });
+
   const url = URL.createObjectURL(blob);
 
-  // Create a temporary <a> element to trigger the download
   const link = document.createElement("a");
   link.href = url;
   link.download = filename;
 
-  // Append the link, trigger the download, then clean up
   document.body.appendChild(link);
   link.click();
   document.body.removeChild(link);

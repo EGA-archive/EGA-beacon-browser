@@ -137,9 +137,19 @@ function ResultList({
 
   const tableRef = React.useRef(null);
 
+  // const handleDownloadTable = () => {
+  //   if (!tableRef.current) return;
+  //   downloadCSV(tableRef.current, "beacon-results.csv", toggle, data);
+  // };
   const handleDownloadTable = () => {
     if (!tableRef.current) return;
-    downloadCSV(tableRef.current, "beacon-results.csv");
+
+    downloadCSV(tableRef.current, "beacon-results.csv", toggle, finalResults, {
+      queriedVariant,
+      assemblyIdQueried,
+      liftedAssemblyId,
+      liftedVariant,
+    });
   };
 
   const chartData = Object.values(results || {})
@@ -208,8 +218,6 @@ function ResultList({
       };
     });
 
-  // console.log("CHART DATA TRANSFORMED:", chartData);
-
   const mergedResults = [
     ...(results?.original || []).map((r) => ({ ...r, __source: "original" })),
     ...(results?.lifted || []).map((r) => ({ ...r, __source: "lifted" })),
@@ -248,11 +256,8 @@ function ResultList({
 
   // const handleToggle = (event, newToggle) => setToggle(newToggle);
   const handleToggle = (event, newToggle) => {
-    console.log("🧠 ResultList received newToggle:", newToggle);
     setToggle(newToggle);
   };
-
-  console.log("🧠 ResultList toggle state:", toggle);
 
   const totalResults = (ac, an, hom, het, hemi, af) => {
     const baseClass = toggle.length === 0 ? "no-border" : "beaconized";
@@ -311,8 +316,6 @@ function ResultList({
       ) || [];
 
     const totalCounts = normalizeGenotypeCounts(total || {});
-
-    console.log("📋 Rendering with toggle:", toggle);
 
     return (
       <>

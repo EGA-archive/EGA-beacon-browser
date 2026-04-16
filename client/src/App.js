@@ -97,8 +97,11 @@ function App() {
         ...prev,
         [type]: response.data.response.resultSets,
       }));
-      setQueriedVariant(variant);
-      setAssemblyIdQueried(genome);
+
+      if (type === "original") {
+        setQueriedVariant(variant);
+        setAssemblyIdQueried(genome);
+      }
     } catch (err) {
       console.error("❌ Search error:", err);
       setError(err);

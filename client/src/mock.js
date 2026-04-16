@@ -11,7 +11,7 @@ export const mockData = {
                   population: "Total",
                   alleleCount: 2,
                   alleleNumber: 1182,
-                  alleleFrequency: 0.9,
+                  alleleFrequency: 0.99,
                   genotypeHomozygous: 0.1,
                   genotypeHeterozygous: 2,
                 },
@@ -20,7 +20,7 @@ export const mockData = {
                   alleleCount: 2,
                   alleleNumber: 794,
                   alleleFrequency: 0.1,
-                  genotypeHomozygous: 0.2,
+                  genotypeHomozygous: 0.24,
                   genotypeHeterozygous: 2,
                   genotypeHemizygous: 0.1,
                 },
@@ -28,21 +28,21 @@ export const mockData = {
                   population: "XY",
                   alleleCount: 3,
                   alleleNumber: 388,
-                  alleleFrequency: 0.8,
+                  alleleFrequency: 0.88,
                   genotypeHomozygous: 1,
                 },
                 {
                   population: "European",
                   alleleCount: 2,
                   alleleNumber: 1182,
-                  alleleFrequency: 0.9,
+                  alleleFrequency: 0.89,
                   genotypeHomozygous: 1,
                 },
                 {
                   population: "European XX",
                   alleleCount: 2,
                   alleleNumber: 794,
-                  alleleFrequency: 0.15,
+                  alleleFrequency: 0.157,
                 },
                 {
                   population: "European XY",
@@ -59,7 +59,7 @@ export const mockData = {
     },
 
     {
-      id: "gnomADv2.1.1",
+      id: "gnomADv2.1.1gnomADv2.1.1gnomADv2.1.1gnomADv2.1.1gnomADv2.1.1gnomADv2.1.1gnomADv2.1.1",
       results: [
         {
           frequencyInPopulations: [
@@ -78,18 +78,6 @@ export const mockData = {
                   alleleNumber: 24195,
                   alleleFrequency: 0.8,
                 },
-                {
-                  population: "Admixed American XX",
-                  alleleCount: 1,
-                  alleleNumber: 19488,
-                  alleleFrequency: 0.9,
-                },
-                {
-                  population: "Admixed American XY",
-                  alleleCount: 0,
-                  alleleNumber: 4707,
-                  alleleFrequency: 0.4,
-                },
 
                 {
                   population: "East Asian",
@@ -97,12 +85,7 @@ export const mockData = {
                   alleleNumber: 12472,
                   alleleFrequency: 1,
                 },
-                {
-                  population: "East Asian XX",
-                  alleleCount: 0,
-                  alleleNumber: 9164,
-                  alleleFrequency: 0.15,
-                },
+
                 {
                   population: "East Asian XY",
                   alleleCount: 0,

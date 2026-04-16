@@ -11,10 +11,7 @@ import { liftoverInterval } from "./liftoverService";
 
 export async function liftoverVariant(variant, genome) {
   // Parse the variant into structured components (chrom, pos, ref, alt)
-  console.log(variant);
   const parsed = parseVariant(variant);
-  console.log(parsed);
-  console.log(parsed.pos);
 
   // Compute start/end interval based on position and reference length
   const { start, end } = getInterval(parsed.pos, parsed.ref);

@@ -421,6 +421,9 @@ code {
   background-color: #f7f7f8;
 }
 
+td.sex-subrow {
+  padding-left: 7%;
+}
 table {
   border-spacing: 0;
   border-collapse: separate;
@@ -787,4 +790,16 @@ tr[data-category="ancestry_main"] {
 tr[data-category="total"] {
   font-weight: bold;
   border-top: 2px solid black;
+}
+
+.recharts-wrapper *:focus {
+  outline: none !important;
+}
+
+.recharts-wrapper svg *:focus {
+  outline: none !important;
+}
+
+.recharts-wrapper * {
+  -webkit-tap-highlight-color: transparent;
 }

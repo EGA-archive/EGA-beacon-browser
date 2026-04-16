@@ -110,49 +110,27 @@ export const POPULATION_NORMALIZATION = {
   "European (non-Finnish)": "European (non-Finnish)",
 };
 
-// Creates bar with dots for the chart
-export const createBarWithDots =
-  ({ dataKey, color }) =>
+// Creates bar with rounded top
+export const createBarWithRoundTop =
+  ({ color }) =>
   (props) => {
-    const { x, y, width, height, payload } = props;
+    const { x, y, width, height } = props;
 
-    const dots = payload.ancestryDots || [];
-    const spacing = 6;
-    const radius = 4;
+    const radius = 6;
+
     const path = `
-    M ${x},${y + height}
-    L ${x},${y + radius}
-    Q ${x},${y} ${x + radius},${y}
-    L ${x + width - radius},${y}
-    Q ${x + width},${y} ${x + width},${y + radius}
-    L ${x + width},${y + height}
-    Z
-  `;
+      M ${x},${y + height}
+      L ${x},${y + radius}
+      Q ${x},${y} ${x + radius},${y}
+      L ${x + width - radius},${y}
+      Q ${x + width},${y} ${x + width},${y + radius}
+      L ${x + width},${y + height}
+      Z
+    `;
 
     return (
       <g>
         <path d={path} fill={`${color}33`} stroke={color} strokeWidth={3} />
-
-        {dots.map((dot, i) => {
-          const value = dot[dataKey];
-          if (value == null) return null;
-
-          const total = payload[dataKey];
-          const ratio = total ? value / total : 0;
-
-          const cy = y + height - ratio * height;
-          const offset = (i - (dots.length - 1) / 2) * spacing;
-
-          return (
-            <circle
-              key={`${dataKey}-${payload.dataset}-${dot.population}`}
-              cx={x + width / 2 + offset}
-              cy={cy}
-              r={4}
-              fill={color}
-            />
-          );
-        })}
       </g>
     );
   };

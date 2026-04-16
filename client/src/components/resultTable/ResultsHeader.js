@@ -46,7 +46,6 @@ const ResultsHeader = ({
     },
   });
 
-  console.log("📊 ResultsHeader toggle:", toggle);
   return (
     <Box className="queried-row">
       {/* Title */}
@@ -135,7 +134,6 @@ const ResultsHeader = ({
             Sex distribution (per ancestry):
           </Typography>
 
-          {/* Here */}
           <Button
             variant="outlined"
             onClick={onOpenAll}
@@ -191,9 +189,7 @@ const ResultsHeader = ({
             <ToggleButtonGroup
               value={toggle}
               exclusive={false}
-              // onChange={handleToggle}
               onChange={(e, newToggle) => {
-                console.log("🎛 Toggle clicked:", newToggle);
                 handleToggle(e, newToggle);
               }}
               aria-label="Sort options"
@@ -280,7 +276,7 @@ const ResultsHeader = ({
                   mt: 0.5,
                 },
               }}
-              onClick={onDownloadTable}
+              onClick={() => onDownloadTable(toggle, data)}
             >
               <span>Download table</span>
               <DownloadRoundedIcon

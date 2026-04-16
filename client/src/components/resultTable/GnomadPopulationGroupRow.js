@@ -31,9 +31,12 @@ export default function GnomadPopulationGroupRows({
   const [openGroups, setOpenGroups] = useState({});
 
   useEffect(() => {
-    const values = Object.values(openGroups);
-    const allOpen = values.length > 0 && values.every(Boolean);
-    const allClosed = values.length === 0 || values.every((v) => !v);
+    const allGroupKeys = Object.keys(GNOMAD_GROUPS);
+    const states = allGroupKeys.map((key) => !!openGroups[key]);
+
+    const allOpen = states.every(Boolean);
+    const allClosed = states.every((v) => !v);
+
     onStateChange?.({ allOpen, allClosed });
   }, [openGroups]);
 
@@ -76,8 +79,8 @@ export default function GnomadPopulationGroupRows({
         alleleCountHemizygous: hemizygous,
       };
     } else {
-      acc[name].alleleCount += f.alleleCount || 0;
-      acc[name].alleleNumber += f.alleleNumber || 0;
+      acc[name].alleleCount += f.alleleCount || "-";
+      acc[name].alleleNumber += f.alleleNumber || "-";
       acc[name].alleleCountHomozygous += homozygous;
       acc[name].alleleCountHeterozygous += heterozygous;
       acc[name].alleleCountHemizygous += hemizygous;
@@ -133,8 +136,10 @@ export default function GnomadPopulationGroupRows({
 
             const shouldHideAncestrySexRows = hasSingleMainPopulation;
 
+            const showSex = toggle.includes("sex");
+
             const subRows = [
-              ...(shouldHideAncestrySexRows ? [] : sexRows),
+              ...(showSex && !shouldHideAncestrySexRows ? sexRows : []),
               ...realSubPopulationRows,
             ];
 
@@ -180,14 +185,18 @@ export default function GnomadPopulationGroupRows({
                   nonBackgroundColor
                 />
                 {isOpen &&
-                  subRows.map((sub) => (
-                    <SharedTableRow
-                      key={sub.population}
-                      type={sub.population}
-                      {...sub}
-                      isSubRow
-                    />
-                  ))}
+                  subRows.map((sub) => {
+                    const isSexRow = /\s(XX|XY)$/.test(sub.population);
+                    return (
+                      <SharedTableRow
+                        key={sub.population}
+                        type={sub.population}
+                        {...sub}
+                        isSubRow
+                        isSexRow={isSexRow}
+                      />
+                    );
+                  })}
               </React.Fragment>
             );
           })}
