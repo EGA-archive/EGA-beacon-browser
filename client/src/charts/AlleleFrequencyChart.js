@@ -198,153 +198,6 @@ const CustomXAxisTick = ({ x, y, payload }) => {
   );
 };
 
-// const getYAxisMax = (maxValue) => {
-//   if (maxValue == null || Number.isNaN(maxValue)) return 1;
-
-//   // round up to the next tenth
-//   const roundedUp = Math.ceil(maxValue * 10) / 10;
-
-//   // never go above 1
-//   return Math.min(roundedUp, 1);
-// };
-
-// const getYAxisTicks = (maxY) => {
-//   // nice fixed steps based on the final max
-//   if (maxY <= 0.2) {
-//     return [0, 0.05, 0.1, 0.15, 0.2].filter((v) => v <= maxY);
-//   }
-
-//   if (maxY <= 0.5) {
-//     return [0, 0.1, 0.2, 0.3, 0.4, 0.5].filter((v) => v <= maxY);
-//   }
-
-//   return Array.from({ length: Math.round(maxY / 0.1) + 1 }, (_, i) =>
-//     Number((i * 0.1).toFixed(2))
-//   );
-// };
-
-// const formatYAxisTick = (value) => {
-//   if (value === 0) return "0";
-
-//   return formatAF(value, {
-//     threshold: 1e-5,
-//     decimalDigits: 2,
-//     exponentDigits: 2,
-//   });
-// };
-
-// export default function AlleleFrequencyChart({ data }) {
-//   const allValues = data.flatMap((d) => [
-//     d.female,
-//     d.male,
-//     d.total,
-//     ...(d.ancestryDots || []).flatMap((dot) => [
-//       dot.female,
-//       dot.male,
-//       dot.total,
-//     ]),
-//   ]);
-
-//   const validValues = allValues.filter((v) => v != null && !Number.isNaN(v));
-
-//   const maxValue = validValues.length ? Math.max(...validValues) : 1;
-
-//   const yAxisMax = getYAxisMax(maxValue);
-//   const yAxisTicks = getYAxisTicks(yAxisMax);
-
-//   return (
-//     <div
-//       style={{
-//         display: "flex",
-//         justifyContent: "center",
-//       }}
-//     >
-//       <div
-//         style={{
-//           width: "100%",
-//           height: 350,
-//           marginBottom: "40px",
-//           position: "relative",
-//         }}
-//       >
-//         <ResponsiveContainer>
-//           <BarChart
-//             data={data}
-//             barGap={8}
-//             margin={{ top: 20, right: 20, left: 20, bottom: 40 }}
-//           >
-//             <CartesianGrid strokeDasharray="1 1" vertical={false} />
-//             <XAxis
-//               dataKey="dataset"
-//               tick={<CustomXAxisTick />}
-//               axisLine={{ stroke: "#000" }}
-//               tickLine={{ stroke: "#000" }}
-//             >
-//               <Label
-//                 value="Datasets Distribution by sex"
-//                 position="bottom"
-//                 offset={15}
-//                 style={{ fontSize: 14, fill: "#000", fontWeight: 700 }}
-//               />
-//             </XAxis>
-//             <YAxis
-//               domain={[0, yAxisMax]}
-//               ticks={yAxisTicks}
-//               tickFormatter={formatYAxisTick}
-//               tick={{ fontSize: 12, fill: "#000" }}
-//               axisLine={{ stroke: "#000" }}
-//               tickLine={{ stroke: "#000" }}
-//               width={60}
-//             >
-//               <Label
-//                 value="Allele Frequency"
-//                 angle={-90}
-//                 position="insideLeft"
-//                 offset={-10}
-//                 style={{ textAnchor: "middle", fill: "#000" }}
-//               />
-//             </YAxis>
-
-//             <Tooltip
-//               content={<CustomTooltip />}
-//               cursor={{ fill: "rgba(0,0,0,0.05)" }}
-//               wrapperStyle={{ zIndex: "999" }}
-//             />
-
-//             {["female", "male", "total"].map((key) => (
-//               <Bar
-//                 key={key}
-//                 dataKey={key}
-//                 name={key.charAt(0).toUpperCase() + key.slice(1)}
-//                 fill={`${CHART_COLORS[key]}33`}
-//                 stroke={CHART_COLORS[key]}
-//                 strokeWidth={3}
-//                 barSize={30}
-//                 shape={createBarWithRoundTop({
-//                   dataKey: key,
-//                   color: CHART_COLORS[key],
-//                 })}
-//               />
-//             ))}
-//           </BarChart>
-//         </ResponsiveContainer>
-
-//         <div
-//           style={{
-//             position: "absolute",
-//             top: -20,
-//             right: 20,
-//             padding: "12px 16px",
-//             borderRadius: 10,
-//           }}
-//         >
-//           <CustomLegend />
-//         </div>
-//       </div>
-//     </div>
-//   );
-// }
-
 const getYAxisConfig = (maxValue) => {
   if (!maxValue || Number.isNaN(maxValue)) {
     return {
@@ -374,7 +227,7 @@ const getYAxisConfig = (maxValue) => {
   else if (normalized <= 5) niceNormalized = 5;
   else niceNormalized = 10;
 
-  const niceMax = niceNormalized * base;
+  const niceMax = maxValue;
 
   const step = niceMax / 5;
 
@@ -396,14 +249,11 @@ export default function AlleleFrequencyChart({ data }) {
 
   const validValues = allValues.filter((v) => v != null && !Number.isNaN(v));
 
-  const rawMax = validValues.length ? Math.max(...validValues) : 1;
-  const maxValue = rawMax * 1.1;
+  const rawMax = validValues.length ? Math.max(...validValues) : 0;
+
+  const maxValue = Math.min(rawMax, 1);
 
   const { max: yAxisMax, ticks: yAxisTicks } = getYAxisConfig(maxValue);
-
-  console.log("ALL VALUES:", validValues);
-  console.log("rawMax", rawMax);
-  console.log("MAX VALUE USED:", maxValue);
 
   return (
     <div
@@ -424,7 +274,7 @@ export default function AlleleFrequencyChart({ data }) {
           <BarChart
             data={data}
             barGap={8}
-            margin={{ top: 20, right: 20, left: 20, bottom: 40 }}
+            margin={{ top: 20, right: 0, left: 30, bottom: 40 }}
           >
             <CartesianGrid strokeDasharray="1 1" vertical={false} />
 
@@ -455,7 +305,7 @@ export default function AlleleFrequencyChart({ data }) {
                 value="Allele Frequency"
                 angle={-90}
                 position="insideLeft"
-                offset={-10}
+                offset={-23.5}
                 style={{ textAnchor: "middle", fill: "#000" }}
               />
             </YAxis>
@@ -487,7 +337,7 @@ export default function AlleleFrequencyChart({ data }) {
         <div
           style={{
             position: "absolute",
-            top: -20,
+            top: -45,
             right: 20,
             padding: "12px 16px",
             borderRadius: 10,
