@@ -66,7 +66,6 @@ const ResultsHeader = ({
             variant="body2"
             sx={{
               fontSize: "16px",
-              marginBottom: { xs: 1, sm: 3 },
             }}
           >
             Queried Variant:{" "}
@@ -84,7 +83,7 @@ const ResultsHeader = ({
               variant="body2"
               sx={{
                 fontSize: "16px",
-                marginTop: "4px",
+                marginBottom: "20px",
               }}
             >
               Queried lifted-over variant:{" "}

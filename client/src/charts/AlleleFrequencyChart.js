@@ -287,7 +287,7 @@ export default function AlleleFrequencyChart({ data }) {
               <Label
                 value="Datasets Distribution by sex"
                 position="bottom"
-                offset={15}
+                offset={25}
                 style={{ fontSize: 14, fill: "#000", fontWeight: 700 }}
               />
             </XAxis>

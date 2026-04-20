@@ -30,6 +30,7 @@ const SharedTableRow = ({
     ? "group-background"
     : "sex-background";
 
+  const isGlobalSexRow = category === "global_sex";
   // Display helper:
   // Converts null/undefined → "-"
   // Keeps valid 0 values untouched
@@ -50,35 +51,69 @@ const SharedTableRow = ({
     <tr data-id={id} data-category={category}>
       {/* Column 1: Population */}
       <td
-        className={`type-wrap ${backgroundColor} ${
-          isSubRow && isSexRow ? "sex-subrow" : ""
-        }`}
+        className={
+          isGlobalSexRow
+            ? "beaconized global-row-background dataset-col"
+            : `type-wrap ${backgroundColor} ${
+                isSubRow && isSexRow ? "sex-subrow" : ""
+              }`
+        }
       >
         {type}
       </td>
 
       {/* Column 2: Allele Count */}
-      <td className={`centered-header ${backgroundColor}`}>
+      <td
+        className={
+          isGlobalSexRow
+            ? "beaconized global-row-background centered"
+            : `centered-header ${backgroundColor}`
+        }
+      >
         {display(alleleCount)}
       </td>
 
       {/* Column 3: Allele Number */}
-      <td className={`centered-header ${backgroundColor}`}>
+      <td
+        className={
+          isGlobalSexRow
+            ? "beaconized global-row-background centered"
+            : `centered-header ${backgroundColor}`
+        }
+      >
         {display(alleleNumber)}
       </td>
 
       {/* Column 4: Homozygous Count */}
-      <td className={`centered-header ${backgroundColor}`}>
+      <td
+        className={
+          isGlobalSexRow
+            ? "beaconized global-row-background centered"
+            : `centered-header ${backgroundColor}`
+        }
+      >
         {display(homozygous)}
       </td>
 
       {/* Column 5: Heterozygous Count */}
-      <td className={`centered-header ${backgroundColor}`}>
+      <td
+        className={
+          isGlobalSexRow
+            ? "beaconized global-row-background centered"
+            : `centered-header ${backgroundColor}`
+        }
+      >
         {display(heterozygous)}
       </td>
 
       {/* Column 6: Hemizygous Count */}
-      <td className={`centered-header ${backgroundColor}`}>
+      <td
+        className={
+          isGlobalSexRow
+            ? "beaconized global-row-background centered"
+            : `centered-header ${backgroundColor}`
+        }
+      >
         {display(hemizygous)}
       </td>
 
@@ -88,7 +123,13 @@ const SharedTableRow = ({
         - Zero stays 0
         - If missing, show "-"
       */}
-      <td className={`centered-header ${backgroundColor}`}>
+      <td
+        className={
+          isGlobalSexRow
+            ? "beaconized global-row-background centered"
+            : `centered-header ${backgroundColor}`
+        }
+      >
         {alleleFrequencyRaw === null
           ? "-"
           : formatAF(alleleFrequencyRaw, {

@@ -127,7 +127,7 @@ export const buildPopulationRowsForCsv = ({
           rows.push({
             ...sub,
             rowType: isAncestrySexRow ? "ancestry_sex" : "ancestry_sub",
-            indentLevel: 1,
+            indentLevel: 0,
           });
         });
       });

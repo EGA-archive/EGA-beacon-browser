@@ -774,6 +774,10 @@ tr[data-category="global_sex"] {
   background: #fff8e8;
 }
 
+tr[data-category="global_sex"] td:first-child {
+  padding-left: 7%;
+}
+
 tr[data-category="global_sex"]:hover {
   background: #fff8e8 !important;
   cursor: default;

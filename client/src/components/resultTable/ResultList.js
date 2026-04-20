@@ -6,12 +6,10 @@ import TableLayout from "./TableLayout.js";
 import liftoverIcon from "../../liftover-icon.svg";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
-import { normalizeGenotypeCounts } from "./normalizeGenotypeCounts";
 import { downloadCSV } from "./downloadCSV.js";
 import GnomadPopulationGroupRows from "./GnomadPopulationGroupRow.js";
 import {
   getPopulationFrequency,
-  formatAF,
   GNOMAD_GROUPS,
   POPULATION_NORMALIZATION,
 } from "../constants.js";
@@ -136,11 +134,6 @@ function ResultList({
   };
 
   const tableRef = React.useRef(null);
-
-  // const handleDownloadTable = () => {
-  //   if (!tableRef.current) return;
-  //   downloadCSV(tableRef.current, "beacon-results.csv", toggle, data);
-  // };
   const handleDownloadTable = () => {
     if (!tableRef.current) return;
 
@@ -254,55 +247,8 @@ function ResultList({
     setDataExists(condition);
   }, [mergedResults]);
 
-  // const handleToggle = (event, newToggle) => setToggle(newToggle);
   const handleToggle = (event, newToggle) => {
     setToggle(newToggle);
-  };
-
-  const totalResults = (ac, an, hom, het, hemi, af) => {
-    const baseClass = toggle.length === 0 ? "no-border" : "beaconized";
-    const totalClass = `${baseClass} global-row-background`;
-
-    const display = (v) => v ?? "-";
-
-    return (
-      <tr data-id="total" data-category="total">
-        <td className={`${totalClass} dataset-col`}>
-          <b>Total</b>
-        </td>
-
-        <td className={`${totalClass} centered`}>
-          <b>{display(ac)}</b>
-        </td>
-
-        <td className={`${totalClass} centered`}>
-          <b>{display(an)}</b>
-        </td>
-
-        <td className={`${totalClass} centered`}>
-          <b>{display(hom)}</b>
-        </td>
-
-        <td className={`${totalClass} centered`}>
-          <b>{display(het)}</b>
-        </td>
-
-        <td className={`${totalClass} centered`}>
-          <b>{display(hemi)}</b>
-        </td>
-
-        <td className={`${totalClass} centered`}>
-          <b>
-            {af != null
-              ? formatAF(af, {
-                  threshold: 1e-5,
-                  exponentDigits: 2,
-                })
-              : "-"}
-          </b>
-        </td>
-      </tr>
-    );
   };
 
   const renderDatasetTable = (dataset) => {
@@ -315,8 +261,6 @@ function ResultList({
         (f) => f?.population !== "Total"
       ) || [];
 
-    const totalCounts = normalizeGenotypeCounts(total || {});
-
     return (
       <>
         {!isCollapsed && (
@@ -328,19 +272,9 @@ function ResultList({
               clearGlobalAction={() => setGlobalAction(null)}
               onStateChange={setGroupState}
               toggle={toggle}
+              total={total}
             />
           </>
-        )}
-
-        {/* This renders the Total in bold */}
-        {totalResults(
-          total?.alleleCount ?? null,
-          total?.alleleNumber ?? null,
-          totalCounts.homozygous,
-          totalCounts.heterozygous,
-          totalCounts.hemizygous,
-          total?.alleleFrequency,
-          true
         )}
       </>
     );

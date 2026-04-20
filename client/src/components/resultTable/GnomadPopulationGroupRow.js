@@ -3,7 +3,11 @@ import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
 import SharedTableRow from "./SharedTableRow";
 import { normalizeGenotypeCounts } from "./normalizeGenotypeCounts";
-import { GNOMAD_GROUPS, POPULATION_NORMALIZATION } from "../constants.js";
+import {
+  GNOMAD_GROUPS,
+  POPULATION_NORMALIZATION,
+  formatAF,
+} from "../constants.js";
 
 const normalizePopulation = (name) => {
   if (!name) return name;
@@ -27,6 +31,7 @@ export default function GnomadPopulationGroupRows({
   clearGlobalAction,
   onStateChange,
   toggle,
+  total,
 }) {
   const [openGroups, setOpenGroups] = useState({});
 
@@ -115,6 +120,8 @@ export default function GnomadPopulationGroupRows({
 
   const hasSingleMainPopulation = mainGroupsWithData.length === 1;
 
+  const totalCounts = normalizeGenotypeCounts(total || {});
+
   return (
     <>
       {toggle.includes("ancestry") &&
@@ -201,6 +208,50 @@ export default function GnomadPopulationGroupRows({
             );
           })}
 
+      {/* This renders the Total in bold */}
+      {total &&
+        (() => {
+          const totalClass = "beaconized global-row-background";
+
+          return (
+            <tr data-id="total" data-category="total">
+              <td className={`${totalClass} dataset-col`}>
+                <b>Total</b>
+              </td>
+
+              <td className={`${totalClass} centered`}>
+                <b>{total.alleleCount ?? "-"}</b>
+              </td>
+
+              <td className={`${totalClass} centered`}>
+                <b>{total.alleleNumber ?? "-"}</b>
+              </td>
+
+              <td className={`${totalClass} centered`}>
+                <b>{totalCounts.homozygous ?? "-"}</b>
+              </td>
+
+              <td className={`${totalClass} centered`}>
+                <b>{totalCounts.heterozygous ?? "-"}</b>
+              </td>
+
+              <td className={`${totalClass} centered`}>
+                <b>{totalCounts.hemizygous ?? "-"}</b>
+              </td>
+
+              <td className={`${totalClass} centered`}>
+                <b>
+                  {total.alleleFrequency != null
+                    ? formatAF(total.alleleFrequency, {
+                        threshold: 1e-5,
+                        exponentDigits: 2,
+                      })
+                    : "-"}
+                </b>
+              </td>
+            </tr>
+          );
+        })()}
       {/* Global sex */}
       {toggle.includes("sex") &&
         sexOnlyRows.map((row) => (
