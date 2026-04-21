@@ -126,6 +126,12 @@ function ResultList({
     allClosed: true,
   });
 
+  const showLiftoverGnomad = false;
+
+  const isGnomadDataset = (datasetId) => {
+    return datasetId?.toLowerCase().includes("gnomad");
+  };
+
   const toggleDataset = (key) => {
     setCollapsedDatasets((prev) => ({
       ...prev,
@@ -145,76 +151,93 @@ function ResultList({
     });
   };
 
-  const chartData = Object.values(results || {})
-    .flat()
-    .map((dataset) => {
-      const rawFrequencies =
-        dataset?.results?.[0]?.frequencyInPopulations?.[0]?.frequencies || [];
+  const originalResults = (results?.original || []).map((r) => ({
+    ...r,
+    __source: "original",
+  }));
 
-      const normalizePopulation = (name) => {
-        if (!name) return name;
+  const liftedResults = (results?.lifted || []).map((r) => ({
+    ...r,
+    __source: "lifted",
+  }));
 
-        const trimmed = name.trim();
-        const match = trimmed.match(/(.+)\s+(XX|XY)$/);
+  const filteredLiftedResults = liftedResults.filter((entry) => {
+    if (showLiftoverGnomad) return true;
 
-        if (match) {
-          const base = match[1];
-          const sex = match[2];
-          const normalizedBase = POPULATION_NORMALIZATION[base] || base;
-          return `${normalizedBase} ${sex}`;
-        }
+    const datasetId = entry?.id || "";
 
-        return POPULATION_NORMALIZATION[trimmed] || trimmed;
-      };
+    if (isGnomadDataset(datasetId)) {
+      return false;
+    }
 
-      const frequencies = rawFrequencies.map((f) => ({
-        ...f,
-        population: normalizePopulation(f.population),
-      }));
+    return true;
+  });
 
-      const get = (labels) =>
-        frequencies.find((f) => labels.includes(f.population));
+  const mergedResults = [...originalResults, ...filteredLiftedResults];
 
-      const female = get(["Female", "Females", "XX"]);
-      const male = get(["Male", "Males", "XY"]);
-      const total = get(["Total"]);
+  const chartData = mergedResults.map((dataset) => {
+    const rawFrequencies =
+      dataset?.results?.[0]?.frequencyInPopulations?.[0]?.frequencies || [];
 
-      const ancestryDots = Object.keys(GNOMAD_GROUPS)
-        .filter((groupName) =>
-          frequencies.some((f) => f.population === groupName)
-        )
-        .map((groupName) => {
-          const totalPop = frequencies.find((f) => f.population === groupName);
+    const normalizePopulation = (name) => {
+      if (!name) return name;
 
-          const femalePop = frequencies.find(
-            (f) => f.population === `${groupName} XX`
-          );
+      const trimmed = name.trim();
+      const match = trimmed.match(/(.+)\s+(XX|XY)$/);
 
-          const malePop = frequencies.find(
-            (f) => f.population === `${groupName} XY`
-          );
+      if (match) {
+        const base = match[1];
+        const sex = match[2];
+        const normalizedBase = POPULATION_NORMALIZATION[base] || base;
+        return `${normalizedBase} ${sex}`;
+      }
 
-          return {
-            population: groupName,
-            total: totalPop?.alleleFrequency ?? null,
-            female: femalePop?.alleleFrequency ?? null,
-            male: malePop?.alleleFrequency ?? null,
-          };
-        });
+      return POPULATION_NORMALIZATION[trimmed] || trimmed;
+    };
 
-      return {
-        dataset: dataset.id,
-        female: female?.alleleFrequency ?? null,
-        male: male?.alleleFrequency ?? null,
-        total: total?.alleleFrequency ?? null,
-        ancestryDots,
-      };
-    });
+    const frequencies = rawFrequencies.map((f) => ({
+      ...f,
+      population: normalizePopulation(f.population),
+    }));
 
-  const mergedResults = [
-    ...(results?.original || []).map((r) => ({ ...r, __source: "original" })),
-    ...(results?.lifted || []).map((r) => ({ ...r, __source: "lifted" })),
-  ];
+    const get = (labels) =>
+      frequencies.find((f) => labels.includes(f.population));
+
+    const female = get(["Female", "Females", "XX"]);
+    const male = get(["Male", "Males", "XY"]);
+    const total = get(["Total"]);
+
+    const ancestryDots = Object.keys(GNOMAD_GROUPS)
+      .filter((groupName) =>
+        frequencies.some((f) => f.population === groupName)
+      )
+      .map((groupName) => {
+        const totalPop = frequencies.find((f) => f.population === groupName);
+
+        const femalePop = frequencies.find(
+          (f) => f.population === `${groupName} XX`
+        );
+
+        const malePop = frequencies.find(
+          (f) => f.population === `${groupName} XY`
+        );
+
+        return {
+          population: groupName,
+          total: totalPop?.alleleFrequency ?? null,
+          female: femalePop?.alleleFrequency ?? null,
+          male: malePop?.alleleFrequency ?? null,
+        };
+      });
+
+    return {
+      dataset: dataset.id,
+      female: female?.alleleFrequency ?? null,
+      male: male?.alleleFrequency ?? null,
+      total: total?.alleleFrequency ?? null,
+      ancestryDots,
+    };
+  });
 
   const getDatasetDisplayNameString = (datasetId) => {
     if (datasetId === "EGAD00001007774") return "GCAT | Genomes for Life";
