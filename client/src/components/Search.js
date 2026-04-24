@@ -79,11 +79,13 @@ function Search({
 
         setLiftedVariant(lifted);
         setLiftedAssemblyId(currentGenome === "GRCh37" ? "GRCh38" : "GRCh37");
-      } catch (err) {
+      } catch (error) {
+        console.error("❌ Liftover failed:", error);
         setLiftedVariant(null);
         setLiftedAssemblyId(null);
         setLiftoverError(
-          "Liftover could not be completed for this variant. The coordinates may not exist in the target assembly."
+          error?.message ||
+            "Liftover could not be completed for this variant. The coordinates may not exist in the target assembly."
         );
       }
     };
