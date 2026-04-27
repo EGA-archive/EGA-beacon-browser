@@ -24,6 +24,7 @@ const CustomLegend = () => (
       gap: 20,
       flexWrap: "wrap",
       marginLeft: 20,
+      marginTop: "9%",
     }}
   >
     {LEGEND_ITEMS.map(({ label, key }) => {
@@ -338,7 +339,7 @@ export default function AlleleFrequencyChart({ data }) {
           style={{
             position: "absolute",
             top: -45,
-            right: 20,
+            right: -15,
             padding: "12px 16px",
             borderRadius: 10,
           }}

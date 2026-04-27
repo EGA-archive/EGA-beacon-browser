@@ -84,6 +84,7 @@ const ResultsHeader = ({
               sx={{
                 fontSize: "16px",
                 marginBottom: "20px",
+                backgroundColor: "green",
               }}
             >
               Queried lifted-over variant:{" "}

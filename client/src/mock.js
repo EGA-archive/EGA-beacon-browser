@@ -59,7 +59,7 @@ export const mockData = {
     },
 
     {
-      id: "gnomADv2.1.1gnomADv2.1.1gnomADv2.1.1gnomADv2.1.1gnomADv2.1.1gnomADv2.1.1gnomADv2.1.1",
+      id: "gnomADv2.1.1",
       results: [
         {
           frequencyInPopulations: [
