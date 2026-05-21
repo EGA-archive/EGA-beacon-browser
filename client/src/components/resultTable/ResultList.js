@@ -345,7 +345,14 @@ function ResultList({
   return (
     <Row>
       {dataExists && (
-        <Box sx={{ marginTop: "50px", backgroundColor: "white" }}>
+        <Box
+          sx={{
+            marginTop: "50px",
+            backgroundColor: "white",
+            width: "100%",
+            mx: "auto",
+          }}
+        >
           <ResultsHeader
             queriedVariant={queriedVariant}
             toggle={toggle}

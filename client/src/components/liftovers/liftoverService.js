@@ -1,6 +1,6 @@
 import config from "../../config";
 
-// Performs a liftover of a genomic interval between GRCh37 and GRCh38 and viceversa
+// Performs a liftover of a genomic interval between GRCh37 and GRCh38
 
 function cleanLiftoverErrorMessage(errorMessage) {
   if (!errorMessage) return null;
@@ -11,46 +11,38 @@ function cleanLiftoverErrorMessage(errorMessage) {
     .trim();
 }
 
-export async function liftoverInterval({
-  chrom,
-  start,
-  refBases,
-  altBases,
-  fromGenome,
-}) {
-  // Decide target assembly
-  const finalAssembly = fromGenome === "GRCh37" ? "GRCh38" : "GRCh37";
+export async function liftoverInterval({ chrom, start, fromGenome }) {
+  // Convert assemblies to UCSC liftover format
+  const hg = fromGenome === "GRCh37" ? "hg19-to-hg38" : "hg38-to-hg19";
+
+  // UI is 1-based
+  // UCSC interval API expects 0-based half-open interval
+  const zeroBasedStart = Number(start) - 1;
+  const zeroBasedEnd = Number(start);
 
   const params = new URLSearchParams({
-    pos: start,
-    refBases,
-    altBases,
-    chr: chrom,
-    finalAssembly,
+    hg,
+    format: "interval",
+    chrom: `chr${chrom}`,
+    start: zeroBasedStart,
+    end: zeroBasedEnd,
   });
 
   const url = `${config.LIFTOVER_URL}?${params.toString()}`;
 
-  // https://beacon-network-backend-test.ega-archive.org/liftover?pos=5935162&refBases=A&altBases=T&chr=1&finalAssembly=GRCh38
-
-  // Call liftover API
   const response = await fetch(url);
+
   const data = await response.json();
 
-  console.log("📡 liftoverInterval response:", data);
-
-  // 1. Backend explicit error (e.g. allele mismatch)
+  // Backend explicit error
   if (data?.error) {
     throw new Error(cleanLiftoverErrorMessage(data.error));
   }
 
-  // 2. No valid liftover result
-  if (!data?.pos) {
-    throw new Error(
-      "Liftover could not be completed for this variant. The coordinates may not exist in the target assembly."
-    );
+  // No valid result
+  if (!data?.output_pos) {
+    throw new Error("Liftover could not be completed for this variant.");
   }
 
-  // 3. Valid result
   return data;
 }

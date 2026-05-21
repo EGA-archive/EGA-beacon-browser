@@ -288,8 +288,6 @@ function Search({
                               cursor: values.variant
                                 ? "pointer"
                                 : "not-allowed",
-                              opacity: values.liftover ? 1 : 0.5,
-                              cursor: values.liftover ? "pointer" : "default",
                             }}
                             label={
                               <span className="liftover-label">
@@ -306,6 +304,12 @@ function Search({
                                       <li>
                                         Liftover is performed using bcftools
                                         (version 1000090).
+                                      </li>
+                                      <li>
+                                        If the variant could not be lifted over
+                                        or the variant bases were swapped in the
+                                        target assembly, the lifted-over results
+                                        will not be displayed.
                                       </li>
                                     </ul>
                                   }

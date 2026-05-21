@@ -355,6 +355,7 @@ code {
   /* font-size: xx-small; */
 }
 
+/* Here */
 @media (max-width: 575px) {
   .table-container {
     width: 80%;

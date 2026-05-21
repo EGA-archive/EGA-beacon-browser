@@ -61,7 +61,7 @@ const ResultsHeader = ({
         wrap="wrap"
       >
         {/* Left side: Display the variant that was queried */}
-        <Grid item xs={10} sm={10} md={10}>
+        <Grid item xs={10} sm={10} md={12}>
           <Typography
             variant="body2"
             sx={{
@@ -84,7 +84,6 @@ const ResultsHeader = ({
               sx={{
                 fontSize: "16px",
                 marginBottom: "20px",
-                backgroundColor: "green",
               }}
             >
               Queried lifted-over variant:{" "}

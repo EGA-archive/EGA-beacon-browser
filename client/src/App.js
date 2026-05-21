@@ -114,7 +114,6 @@ function App() {
     <div className="bigparent">
       <div>
         <CustomNavbar />
-
         <Container>
           <Row>
             <Search

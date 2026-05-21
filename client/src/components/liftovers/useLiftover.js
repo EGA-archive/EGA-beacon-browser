@@ -17,22 +17,19 @@ export async function liftoverVariant(variant, genome) {
   const result = await liftoverInterval({
     chrom: normalizeChrom(parsed.chrom),
     start: parsed.pos,
-    refBases: parsed.ref,
-    altBases: parsed.alt,
     fromGenome: genome,
   });
 
-  console.log("📡 LIFTOVER RESPONSE:", result);
-
-  if (!result?.pos) {
+  if (!result?.output_pos) {
     console.error("❌ Invalid liftover response:", result);
-    throw new Error("Invalid liftover response");
+
+    throw new Error(result?.error || "Liftover could not be completed");
   }
 
-  const liftedPos = Number(result.pos);
+  const liftedPos = Number(result.output_pos);
 
   const liftedVariant = buildVariant({
-    chrom: normalizeChrom(result.chr || parsed.chrom),
+    chrom: normalizeChrom(result.output_chrom || parsed.chrom),
     pos: liftedPos,
     ref: result.ref || parsed.ref,
     alt: result.alt || parsed.alt,
