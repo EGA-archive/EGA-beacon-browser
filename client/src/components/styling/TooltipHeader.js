@@ -23,12 +23,12 @@ const CustomTooltip = styled(({ className, ...props }) => (
     color: "#023452",
   },
   // Style the tooltip positioning
-  "&.custom-margin-right": {
-    [`& .MuiTooltip-tooltip`]: {
-      transform: "translateY(100%)",
-      transformOrigin: "center bottom",
-    },
-  },
+  // "&.custom-margin-right": {
+  //   [`& .MuiTooltip-tooltip`]: {
+  //     transform: "translateY(100%)",
+  //     transformOrigin: "center bottom",
+  //   },
+  // },
 });
 
 // TooltipHeader component:

@@ -3,16 +3,59 @@ import { Box } from "@mui/system";
 import ResultsHeader from "./ResultsHeader.js";
 import { Row } from "react-bootstrap";
 import TableLayout from "./TableLayout.js";
-import liftoverIcon from "../../liftover-icon.svg";
+import liftoverIcon from "../../liftover-icon.png";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
 import { downloadCSV } from "./downloadCSV.js";
 import GnomadPopulationGroupRows from "./GnomadPopulationGroupRow.js";
+import Tooltip from "@mui/material/Tooltip";
+import { ThemeProvider } from "@mui/material/styles";
+import CustomTheme from "../styling/CustomTheme";
 import {
   getPopulationFrequency,
   GNOMAD_GROUPS,
   POPULATION_NORMALIZATION,
 } from "../constants.js";
+
+const getDatasetPlainName = ({
+  datasetId = "",
+  assemblyIdQueried,
+  liftedAssemblyId,
+  isLifted,
+}) => {
+  const effectiveAssembly = isLifted ? liftedAssemblyId : assemblyIdQueried;
+
+  // EGA datasets: remove the EGAD ID and its empty brackets
+  const egadMatch = datasetId.match(/EGAD\d+/);
+  const egadId = egadMatch ? egadMatch[0] : null;
+
+  if (egadId) {
+    return datasetId
+      .replace(egadId, "")
+      .replace(/\(\s*\)/g, "")
+      .replace(/\(\s*$/, "")
+      .replace(/\s*\)$/, "")
+      .trim();
+  }
+
+  // gnomAD datasets: use the same names displayed in the table
+  if (datasetId.toLowerCase().includes("gnomad")) {
+    if (effectiveAssembly === "GRCh37") {
+      return "gnomAD v2.1.1";
+    }
+
+    if (effectiveAssembly === "GRCh38") {
+      return "gnomAD v4.1.0";
+    }
+  }
+
+  // Other datasets: remove any text inside brackets
+  return datasetId
+    .replace(/\s*\([^)]*\)/g, "")
+    .replace(/\s*\[[^\]]*\]/g, "")
+    .replace(/\s{2,}/g, " ")
+    .trim();
+};
 
 const buildDatasetDisplayName = ({
   datasetId,
@@ -23,6 +66,13 @@ const buildDatasetDisplayName = ({
   liftedVariant,
 }) => {
   const effectiveAssembly = isLifted ? liftedAssemblyId : assemblyIdQueried;
+
+  const plainDatasetName = getDatasetPlainName({
+    datasetId,
+    assemblyIdQueried,
+    liftedAssemblyId,
+    isLifted,
+  });
 
   const egadMatch = datasetId.match(/EGAD\d+/);
   const egadId = egadMatch ? egadMatch[0] : null;
@@ -44,16 +94,9 @@ const buildDatasetDisplayName = ({
   };
 
   if (egadId) {
-    const label = datasetId
-      .replace(egadId, "")
-      .replace(/\(\s*\)/g, "") // remove empty ()
-      .replace(/\(\s*$/, "") // remove "(" at end
-      .replace(/\s*\)$/, "") // remove ")" at end
-      .trim();
-
     return (
       <>
-        {label} {"("}
+        {plainDatasetName} {"("}
         <a
           href={`https://ega-archive.org/datasets/${egadId}`}
           target="_blank"
@@ -82,7 +125,7 @@ const buildDatasetDisplayName = ({
             rel="noopener noreferrer"
             className="ega-link"
           >
-            gnomAD v2.1.1
+            {plainDatasetName}
           </a>{" "}
           (exomes only)
         </>
@@ -98,7 +141,7 @@ const buildDatasetDisplayName = ({
             rel="noopener noreferrer"
             className="ega-link"
           >
-            gnomAD v4.1.0
+            {plainDatasetName}
           </a>{" "}
           (exomes and genomes)
         </>
@@ -126,7 +169,7 @@ function ResultList({
     allClosed: true,
   });
 
-  const showLiftoverGnomad = false;
+  const showLiftoverGnomad = true;
 
   const isGnomadDataset = (datasetId) => {
     return datasetId?.toLowerCase().includes("gnomad");
@@ -174,6 +217,16 @@ function ResultList({
   });
 
   const mergedResults = [...originalResults, ...filteredLiftedResults];
+
+  const getDatasetDisplayNameString = (datasetId) => {
+    if (datasetId === "EGAD00001007774") return "GCAT | Genomes for Life";
+    if (datasetId.startsWith("EGAD")) return datasetId;
+    if (datasetId.includes("v2") || datasetId.includes("r2"))
+      return "gnomAD v2.1.1";
+    if (datasetId.includes("v4") || datasetId.includes("r4"))
+      return "gnomAD v4.1.0";
+    return datasetId;
+  };
 
   const chartData = mergedResults.map((dataset) => {
     const rawFrequencies =
@@ -231,23 +284,13 @@ function ResultList({
       });
 
     return {
-      dataset: dataset.id,
+      dataset: getDatasetDisplayNameString(dataset.id),
       female: female?.alleleFrequency ?? null,
       male: male?.alleleFrequency ?? null,
       total: total?.alleleFrequency ?? null,
       ancestryDots,
     };
   });
-
-  const getDatasetDisplayNameString = (datasetId) => {
-    if (datasetId === "EGAD00001007774") return "GCAT | Genomes for Life";
-    if (datasetId.startsWith("EGAD")) return datasetId;
-    if (datasetId.includes("v2") || datasetId.includes("r2"))
-      return "gnomAD v2.1.1";
-    if (datasetId.includes("v4") || datasetId.includes("r4"))
-      return "gnomAD v4.1.0";
-    return datasetId;
-  };
 
   const finalResults = Object.values(
     mergedResults.reduce((acc, item) => {
@@ -316,29 +359,51 @@ function ResultList({
     });
 
     return (
-      <tr>
-        <td className="dataset dataset-col" colSpan="7">
-          <span
-            style={{ cursor: "pointer", marginRight: "6px" }}
-            onClick={() => toggleDataset(datasetKey)}
-          >
-            {isCollapsed ? (
-              <KeyboardArrowRightIcon fontSize="small" />
-            ) : (
-              <KeyboardArrowDownIcon fontSize="small" />
+      <ThemeProvider theme={CustomTheme}>
+        <tr>
+          <td className="dataset dataset-col" colSpan="7">
+            <span
+              style={{ cursor: "pointer", marginRight: "6px" }}
+              onClick={() => toggleDataset(datasetKey)}
+            >
+              {isCollapsed ? (
+                <KeyboardArrowRightIcon fontSize="small" />
+              ) : (
+                <KeyboardArrowDownIcon fontSize="small" />
+              )}
+            </span>
+            Dataset: <b>{displayName}</b>
+            {isLifted && (
+              <Tooltip
+                title="Lifted-over variant"
+                placement="top-start"
+                arrow
+                slotProps={{
+                  popper: {
+                    sx: {
+                      '&[data-popper-placement*="top"] .MuiTooltip-tooltip': {
+                        marginBottom: "5px !important",
+                      },
+                    },
+                  },
+                  arrow: {
+                    sx: {
+                      left: "10px !important",
+                    },
+                  },
+                }}
+              >
+                <img
+                  src={liftoverIcon}
+                  alt="lifted-over"
+                  style={{ marginLeft: "8px", verticalAlign: "middle" }}
+                  width={35}
+                />
+              </Tooltip>
             )}
-          </span>
-          Dataset: <b>{displayName}</b>
-          {isLifted && (
-            <img
-              src={liftoverIcon}
-              alt="lifted-over"
-              style={{ marginLeft: "8px", verticalAlign: "middle" }}
-              width={35}
-            />
-          )}
-        </td>
-      </tr>
+          </td>
+        </tr>
+      </ThemeProvider>
     );
   };
 

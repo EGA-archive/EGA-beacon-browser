@@ -290,7 +290,7 @@ function Search({
                                 : "not-allowed",
                             }}
                             label={
-                              <span className="liftover-label">
+                              <span>
                                 Convert this variant to the other reference
                                 genome
                                 <Tooltip
@@ -302,8 +302,9 @@ function Search({
                                         GRCh38.
                                       </li>
                                       <li>
-                                        Liftover is performed using bcftools
-                                        (version 1000090).
+                                        Liftover is performed using the
+                                        BCFtools/ liftover plugin (v1.22), with
+                                        BCFtools 1.20 and HTSlib 1.20.
                                       </li>
                                       <li>
                                         If the variant could not be lifted over
@@ -348,27 +349,27 @@ function Search({
                   <u
                     className="example"
                     onClick={async () => {
-                      await setFieldValue("variant", "21-19653341-AT-A");
+                      await setFieldValue("variant", "1-898511-C-A");
                       await setFieldValue("genome", "GRCh37");
                       validateField("variant");
-                      setCurrentVariant("21-19653341-AT-A");
+                      setCurrentVariant("1-898511-C-A");
                       setCurrentGenome("GRCh37");
                     }}
                   >
-                    GRCh37 | 21-19653341-AT-A
+                    GRCh37 | 1-898511-C-A
                   </u>
                   <br />
                   <u
                     className="example"
                     onClick={async () => {
-                      await setFieldValue("variant", "21-18281024-AT-A");
+                      await setFieldValue("variant", "21-18281025-A-AT");
                       await setFieldValue("genome", "GRCh38");
                       validateField("variant");
-                      setCurrentVariant("21-18281024-AT-A");
+                      setCurrentVariant("21-18281025-A-AT");
                       setCurrentGenome("GRCh38");
                     }}
                   >
-                    GRCh38 | 21-18281024-AT-A
+                    GRCh38 | 21-18281025-A-AT
                   </u>
                 </div>
               </Form>

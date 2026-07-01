@@ -58,6 +58,7 @@ const CustomLegend = () => (
 
 const CustomTooltip = ({ active, payload, label }) => {
   if (!active || !payload || !payload.length) return null;
+  const displayLabel = formatDatasetLabel(label).join(" ");
 
   const values = Object.fromEntries(payload.map((p) => [p.dataKey, p]));
 
@@ -115,7 +116,7 @@ const CustomTooltip = ({ active, payload, label }) => {
       }}
     >
       <div style={{ marginBottom: 6 }}>
-        Dataset: <b>{label}</b>
+        Dataset: <b>{displayLabel}</b>
         <br />
         Ancestries: <b>{ancestryDots.length || "-"}</b>
       </div>
@@ -152,28 +153,40 @@ const CustomTooltip = ({ active, payload, label }) => {
 };
 
 const formatDatasetLabel = (label = "") => {
-  const cleaned = label.replace(/\(EGAD.*?\)/g, "").trim();
+  const cleaned = label
+    // Remove anything inside parentheses: (...)
+    .replace(/\s*\([^)]*\)/g, "")
+    // Remove anything inside square brackets: [...]
+    .replace(/\s*\[[^\]]*\]/g, "")
+    // Remove extra spaces left behind
+    .replace(/\s{2,}/g, " ")
+    .trim();
 
-  const MAX_LINE_LENGTH = 18;
-  const MAX_TOTAL_LENGTH = 36;
+  const MAX_LINE_LENGTH = 22;
+  const words = cleaned.split(/\s+/);
 
-  if (cleaned.length <= MAX_LINE_LENGTH) {
-    return [cleaned];
+  const lines = [];
+  let currentLine = "";
+
+  words.forEach((word) => {
+    const nextLine = currentLine ? `${currentLine} ${word}` : word;
+
+    if (nextLine.length <= MAX_LINE_LENGTH) {
+      currentLine = nextLine;
+    } else {
+      if (currentLine) {
+        lines.push(currentLine);
+      }
+
+      currentLine = word;
+    }
+  });
+
+  if (currentLine) {
+    lines.push(currentLine);
   }
 
-  if (cleaned.length <= MAX_TOTAL_LENGTH) {
-    const firstLine = cleaned.slice(0, MAX_LINE_LENGTH);
-    const secondLine = cleaned.slice(MAX_LINE_LENGTH);
-
-    return [firstLine.trim(), secondLine.trim()];
-  }
-
-  const truncated = cleaned.slice(0, MAX_TOTAL_LENGTH - 3) + "...";
-
-  return [
-    truncated.slice(0, MAX_LINE_LENGTH).trim(),
-    truncated.slice(MAX_LINE_LENGTH).trim(),
-  ];
+  return lines;
 };
 
 const CustomXAxisTick = ({ x, y, payload }) => {

@@ -7,9 +7,10 @@ import {
   Typography,
   Button,
 } from "@mui/material";
+
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import PanoramaFishEyeIcon from "@mui/icons-material/PanoramaFishEye";
-import liftoverIcon from "../../liftover-icon.svg";
+import liftoverIcon from "../../liftover-icon.png";
 import DownloadRoundedIcon from "@mui/icons-material/DownloadRounded";
 import AlleleFrequencyChart from "../../charts/AlleleFrequencyChart";
 
@@ -89,12 +90,7 @@ const ResultsHeader = ({
               Queried lifted-over variant:{" "}
               <Box component="span" fontWeight="bold">
                 {liftedAssemblyId} | {liftedVariant}{" "}
-                <img
-                  src={liftoverIcon}
-                  alt="Lifted-over variant"
-                  width={45}
-                  height={45}
-                />
+                <img src={liftoverIcon} alt="Lifted-over variant" width={45} />
               </Box>
             </Typography>
           )}
